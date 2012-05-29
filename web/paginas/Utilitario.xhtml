@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core" template="comum/template.xhtml"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:define name="body">
+		<a4j:form>
+			<rich:messages passedLabel="Data is allowed to be stored."
+				layout="list">
+				<f:facet name="header">
+					<h:outputText value="Entered Data Status:"></h:outputText>
+				</f:facet>
+				<f:facet name="passedMarker">
+					<h:graphicImage value="/images/ajax/passed.gif" />
+				</f:facet>
+				<f:facet name="errorMarker">
+					<h:graphicImage value="/images/ajax/error.gif" />
+				</f:facet>
+			</rich:messages>
+
+			<rich:panel header="Utilitário de importação / indexação"
+				style="margin-left: 25%; margin-right: 25%;" columns="1">
+
+				<rich:panel styleClass="panelInterno">
+
+					<h:panelGrid styleClass="fullWidthClass" columns="5">
+						<h:outputText value="Fontes de dados:" />
+						<h:selectOneMenu layout="lineDirection" label="Fontes"
+							value="#{utilitarioBean.idFonteDados}">
+							<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
+								<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+							</c:forEach>
+						</h:selectOneMenu>
+
+						<h:commandLink action="#{fonteDadosBean.editar}">
+							<h:graphicImage url="imagens/edit.png" style="border: none" />
+							<f:setPropertyActionListener
+								target="#{fonteDadosBean.fonteDados.id}"
+								value="#{utilitarioBean.idFonteDados}" />
+						</h:commandLink>
+
+						<h:commandLink action="#{fonteDadosBean.excluir}"
+							onclick="if (!confirm('Deseja excluir a configuração da fonte de dados (os dados não serão removidos)?')) return false;">
+							<h:graphicImage url="imagens/remove.png" style="border: none" />
+							<f:setPropertyActionListener
+								target="#{fonteDadosBean.fonteDados.id}"
+								value="#{utilitarioBean.idFonteDados}" />
+						</h:commandLink>
+
+						<a4j:commandLink action="#{fonteDadosBean.novo}">
+							<h:graphicImage url="imagens/new.png" alt="Nova fonte de dados"
+								style="border: none" />
+						</a4j:commandLink>
+					</h:panelGrid>
+				</rich:panel>
+
+				<rich:spacer height="6px" />
+
+				<rich:panel styleClass="panelInterno">
+					<h:panelGrid columns="3">
+						<h:commandButton value="Indexar" type="submit"
+							action="#{utilitarioBean.indexar}"
+							onclick="Richfaces.showModalPanel('painelAguarde');"
+							oncomplete="Richfaces.hideModalPanel('painelAguarde');"
+							reRender="mensagens" />
+					</h:panelGrid>
+				</rich:panel>
+
+			</rich:panel>
+		</a4j:form>
+	</ui:define>
+</ui:composition>

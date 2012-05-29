@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<rich:tree immediate="true" id="arvore" switchType="client"
+		ajaxSingle="true"
+		style="width:300px" binding="#{permissaoDHFBean.uiTree}"
+		value="#{permissaoDHFBean.arvoreAcesso}" var="node"
+		nodeFace="#{node.type}" icon="/common/images/tree_folder_open.gif"
+		reRender="arvore, mensagens">
+		<rich:treeNode type="raiz">
+			<h:selectBooleanCheckbox value="#{node.checked}">
+				<a4j:support event="onclick"
+					actionListener="#{permissaoDHFBean.onCheck}"
+					reRender="arvore, messages" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}" />
+		</rich:treeNode>
+		<rich:treeNode type="menu">
+			<h:selectBooleanCheckbox value="#{node.checked}">
+				<a4j:support event="onclick"
+					actionListener="#{permissaoDHFBean.onCheck}"
+					reRender="arvore, messages" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}" />
+		</rich:treeNode>
+		<rich:treeNode type="submenu">
+			<h:selectBooleanCheckbox value="#{node.checked}">
+				<a4j:support event="onclick"
+					actionListener="#{permissaoDHFBean.onCheck}"
+					reRender="arvore, messages" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}" />
+		</rich:treeNode>
+		<rich:treeNode type="holder">
+			<h:selectBooleanCheckbox value="#{node.checked}">
+				<a4j:support event="onclick"
+					actionListener="#{permissaoDHFBean.onCheck}"
+					reRender="arvore, messages" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}" />
+		</rich:treeNode>
+		<rich:treeNode type="funcao">
+			<h:selectBooleanCheckbox value="#{node.checked}">
+				<a4j:support event="onclick"
+					actionListener="#{permissaoDHFBean.onCheck}"
+					reRender="arvore, messages" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}" />
+		</rich:treeNode>
+		<rich:treeNode type="opcao">
+			<h:selectBooleanCheckbox value="#{node.checked}">
+				<a4j:support event="onclick"
+					actionListener="#{permissaoDHFBean.onCheck}"
+					reRender="arvore, messages" />
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}" />
+		</rich:treeNode>
+	</rich:tree>
+</ui:composition>

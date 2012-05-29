@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:metrologia="http://cni.org.br/metrologia">
+<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+	<ui:define name="title">Sistema de Gestão de Volumes - Pesquisa de Tipo Endereço...</ui:define>
+	<ui:define name="body">
+		<h:form id="tipoEnderecoForm" class="defaultFormClass">
+			<h1 class="cont"><span>Pesquisa de Tipo Endereço</span></h1>
+			<metrologia:viewDominio label="Tipo Endereço"
+				beanDominio="#{tipoEnderecoBean}"
+				textoConsultaVazia="Nenhum tipo endereço encontrado para os termos de sua consulta"
+				textoConfirmacao="Deseja excluir os dados do tipo endereço?"
+				labelNovoItem="Novo Tipo Endereço" />
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

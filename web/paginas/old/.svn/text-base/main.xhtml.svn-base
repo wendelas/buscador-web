@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html" xml:lang="pt" lang="pt">
+<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+	<ui:define name="title">Sistema de Gestão de Volumes</ui:define>
+	<ui:define name="body">
+		<h1 class="cont">
+			<span>Página Principal</span>
+		</h1>
+		<rich:panel styleClass="viewContent">
+			<p class="noteMain">
+				<i> <b>Bem-vindo:</b> O sistema de <b>Gestão de Volumes</b> é um
+					protótipo para teste. </i>
+			</p>
+		</rich:panel>
+	</ui:define>
+</ui:composition>
+</html>

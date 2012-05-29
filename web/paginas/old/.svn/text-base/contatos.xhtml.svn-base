@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<rich:panel id="painelContatos" styleClass="panelInterno">
+		<f:facet name="header">
+			<h:outputText>Contatos:</h:outputText>
+		</f:facet>
+		<!-- Despesa: Lista =============================================================================== -->
+		<rich:dataTable id="contatos" width="100%"
+			value="#{contatoBean.itens}" var="contato" rowKeyVar="index"
+			rendered="#{not empty contatoBean.itens.wrappedData}"
+			columnClasses="fieldPadding, fieldPadding, fieldPadding, noStyleClass">
+			<rich:column style="width:55%" sortBy="#{contato.nome}">
+				<f:facet name="header">
+					<h:outputText value="Contato" />
+				</f:facet>
+				<a4j:commandLink id="editarEndLinkContato"
+					action="#{contatoBean.editar}" immediate="true"
+					oncomplete="Richfaces.showModalPanel('contatoPanel'); return false;"
+					reRender="contatoPanel, messagesContatosPanel">
+					<h:outputText value="#{contato.nome}" />
+				</a4j:commandLink>	
+			</rich:column>
+			<rich:column style="width:23%" sortBy="#{contato.descricaoTipo}">
+				<f:facet name="header">
+					<h:outputText value="Tipo" />
+				</f:facet>
+				<a4j:commandLink id="editarContatoLinkTipo"
+					action="#{contatoBean.editar}" immediate="true"
+					oncomplete="Richfaces.showModalPanel('contatoPanel'); return false;"
+					reRender="contatoPanel, messagesContatosPanel">
+					<h:outputText value="#{contato.descricaoTipo}" />
+				</a4j:commandLink>				
+			</rich:column>	
+			<rich:column style="width:10%" sortBy="#{contato.principal}">
+				<f:facet name="header">
+					<h:outputText value="Principal" />
+				</f:facet>
+					<a4j:commandLink id="editarContatoLinkPrincipal"
+						action="#{contatoBean.editar}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('contatoPanel'); return false;"
+						reRender="contatoPanel, messagesContatosPanel">
+						<h:outputText value="#{contato.principal ? 'Sim' : 'Não'}" />
+					</a4j:commandLink>				
+			</rich:column>					
+			<rich:column style="width:10%" sortBy="#{contato.situacao}">
+				<f:facet name="header">
+					<h:outputText value="Situação" />
+				</f:facet>
+					<a4j:commandLink id="editarContatoLinkSit"
+						action="#{contatoBean.editar}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('contatoPanel'); return false;"
+						reRender="contatoPanel, messagesContatosPanel">
+						<h:outputText value="#{contato.situacao ? 'Ativo' : 'Inativo'}" />
+					</a4j:commandLink>				
+			</rich:column>					
+			<rich:column style="width:2%" rendered="#{pessoaBean.permiteEdicao}">
+				<f:facet name="header">
+					<a4j:commandLink id="novoContatoLink"
+						action="#{contatoBean.novo}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('contatoPanel'); return false;"
+						reRender="contatoPanel">
+						<h:graphicImage url="/common/images/bt_incluir.gif"
+							style="border: none" title="Novo"/>
+					</a4j:commandLink>
+				</f:facet>
+				<a4j:commandLink id="removerContatoLink"
+					action="#{contatoBean.remover}"
+					reRender="painelContatos, messagesContatosPanel"
+					onclick="if (!confirm('Deseja excluir o contato?')) return false;">
+					<h:graphicImage url="/common/images/bt_excluir.gif"
+						style="border: none" title="Excluir" />
+				</a4j:commandLink>
+			</rich:column>			
+		</rich:dataTable>
+		<h:outputText rendered="#{empty contatoBean.itens.wrappedData}">
+			<p class="note"><i><b>Contatos:</b> Não há contatos
+			associados a essa pessoa. Clique <b> <a4j:commandLink
+				id="novoContatoLink" action="#{contatoBean.novo}" value="aqui"
+				immediate="true"
+				oncomplete="Richfaces.showModalPanel('contatoPanel'); return false;"
+				reRender="contatoPanel" /> </b> para criar e associar um novo contato.
+			</i></p>
+		</h:outputText>
+	</rich:panel>
+</ui:composition>

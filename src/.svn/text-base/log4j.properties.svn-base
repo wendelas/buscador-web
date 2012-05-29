@@ -1,0 +1,22 @@
+log4j.rootLogger=debug, A1, CONSOLE 
+log4j.appender.A1=org.apache.log4j.RollingFileAppender
+log4j.appender.A1.File=${user.home}/logs-app/search-web/search-web.log
+#log4j.appender.A1.DatePattern='.'yyyy-MM-dd
+log4j.appender.A1.threshold=INFO
+#log4j.appender.A1.Append=false
+log4j.appender.A1.layout=org.apache.log4j.PatternLayout
+log4j.appender.A1.layout.ConversionPattern=%d{ABSOLUTE} %5p %c{1}:%L - %m%n
+
+log4j.appender.CONSOLE.threshold=info
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender 
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout 
+log4j.appender.CONSOLE.layout.ConversionPattern=%r [%t] %-5p %c - %m%n
+
+log4j.appender.hib=org.apache.log4j.RollingFileAppender
+log4j.appender.hib.File=${user.home}/logs-app/search-web/hibernate.log
+#log4j.appender.hib.Append=false
+#log4j.appender.hib.DatePattern='.'yyyy-MM-dd
+log4j.appender.hib.layout=org.apache.log4j.PatternLayout
+log4j.appender.hib.layout.ConversionPattern=%d{ABSOLUTE} %5p %c{1}:%L - %m%n
+log4j.logger.org.hibernate.type=trace, hib
+log4j.logger.org.hibernate.SQL=trace, hib

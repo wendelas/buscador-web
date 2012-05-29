@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:metrologia="http://cni.org.br/metrologia" 
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<!-- Telefone: Formulario ========================================================================== -->			  
+	<rich:modalPanel id="telefonePanel" width="600" height="200">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Telefone: Formulário..."></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/common/images/close.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('telefonePanel')" />
+			</h:panelGroup>
+		</f:facet>
+		<a4j:outputPanel id="messagesTelefonesPanel">
+			<t:messages id="mensagensTelefones" infoClass="info"
+				infoStyle="color: green;" errorClass="erro" errorStyle="color: red;"
+				layout="table" />
+		</a4j:outputPanel>		
+		<h:form id="telefoneForm">
+			<h:panelGrid rows="2" rendered="#{telefoneBean.item != null}" styleClass="fullWidthClass">
+				<h:panelGrid columns="2" styleClass="formClass" columnClasses="duasColunasClass, duasColunasClass">
+					<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+						<span>*</span>
+						<h:outputLabel value="Tipo:" for="tipoTelefone" styleClass="labelClass"/>
+						<h:selectOneMenu value="#{telefoneBean.item.tipo}"
+							valueChangeListener="#{telefoneBean.tipoChanged}"
+							id="tipoTelefone" styleClass="inputTextClass fullWidthClass">
+							<f:selectItem itemValue="0" itemLabel="Escolha um item" />
+							<c:forEach items="#{telefoneBean.tiposTelefones}" var="tipo">
+								<f:selectItem itemValue="#{tipo.id}"
+									itemLabel="#{tipo.descricao}" />
+							</c:forEach>
+						</h:selectOneMenu>
+					</h:panelGrid>				
+					<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+						<span >*</span>
+						<h:outputLabel for="numeroTelefone" value="Número:"  styleClass="labelClass"/>
+						<h:inputText value="#{telefoneBean.item.numero}"  
+							onkeypress="formatTelefone(this, event)"
+							maxlength="13" id="numeroTelefone" styleClass="inputTextClass fullWidthClass"/>
+					</h:panelGrid>	
+					<h:panelGrid columns="2" styleClass="noCellBorderClass fullWidthClass" columnClasses="noStyleClass, fullWidthClass">
+						<h:outputLabel for="situacaoTel" value="Situação:"  styleClass="labelClass"/>
+						<h:selectBooleanCheckbox id="situacaoTel" value="#{telefoneBean.item.situacao}">Ativo</h:selectBooleanCheckbox>
+					</h:panelGrid>		
+
+					<h:panelGrid columns="2" rendered="#{telefoneBean.exibePrincipal || telefoneBean.item.principal}" styleClass="noCellBorderClass fullWidthClass" columnClasses="noStyleClass, fullWidthClass">
+						<h:outputLabel for="principalTel" value="Principal:"  styleClass="labelClass"/>
+						<h:selectBooleanCheckbox id="principalTel" value="#{telefoneBean.item.principal}">Sim</h:selectBooleanCheckbox>
+					</h:panelGrid>					
+				</h:panelGrid>	
+			</h:panelGrid>
+			<rich:spacer height="3"/>
+			<rich:separator height="2" lineType="dotted"/>
+			<h:panelGrid columns="3" columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+				<a4j:commandButton rendered="#{pessoaBean.permiteEdicao}" id="salvarTelefone" value="Salvar" action="#{telefoneBean.salvar}" reRender="painelTelefones, messagesTelefonesPanel"  oncomplete="if (!ajaxRequestContainsErrors()) {Richfaces.hideModalPanel('telefonePanel');}" style="margin-top: 5px" styleClass="buttonClass"/> <h:outputText/>
+				<h:commandButton value="Cancelar" onclick="Richfaces.hideModalPanel('telefonePanel'); return false;" style="margin-top: 5px" styleClass="buttonClass"/>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>	
+</ui:composition>

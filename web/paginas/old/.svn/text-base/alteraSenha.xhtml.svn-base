@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:metrologia="http://cni.org.br/metrologia"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<ui:composition template="/common/decorators/template.xhtml">
+	<ui:define name="title">Sistema de Gestão de Volumes - Alteração de Senha...</ui:define>
+
+
+	<ui:define name="body">
+		<metrologia:mensagens />
+		<h:form id="estadoForm">
+			<h1 class="cont">
+				<span>Alteração de Senha</span>
+			</h1>
+			<rich:panel styleClass="viewContent">
+				<rich:panel id="informacoesGerais" styleClass="panelInterno">
+					<f:facet name="header">
+						<h:outputText>
+								Alteração de Senha
+							</h:outputText>
+					</f:facet>
+					<h:inputHidden id="login" value="#{loginBean.login}" />
+					<h:inputHidden id="nome" value="#{loginBean.nome}" />
+					<h:panelGrid columns="1" styleClass="fullWidthClass"
+						columnClasses="fullWidthClass">
+						<h:panelGrid rows="2" styleClass="fullWidthClass">
+							<h:panelGrid columns="2" styleClass="formClass"
+								columnClasses="duasColunasClass, duasColunasClass">
+								<h:panelGrid columns="2"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputLabel value="Usuário:" styleClass="labelClass" />
+									<h:outputText>#{loginBean.nome}</h:outputText>
+								</h:panelGrid>
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+									<span>*</span>
+									<h:outputLabel for="senhaAtual" value="Senha Atual:"
+										styleClass="labelClass" />
+									<h:inputSecret id="senhaAtual" value="#{loginBean.senha}"
+										styleClass="inputTextClass fullWidthClass" maxlength="50"></h:inputSecret>
+								</h:panelGrid>
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+									<span>*</span>
+									<h:outputLabel for="novaSenha" value="Nova Senha:"
+										styleClass="labelClass" />
+									<h:inputSecret id="novaSenha" value="#{loginBean.novaSenha}"
+										styleClass="inputTextClass fullWidthClass" maxlength="50"></h:inputSecret>
+								</h:panelGrid>
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+									<span>*</span>
+									<h:outputLabel for="confNovaSenha"
+										value="Confirme a Nova Senha Atual:" styleClass="labelClass" />
+									<h:inputSecret id="confNovaSenha"
+										value="#{loginBean.novaSenha1}"
+										styleClass="inputTextClass fullWidthClass" maxlength="50"></h:inputSecret>
+								</h:panelGrid>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+				</rich:panel>
+
+				<rich:spacer height="6" />
+
+				<rich:panel styleClass="panelInterno">
+					<h:panelGrid columns="3"
+						columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+						<h:commandButton value="Salvar"
+							action="#{loginBean.salvaAlteraSenha}" styleClass="buttonClass"
+							onclick="if (!confirm('Deseja alterar a senha?')) return false;" />
+						<h:outputText />
+						<input name="botao_voltar" type="button" class="buttonClass"
+							id="botao_voltar"
+							onclick="location.href='${ctx}/view/login.faces';"
+							value="Cancelar" />
+					</h:panelGrid>
+				</rich:panel>
+
+			</rich:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

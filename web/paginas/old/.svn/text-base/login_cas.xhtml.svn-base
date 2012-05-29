@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" 
+xmlns:c="http://java.sun.com/jstl/core" lang="pt">
+<script language="JavaScript" type="text/javascript">
+//<![CDATA[
+function prepareLoginForm() {
+	$('loginForm').action = casLoginURL;
+	$('lt').value = loginTicket;
+}
+
+function checkForLoginTicket() {
+	var loginTicketProvided = false;
+	var query	= '';
+    	casLoginURL = '#{casBean.configuracaoLoginCas.loginCas}';
+    	thisPageURL = '#{casBean.configuracaoLoginCas.appContextSsl}view/index.faces';
+    	casLoginURL += '?service=#{casBean.configuracaoLoginCas.appContext}j_acegi_security_check&login-at=' + encodeURIComponent (thisPageURL);
+
+	query	= window.location.search;
+	query	= query.substr (1, query.length - 1);
+
+
+	var param	= new Array();
+	//var value	= new Array();
+	var temp	= new Array();
+	param	= query.split ('&');
+
+	i = 0;
+	while (param[i]) {
+		temp		= param[i].split ('=');
+		if (temp[0] == 'lt') {
+			loginTicket = temp[1];
+			loginTicketProvided = true;
+		}
+		i++;
+	}
+	if (!loginTicketProvided) {
+		location.href = casLoginURL + '&get-lt=true';
+	}
+}
+
+function $(id) {
+	return document.getElementById(id);
+}
+var loginTicket;
+var casLoginURL;
+var thisPageURL;
+
+checkForLoginTicket();
+onload = prepareLoginForm;
+//]]>
+</script>
+	<form method="post" name="loginForm" id="loginForm" action="" >
+		<c:if test="${param.error != null}">
+			<table id="msg_login" style="width:auto">
+				<tr>
+					<td>
+						<span id="msg_login" style="color: red;" class="erro_login">
+							Usuário ou Senha inválido(s)
+						</span>
+					</td>
+				</tr>
+			</table>
+		</c:if>
+		<input type="hidden" value="submit" name="_eventId"/>
+		<input type="hidden" value="" name="lt" id="lt"/>
+		<table class="login_box" border="0">
+			<tr>
+				<td style="text-align:right">Usuário:</td>
+				<td><input name="username" id="username" type="text" class="campo_login" size="16"/></td>
+			</tr>
+			<tr>
+				<td style="text-align:right">Senha:</td>
+				<td><input name="password" id="password" type="password" class="campo_login" size="16"/></td>
+			</tr>
+		</table>
+		<p>
+			<input onclick="return validar()"  name="botao_salvar" type="submit" class="botao_login" id="botao_salvar" value="Entrar"  />
+			<input name="botao_voltar" type="reset" class="botao_login" id="botao_voltar" value="Limpar" />
+	    </p>
+	</form>
+	<script language="JavaScript" type="text/javascript" charset="ISO-8859-1">
+		function validar() {
+			if (document.getElementById('username').value.length == 0) {
+				alert('O campo Usuario deve ser informado.');
+				loginForm.elements['username'].focus();
+				return false;
+			}	
+			if (document.getElementById('password').value.length == 0) {
+				alert('O campo Senha deve ser informado.');
+				loginForm.elements['password'].focus();
+				return false;
+			}			
+		}
+		function foco(){
+			document.loginForm.username.focus();
+		}
+		foco();
+	</script>	
+</ui:composition>			

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+	<ui:define name="title">Sistema de Guarda de Volumes - Manutenção de Grupo Usuário...</ui:define>
+	<ui:define name="body">
+		<h:form id="grupoUsuarioForm">
+			<h1 class="cont">
+				<span>Cadastro de Grupo Usuário</span>
+			</h1>
+			<rich:panel styleClass="viewContent">
+				<rich:panel id="informacoesGerais" styleClass="panelInterno">
+					<f:facet name="header">
+						<h:outputText>
+								Grupo Usuário: Informações Gerais <i><font size="1">(Os
+									campos marcados com * são de preenchimento obrigatório. Por
+									favor, informe-os antes de prosseguir)</font> </i>
+						</h:outputText>
+					</f:facet>
+
+					<h:panelGrid rows="2" styleClass="fullWidthClass">
+						<h:panelGrid columns="2" styleClass="formClass fieldPadding"
+							columnClasses="nomeUsrClass, loginUsrClass">
+							<h:panelGrid columns="3"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+								<span>*</span>
+								<h:outputText value="Grupo" for="nome" styleClass="labelClass" />
+								<h:inputText id="nome" label="Grupo"
+									value="#{grupoUsuarioBean.voGrupoUsuario.nome}" maxlength="100"
+									styleClass="inputTextClass fullWidthClass" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass, fullWidthClass">
+								<h:outputText value="Situação:" styleClass="labelClass" />
+								<h:selectBooleanCheckbox id="ativo"
+									value="#{grupoUsuarioBean.voGrupoUsuario.situacao}">Ativo</h:selectBooleanCheckbox>
+							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="1" styleClass="formClass"
+							columnClasses="fullWidthClass">
+							<h:panelGrid columns="3"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+								<span>*</span>
+								<h:outputLabel value="Usuários:" styleClass="labelClass" />
+								<rich:pickList
+									value="#{grupoUsuarioBean.voGrupoUsuario.usuarios}"
+									sourceListWidth="450px" targetListWidth="450px"
+									listsHeight="200px" showButtonsLabel="false">
+									<c:forEach items="#{grupoUsuarioBean.usuarios}" var="usuario">
+										<f:selectItem itemValue="#{usuario.id}"
+											itemLabel="${usuario.nome}" />
+									</c:forEach>
+								</rich:pickList>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+				</rich:panel>
+
+				<rich:spacer height="6" />
+
+				<!-- ======================================================================================================= -->
+				<!-- Permissões ============================================================== -->
+				<rich:panel id="permissoesDHF" styleClass="panelInterno">
+					<f:facet name="header">
+						<h:outputText value="Permissões" />
+					</f:facet>
+					<a4j:outputPanel id="permissoesPanel" layout="block">
+						<ui:include src="permissoes.xhtml" />
+					</a4j:outputPanel>
+				</rich:panel>
+
+				<rich:panel styleClass="panelInterno">
+					<h:panelGrid columns="3"
+						columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+						<h:commandButton value="Salvar"
+							action="#{grupoUsuarioBean.salvar}" styleClass="buttonClass"
+							onclick="if (!confirm('Deseja salvar os dados do grupo de usuário?')) return false;" />
+						<h:outputText />
+						<h:commandButton value="Cancelar" action="pesquisarGrupoUsuario"
+							immediate="true" styleClass="buttonClass" />
+					</h:panelGrid>
+				</rich:panel>
+
+			</rich:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

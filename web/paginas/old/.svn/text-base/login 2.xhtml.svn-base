@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html">
+<ui:composition template="/common/decorators/template.xhtml">
+	<ui:define name="body">
+		<br></br>
+		<div id="contentLogin" style="text-align: center;">
+			<div id="login">
+				<div id="login_desc">
+					<p id="titulo_login">Descrição do Sistema:</p>
+					<p>
+						...<br />...<br />...<br />...<br />...
+					</p>
+				</div>
+				<div id="login_campos">
+					Dados para Acesso:<br />
+					<ui:include src="/view/security/login.xhtml" />
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:metrologia="http://cni.org.br/metrologia"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+	<ui:define name="title">Sistema de Gestão de Volumes - Manutenção de Serviço Ofertado...</ui:define>
+	<ui:define name="body">
+
+		<h:form id="servicoOfertadoForm" class="defaultFormClass">
+			<h1 class="cont"><span>Cadastro de Serviço Ofertado</span></h1>
+			<rich:panel styleClass="viewContent">
+
+				<rich:panel id="painelDadosPessoaServico" styleClass="panelInterno">
+					<f:facet name="header">
+						<h:outputText>Laboratório</h:outputText>
+					</f:facet>
+					<h:panelGrid styleClass="fullWidthClass">
+						<h:panelGrid columns="2" styleClass="formClass" columnClasses="seisColunasClass,fullWidthClass">
+							<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+								<span>*</span>
+								<h:outputLabel value="UF:" for="idUF" styleClass="labelClass"/>
+								<h:outputText rendered="#{servicoBean.voServico.id > 0}">
+									#{servicoBean.voServico.voPessoa.voEndereco.descricaoEstado}
+								</h:outputText>
+								<h:selectOneMenu value="#{servicoBean.idUF}"
+									rendered="#{servicoBean.voServico.id le 0}"									
+									valueChangeListener="#{servicoBean.ufChanged}"
+									id="idUF" styleClass="inputTextClass fullWidthClass">
+									<f:selectItem itemValue="0" itemLabel="Escolha um item" />
+									<c:forEach items="#{servicoBean.estados}" var="estado">
+										<f:selectItem itemValue="#{estado.id}"
+											itemLabel="#{estado.uf}" />
+									</c:forEach>
+									<a4j:support event="onchange" onsubmit="" oncomplete="document.getElementById('servicoOfertadoForm:laboratorio').value = '';document.getElementById('servicoOfertadoForm:laboratorio').focus()"/>
+								</h:selectOneMenu>
+							</h:panelGrid>
+							<h:panelGrid columns="4" id="gridLaboratorio"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel 
+									rendered="#{servicoBean.voServico.id > 0}"
+									styleClass="labelClass">Laboratório:</h:outputLabel>
+								<h:outputText rendered="#{servicoBean.voServico.id > 0}">
+								#{servicoBean.voServico.voPessoa.nome} - #{servicoBean.voServico.voPessoa.nomeReduzido}
+								</h:outputText>
+								<h:outputLabel for="laboratorio"
+									rendered="#{servicoBean.voServico.id le 0}"
+									styleClass="labelClass">
+										Informe o nome do laboratório: <i><font size="1"><br />
+									(ao menos três caracteres)</font> </i>
+								</h:outputLabel>
+								<h:inputText id="laboratorio" style="margin:0px;"
+									value="#{servicoBean.voServico.voPessoa.nome}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" rendered="#{servicoBean.voServico.id le 0}" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugPessoa')}.callSuggestion(true)"
+									alt="" rendered="#{servicoBean.voServico.id le 0}" />
+								<a4j:region rendered="#{servicoBean.voServico.id le 0}">
+									<rich:suggestionbox for="laboratorio" var="pessoa"
+										fetchValue="#{pessoa.nome} - #{pessoa.nomeReduzido}"
+										id="sugPessoa" status="stPessoa" immediate="true" width="400"
+										height="150" onselect="document.getElementById('servicoOfertadoForm:servico').focus();"
+										suggestionAction="#{servicoBean.autocompletePessoa}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhum laboratório encontrado" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione o laboratório" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{pessoa.nome} - #{pessoa.nomeReduzido}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{pessoa.id}"
+												target="#{servicoBean.voServico.voPessoa.id}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stPessoa" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+				</rich:panel>
+				<!-- ================================================================================================= -->
+				<!-- Pesquisa: Filtros =============================================================================== -->
+				<rich:panel id="painelDadosServico" styleClass="panelInterno">
+					<f:facet name="header">
+						<h:outputText>
+									Dados do Serviço Ofertado: <i><font size="1">(Os
+							campos marcados com * são de preenchimento obrigatório. Por
+							favor, informe-os antes de prosseguir)</font> </i>
+						</h:outputText>
+					</f:facet>
+
+					<h:panelGrid styleClass="fullWidthClass">
+						<h:panelGrid columns="2" styleClass="formClass"
+							columnClasses="duasColunasClass, duasColunasClass">
+							<h:panelGrid columns="4"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel for="servico" value="Serviço:"
+									styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="servico"
+									value="#{servicoBean.voServico.descricaoServico}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugServ')}.callSuggestion(true)" />
+								<a4j:region>
+									<rich:suggestionbox for="servico" var="serv" id="sugServ"
+										fetchValue="#{serv.descricao}" minChars="2" immediate="true"
+										width="700" height="150" status="stServ"
+										suggestionAction="#{servicoBean.autocompleteServicoMetrologico}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhum serviço encontrado" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText
+												value="Selecione o serviço. (Exibindo os 200 primeiros)" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{serv.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{serv.id}"
+												target="#{servicoBean.voServico.servico}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stServ" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+
+							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="2" styleClass="formClass"
+							columnClasses="duasColunasClass, duasColunasClass">							
+							<h:panelGrid columns="4"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel for="tipoServico" value="Tipo Serviço:"
+									styleClass="labelClass" />
+								<h:inputText id="tipoServico" style="margin:0px;"
+									value="#{servicoBean.voServico.descricaoTipoServico}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugTipoServico')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="tipoServico" var="tipo"
+										fetchValue="#{tipo.descricao}" id="sugTipoServico"
+										immediate="true" width="450" height="150" status="stTipoServ"
+										suggestionAction="#{servicoBean.autocompleteTipoServico}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhum tipo de serviço encontrado" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione o tipo de serviço" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{tipo.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect"
+											action="#{servicoBean.selecionouTipoServico}"
+											reRender="panelGridArea,panelGridSubArea,outputPanelCapFaixa">
+											<f:setPropertyActionListener value="#{tipo.id}"
+												target="#{servicoBean.voServico.tipoServico}" />
+											<f:setPropertyActionListener value="#{tipo.descricao}"
+												target="#{servicoBean.voServico.descricaoTipoServico}" />
+
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stTipoServ" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+							<h:panelGrid columns="4" id="panelGridArea"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel for="area" value="Área:" styleClass="labelClass" />
+								<h:outputText value="Selecione o tipo de serviço"
+									rendered="#{servicoBean.idTipoServico le 0}" />
+								<h:inputText id="area" style="margin:0px;"
+									value="#{servicoBean.voServico.descricaoArea}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" rendered="#{servicoBean.idTipoServico gt 0}" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugArea')}.callSuggestion(true)"
+									alt="" rendered="#{servicoBean.idTipoServico gt 0}" />
+								<a4j:region rendered="#{servicoBean.idTipoServico gt 0}">
+									<rich:suggestionbox for="area" var="ar"
+										fetchValue="#{ar.descricao}" id="sugArea" immediate="true"
+										width="450" height="150" status="stArea"
+										suggestionAction="#{servicoBean.autocompleteArea}">
+										<f:facet name="nothingLabel">
+											<h:outputText
+												value="Nenhuma área encontrada para o tipo de serviço #{servicoBean.voServico.descricaoTipoServico}" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione a área" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{ar.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect"
+											action="#{servicoBean.selecionouArea}"
+											reRender="panelGridSubArea">
+											<f:setPropertyActionListener value="#{ar.id}"
+												target="#{servicoBean.voServico.area}" />
+											<f:setPropertyActionListener value="#{ar.descricao}"
+												target="#{servicoBean.voServico.descricaoArea}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stArea" forceId="true"
+									rendered="#{servicoBean.idTipoServico gt 0}">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+
+							</h:panelGrid>
+							<h:panelGrid columns="4" id="panelGridSubArea"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel for="subarea" value="Sub-área:"
+									styleClass="labelClass" />
+								<h:outputText value="Selecione a área"
+									rendered="#{servicoBean.idAreaMetrologia le 0}" />
+								<h:inputText id="subarea" style="margin:0px;"
+									value="#{servicoBean.voServico.descricaoSubarea}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" rendered="#{servicoBean.idAreaMetrologia gt 0}" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugSubArea')}.callSuggestion(true)"
+									alt="" rendered="#{servicoBean.idAreaMetrologia gt 0}" />
+								<a4j:region rendered="#{servicoBean.idAreaMetrologia gt 0}">
+									<rich:suggestionbox for="subarea" var="subar"
+										fetchValue="#{subar.descricao}" id="sugSubArea"
+										immediate="true" width="450" height="150" status="stSubArea"
+										suggestionAction="#{servicoBean.autocompleteSubArea}">
+										<f:facet name="nothingLabel">
+											<h:outputText
+												value="Nenhuma subárea encontrada para a área #{servicoBean.voServico.descricaoArea}" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione a subárea" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{subar.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{subar.id}"
+												target="#{servicoBean.voServico.subarea}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stSubArea" forceId="true"
+									rendered="#{servicoBean.idAreaMetrologia gt 0}">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+							<h:panelGrid columns="3"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass,noStyleClass">
+								<h:outputLabel for="produto" value="Produto:"
+									styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="produto"
+									value="#{servicoBean.voServico.descricaoProduto}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugProd')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="produto" var="prod"
+										fetchValue="#{prod.descricao}" id="sugProd" immediate="true"
+										width="530" height="150" status="stProd"
+										suggestionAction="#{servicoBean.autocompleteProduto}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhum produto encontrado" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione o produto" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{prod.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{prod.id}"
+												target="#{servicoBean.voServico.produto}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stProd" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="2" styleClass="formClass"
+							columnClasses="duasColunasClass, duasColunasClass">
+							<h:panelGrid columns="3"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass,noStyleClass">
+								<h:outputLabel for="normametodo" value="Normas e Métodos:"
+									styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="normametodo"
+									value="#{servicoBean.voServico.descricaoNormaMetodo}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugNorma')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="normametodo" var="norma"
+										fetchValue="#{norma.descricao}" id="sugNorma" immediate="true"
+										width="700" height="150" status="stNorma"
+										suggestionAction="#{servicoBean.autocompleteNormaMetodo}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhuma norma método encontrada" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione a norma método" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{norma.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{norma.id}"
+												target="#{servicoBean.voServico.normaMetodo}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stNorma" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="2" styleClass="formClass"
+							columnClasses="duasColunasClass, duasColunasClass">							
+							<h:panelGrid columns="4"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel for="orgaoAcreditador" value="Órgão Acreditador:"
+									styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="orgaoAcreditador"
+									value="#{servicoBean.voServico.descricaoOrgaoAcreditador}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugOrgao')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="orgaoAcreditador" var="orgao"
+										fetchValue="#{orgao.descricao}" id="sugOrgao" immediate="true"
+										width="450" height="150" status="stOrgao"
+										suggestionAction="#{servicoBean.autocompleteOrgaoAcreditador}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhuma órgão acreditador encontrado" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione o órgão acreditador" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{orgao.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{orgao.id}"
+												target="#{servicoBean.voServico.orgaoAcreditador}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stOrgao" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+							<h:panelGrid columns="4"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="obrigatorio, noStyleClass,fullWidthClass,noStyleClass">
+								<span>*</span>
+								<h:outputLabel for="situacaoAcreditacao"
+									value="Situação Acreditação:" styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="situacaoAcreditacao"
+									value="#{servicoBean.voServico.descricaoSituacaoAcreditacao}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugSitAcred')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="situacaoAcreditacao" var="sit"
+										fetchValue="#{sit.descricao}" id="sugSitAcred"
+										immediate="true" width="450" height="150" status="stSitAcred"
+										suggestionAction="#{servicoBean.autocompleteSituacaoAcreditacao}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhuma situação acreditação encontrada" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione a situação acreditação" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{sit.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{sit.id}"
+												target="#{servicoBean.voServico.situacaoAcreditacao}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stSitAcred" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="2" styleClass="formClass"
+							columnClasses="duasColunasClass, duasColunasClass"
+							id="outputPanelCapFaixa">
+							<h:panelGrid columns="3"
+								rendered="#{servicoBean.exibeCapacidadeFaixaMedicao}"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass,noStyleClass">
+								<h:outputLabel for="capacidadeMedicao"
+									value="Capacidade Medição:" styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="capacidadeMedicao"
+									value="#{servicoBean.voServico.descricaoCapacidadeMedicao}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugCapMed')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="capacidadeMedicao" var="cap"
+										fetchValue="#{cap.descricao}" id="sugCapMed" immediate="true"
+										width="450" height="150" status="stCapMed"
+										suggestionAction="#{servicoBean.autocompleteCapacidadeMedicao}">
+										<f:facet name="nothingLabel">
+											<h:outputText
+												value="Nenhuma capacidade de medição encontrada" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione a capacidade de medição" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{cap.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{cap.id}"
+												target="#{servicoBean.voServico.capacidadeMedicao}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stCapMed" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+							<h:panelGrid columns="3"
+								rendered="#{servicoBean.exibeCapacidadeFaixaMedicao}"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass,noStyleClass">
+								<h:outputLabel for="faixaMedicao" value="Faixa Medição:"
+									styleClass="labelClass" />
+								<h:inputText style="margin:0px;" id="faixaMedicao"
+									value="#{servicoBean.voServico.descricaoFaixaMedicao}"
+									styleClass="inputTextClass fullWidthClass" size="100"
+									maxlength="100" />
+								<h:graphicImage value="/common/images/arrow.png"
+									onclick="#{rich:component('sugFaixa')}.callSuggestion(true)"
+									alt="" />
+								<a4j:region>
+									<rich:suggestionbox for="faixaMedicao" var="faixa"
+										fetchValue="#{faixa.descricao}" id="sugFaixa" immediate="true"
+										width="450" height="150" status="stFaixa"
+										suggestionAction="#{servicoBean.autocompleteFaixaMedicao}">
+										<f:facet name="nothingLabel">
+											<h:outputText value="Nenhuma faixa de medição encontrada" />
+										</f:facet>
+										<f:facet name="header">
+											<h:outputText value="Selecione a faixa de medição" />
+										</f:facet>
+										<h:column>
+											<h:outputText value="#{faixa.descricao}" />
+										</h:column>
+										<a4j:support ajaxSingle="true" event="onselect">
+											<f:setPropertyActionListener value="#{faixa.id}"
+												target="#{servicoBean.voServico.faixaMedicao}" />
+										</a4j:support>
+									</rich:suggestionbox>
+								</a4j:region>
+								<a4j:status id="stFaixa" forceId="true">
+									<f:facet name="start">
+										<metrologia:mensagemStatus />
+									</f:facet>
+								</a4j:status>
+							</h:panelGrid>
+						</h:panelGrid>
+						<h:panelGrid columns="2" styleClass="formClass"
+							rendered="#{servicoBean.voServico.id > 0}"
+							columnClasses="duasColunasClass, duasColunasClass">
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass">
+								<h:outputLabel value="Cadastrado:" styleClass="labelClass" />
+								<h:outputText id="dataCadastro"
+									value="#{servicoBean.voServico.usuarioCadastro.dataOperacao}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+										timeZone="#{globalBean.timeZone}" />
+								</h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass">
+								<h:outputLabel value="Por:" styleClass="labelClass" />
+								<h:outputText id="usuarioCadastro"
+									value="#{servicoBean.voServico.usuarioCadastro.nome}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass">
+								<h:outputLabel value="Aprovado:" styleClass="labelClass" />
+								<h:outputText id="dataAprovacao"
+									value="#{servicoBean.voServico.usuarioAprovacao.dataOperacao}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+										timeZone="#{globalBean.timeZone}" />
+								</h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass">
+								<h:outputLabel value="Por:" styleClass="labelClass" />
+								<h:outputText id="usuarioAprovacao"
+									value="#{servicoBean.voServico.usuarioAprovacao.nome}" />
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass">
+								<h:outputLabel value="Publicado:" styleClass="labelClass" />
+								<h:outputText id="dataPublicacao"
+									value="#{servicoBean.voServico.usuarioPublicacao.dataOperacao}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+										timeZone="#{globalBean.timeZone}" />
+								</h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2"
+								styleClass="noCellBorderClass fullWidthClass"
+								columnClasses="noStyleClass,fullWidthClass">
+								<h:outputLabel value="Por:" styleClass="labelClass" />
+								<h:outputText id="usuarioPublicacao"
+									value="#{servicoBean.voServico.usuarioPublicacao.nome}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+				</rich:panel>
+
+				<rich:spacer height="6" />
+				
+				<rich:panel styleClass="panelInterno">
+					<h:panelGrid columns="2"
+					columnClasses="noStyleClass">
+						<ui:repeat value="#{servicoBean.botoes}" var="botao">
+						
+							<ui:fragment rendered="#{botao.acao == null}">
+								<a4j:commandButton value="#{botao.caption}" styleClass="buttonClass" title="#{botao.caption}"
+									oncomplete="Richfaces.showModalPanel('#{botao.funcao}', {height:'300px',width:'600px'});"
+									immediate="true" reRender="#{botao.funcao}" >
+									<f:param name="idServico" value="#{servicoBean.idServico}" />
+									<f:param name="idServicoExclusao" value="#{servicoBean.idServicoExclusao}" />
+								</a4j:commandButton>
+							</ui:fragment>
+							<ui:fragment rendered="#{botao.acao != null}">
+								<a4j:commandButton value="#{botao.caption}" styleClass="buttonClass" title="#{botao.caption}"
+									onclick="if (!confirm('Deseja efetuar a operação #{botao.caption}?')) return false;"									
+									immediate="false" action="#{servicoBean[botao.acao]}" reRender="messages" />
+							</ui:fragment>
+							<h:outputText/>
+						</ui:repeat>
+					</h:panelGrid>
+				</rich:panel>				
+				
+			</rich:panel>
+		</h:form>
+	
+		<c:forEach items="${servicoBean.botoes}" var="botao">
+			<c:if test="${botao.caminhoArquivo != null}">				
+				<ui:include src="#{botao.caminhoArquivo}"/>
+			</c:if>
+		</c:forEach>		
+	</ui:define>
+</ui:composition>
+</html>

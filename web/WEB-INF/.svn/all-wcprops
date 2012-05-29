@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/9/trunk/fontes/web/WEB-INF
+END
+faces-config.xml
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/16/trunk/fontes/web/WEB-INF/faces-config.xml
+END
+web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/15/trunk/fontes/web/WEB-INF/web.xml
+END
+.faces-config.xml.jsfdia
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/16/trunk/fontes/web/WEB-INF/.faces-config.xml.jsfdia
+END
+.directory
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/8/trunk/fontes/web/WEB-INF/.directory
+END

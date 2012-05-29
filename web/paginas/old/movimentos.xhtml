@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:metrologia="http://cni.org.br/metrologia" 
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<rich:panel id="painelMovimento" styleClass="panelInterno">
+		<f:facet name="header">
+			<h:outputText>Movimentação Financeira:</h:outputText>
+		</f:facet>
+		<!-- Despesa: Lista =============================================================================== -->
+		<rich:dataTable id="movimentacoes" width="100%"
+			value="#{movimentoBean.itens}" var="mov" rowKeyVar="index"
+			rendered="#{not empty movimentoBean.itens.wrappedData}"
+			columnClasses="fieldPadding, fieldPadding, fieldPadding, noStyleClass">
+			<rich:column style="width:23%" sortBy="#{mov.naturezaConta.descricao}">
+				<f:facet name="header">
+					<h:outputText value="Natureza" />
+				</f:facet>
+				<a4j:commandLink id="editarMovLinkNat"
+					action="#{movimentoBean.editar}" immediate="true"
+					oncomplete="Richfaces.showModalPanel('movimentoPanel'); return false;"
+					reRender="movimentoPanel, messagesMovimentoPanel">
+					<h:outputText value="#{mov.naturezaConta.descricao}" />
+				</a4j:commandLink>	
+			</rich:column>
+			<rich:column style="width:23%" sortBy="#{mov.descricaoConta}">
+				<f:facet name="header">
+					<h:outputText value="Conta" />
+				</f:facet>
+				<a4j:commandLink id="editarMovLinkDesc"
+					action="#{movimentoBean.editar}" immediate="true"
+					oncomplete="Richfaces.showModalPanel('movimentoPanel'); return false;"
+					reRender="movimentoPanel, messagesMovimentoPanel">
+					<h:outputText value="#{mov.descricaoConta}" />
+				</a4j:commandLink>				
+			</rich:column>	
+			<rich:column style="width:10%" sortBy="#{mov.dataMovimento}">
+				<f:facet name="header">
+					<h:outputText value="Data" />
+				</f:facet>
+					<a4j:commandLink id="editarMovLinkData"
+						action="#{movimentoBean.editar}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('movimentoPanel'); return false;"
+						reRender="movimentoPanel, messagesMovimentoPanel">
+						<h:outputText value="#{mov.dataMovimento}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{globalBean.timeZone}" />
+						</h:outputText>
+					</a4j:commandLink>				
+			</rich:column>				
+			<rich:column style="width:10%" sortBy="#{mov.valorMovimento}">
+				<f:facet name="header">
+					<h:outputText value="Valor" />
+				</f:facet>
+					<a4j:commandLink id="editarMovLinkVlr"
+						action="#{movimentoBean.editar}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('movimentoPanel'); return false;"
+						reRender="movimentoPanel, messagesMovimentoPanel">
+						<h:outputText value="#{mov.valorMovimento}" >
+							<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+						</h:outputText>
+					</a4j:commandLink>				
+			</rich:column>					
+			<rich:column style="width:2%" rendered="#{pessoaBean.permiteEdicao}">
+				<f:facet name="header">
+					<a4j:commandLink id="novoMovLink"
+						action="#{movimentoBean.novo}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('movimentoPanel'); return false;"
+						reRender="movimentoPanel">
+						<h:graphicImage url="/common/images/bt_incluir.gif"
+							style="border: none" title="Novo"/>
+					</a4j:commandLink>
+				</f:facet>
+				<a4j:commandLink id="removerMovLink"
+					action="#{movimentoBean.remover}"
+					reRender="painelMovimento, messagesMovimentoPanel"
+					onclick="if (!confirm('Deseja excluir a movimentação?')) return false;">
+					<h:graphicImage url="/common/images/bt_excluir.gif"
+						style="border: none" title="Excluir" />
+				</a4j:commandLink>
+			</rich:column>			
+		</rich:dataTable>
+		<h:outputText rendered="#{empty movimentoBean.itens.wrappedData}">
+			<p class="note"><i><b>Movimentação Financeira:</b> Não há movimentações
+			associadas a essa pessoa. Clique <b> <a4j:commandLink
+				id="novoMovimentoLink" action="#{movimentoBean.novo}" value="aqui"
+				immediate="true"
+				oncomplete="Richfaces.showModalPanel('movimentoPanel'); return false;"
+				reRender="movimentoPanel" /> </b> para criar e associar uma nova movimentação.
+			</i></p>
+		</h:outputText>
+	</rich:panel>
+</ui:composition>

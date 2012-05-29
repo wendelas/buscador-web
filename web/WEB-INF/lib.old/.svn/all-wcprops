@@ -1,0 +1,185 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old
+END
+guava-10.0.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/guava-10.0.1.jar
+END
+el-api.jar
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/el-api.jar
+END
+jsp-api.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/jsp-api.jar
+END
+commons-io-1.4.jar
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-io-1.4.jar
+END
+web.teste.xml
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/web.teste.xml
+END
+activation.jar
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/activation.jar
+END
+cssparser-0.9.6.jar
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/cssparser-0.9.6.jar
+END
+commons-validator-1.3.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-validator-1.3.1.jar
+END
+commons-dbcp-1.2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-dbcp-1.2.2.jar
+END
+web.richfaces.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/web.richfaces.xml
+END
+el-ri.jar
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/el-ri.jar
+END
+sac-1.3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/sac-1.3.jar
+END
+richfaces-api-3.3.3.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/richfaces-api-3.3.3.Final.jar
+END
+richfaces-ui-3.3.3.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/richfaces-ui-3.3.3.Final.jar
+END
+CacheDB.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/CacheDB.jar
+END
+primefaces-3.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/primefaces-3.2.jar
+END
+common-annotations.jar
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/common-annotations.jar
+END
+commons-logging-1.1.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-logging-1.1.1.jar
+END
+jsf-facelets.jar
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/jsf-facelets.jar
+END
+dom4j-1.6.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/dom4j-1.6.1.jar
+END
+cglib-2.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/cglib-2.2.jar
+END
+commons-pool-1.3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-pool-1.3.jar
+END
+jsf-api.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/jsf-api.jar
+END
+richfaces-impl-3.3.3.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/richfaces-impl-3.3.3.Final.jar
+END
+commons-fileupload-1.1.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-fileupload-1.1.1.jar
+END
+javax.faces-2.1.8.jar
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/javax.faces-2.1.8.jar
+END
+jsf-impl.jar
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/jsf-impl.jar
+END
+web.xml
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/15/trunk/fontes/web/WEB-INF/lib.old/web.xml
+END
+commons-discovery-0.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/commons-discovery-0.2.jar
+END
+servlet-api.jar
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/14/trunk/fontes/web/WEB-INF/lib.old/servlet-api.jar
+END

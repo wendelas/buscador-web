@@ -1,0 +1,68 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+<c:set var="ctx"
+	value="#{facesContext.externalContext.request.contextPath}" />
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<link href="${ctx}/paginas/comum/estilo/geral.css" type="text/css"
+	rel="stylesheet" />
+<title>Buscador</title>
+</head>
+
+<h:form>
+	<f:loadBundle basename="net.visualizacao.apresentacao.mensagens"
+		var="msgs" />
+
+	<div id="header">
+		<rich:toolBar binding="#{baseBean.toolBar}" />
+	</div>
+
+	<rich:messages tooltip="true" showDetail="false" showSummary="true"
+		id="mensagens">
+		<f:facet name="errorMarker">
+			<h:graphicImage url="imagens/error.png" />
+		</f:facet>
+		<f:facet name="infoMarker">
+			<h:graphicImage url="imagens/info.png" />
+		</f:facet>
+	</rich:messages>
+
+	<rich:spacer height="6px" />
+
+	<div id="content">
+		<ui:insert name="body">Body</ui:insert>
+	</div>
+
+	<div id="footer"
+		style="height: 30px; width: 100%; position: fixed; bottom: 0px; z-index: 5; text-align: center">
+		<ui:insert name="rodape"></ui:insert>
+	</div>
+</h:form>
+
+<rich:modalPanel id="painelAguarde">
+	<h:panelGrid columns="1" styleClass="alignCenterClass">
+		<rich:spacer height="20px" />
+		<h:graphicImage url="/paginas/imagens/ampulheta.png" />
+		<br />
+		<rich:separator height="2" lineType="dotted" />
+		<br />
+		<h:outputText value="Os dados estão sendo importados" />
+	</h:panelGrid>
+</rich:modalPanel>
+
+
+<a4j:outputPanel ajaxRendered="true">
+	<h:form style="display:none" prependId="false">
+		<h:inputHidden id="maximumSeverity"
+			value="#{facesContext.maximumSeverity.ordinal}" />
+	</h:form>
+</a4j:outputPanel>
+
+</html>

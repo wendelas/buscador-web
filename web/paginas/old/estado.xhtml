@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+		<ui:define name="title">Sistema de Gestão de Volumes - Manutenção de Estados...</ui:define>
+		<ui:define name="body">
+			<h:form id="estadoForm" >
+				<h1 class="cont"><span>Cadastro de Estados</span></h1>
+				<rich:panel styleClass="viewContent" >	  
+					<rich:panel id="informacoesGerais" styleClass="panelInterno">
+						<f:facet name="header">
+							<h:outputText>
+								Estado: Informações Gerais <i><font size="1">(Os campos marcados com * são de preenchimento obrigatório. Por favor, informe-os antes de prosseguir)</font> </i>
+							</h:outputText>	
+						</f:facet>
+					
+						<h:panelGrid columns="1" styleClass="fullWidthClass" columnClasses="fullWidthClass">
+							<h:panelGrid rows="2" styleClass="fullWidthClass">
+								<h:panelGrid columns="2" styleClass="formClass fieldPadding" columnClasses="nomeUsrClass, loginUsrClass">
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="Código:" for="codigo" styleClass="labelClass"/>
+										<h:inputText id="codigo" label="Código" onblur="this.value = this.value.toUpperCase()" value="#{estadoBean.voLocalizacao.codigo}" required="true" maxlength="3" styleClass="inputTextClass fullWidthClass"/>
+									</h:panelGrid>
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="Nº da unidade federativa:" for="idUnidade" styleClass="labelClass"/>
+										<h:inputText id="idUnidade" label="Nº da unidade federativa:" value="#{estadoBean.voLocalizacao.idUnidade}" required="true" maxlength="20" styleClass="inputTextClass fullWidthClass">
+											<f:validateLongRange minimum="1"/>
+										</h:inputText>
+									</h:panelGrid>	
+								</h:panelGrid>
+								<h:panelGrid columns="2" styleClass="formClass" columnClasses="noStyleClass, fullWidthClass">
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="Nome" for="descricao" styleClass="labelClass"/>
+										<h:inputText id="descricao" label="Nome" value="#{estadoBean.voLocalizacao.descricao}" required="true" maxlength="50" styleClass="inputTextClass fullWidthClass"/>
+									</h:panelGrid>										
+								</h:panelGrid>	
+								<h:panelGrid columns="2" styleClass="formClass fieldPadding" columnClasses="nomeUsrClass, loginUsrClass">
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputLabel for="pais" value="País:"
+											styleClass="labelClass" />
+										<h:selectOneMenu id="pais" label="País"
+											styleClass="inputTextClass"	required="true"										
+											value="#{estadoBean.voLocalizacao.idPais}">
+											<f:selectItem itemValue="" itemLabel="Escolha um item" />
+											<c:forEach items="#{estadoBean.paises}" var="pais">
+												<f:selectItem itemValue="#{pais.id}"
+													itemLabel="#{pais.descricaoAbreviada}" />
+											</c:forEach>
+										</h:selectOneMenu>
+									</h:panelGrid>	
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputLabel for="regiao" value="Região:"
+											styleClass="labelClass" />
+										<h:selectOneMenu id="regiao" label="Região"
+											styleClass="inputTextClass"	required="true"										
+											value="#{estadoBean.voLocalizacao.idRegiao}">
+											<f:selectItem itemValue="" itemLabel="Escolha um item" />
+											<c:forEach items="#{estadoBean.regioes}" var="regiao">
+												<f:selectItem itemValue="#{regiao.id}"
+													itemLabel="#{regiao.descricao}" />
+											</c:forEach>
+										</h:selectOneMenu>
+									</h:panelGrid>																		
+								</h:panelGrid>																						
+							</h:panelGrid>
+						</h:panelGrid>
+					</rich:panel>
+
+					<rich:spacer height="6"/>
+
+				<rich:panel styleClass="panelInterno">
+					<h:panelGrid columns="3" columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+						<h:commandButton value="Salvar" action="#{estadoBean.salvar}" styleClass="buttonClass" onclick="if (!confirm('Deseja salvar os dados do Estado?')) return false;"/> <h:outputText/>
+						<h:commandButton value="Cancelar" action="pesquisarEstado" immediate="true" styleClass="buttonClass"/>
+					</h:panelGrid>
+				</rich:panel>
+				
+			</rich:panel>
+		</h:form>	
+		</ui:define>
+	</ui:composition>
+</html>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" template="comum/template.xhtml">
+
+	<title>Acórdãos com Sucessivos</title>
+
+	<ui:define name="body">
+		<rich:panel header="Acordaos com sucessivos"
+			style="margin-left: 10%; margin-right: 10%;">
+
+			<rich:panel>
+				<h:outputText value="Limite:  " />
+				<h:inputText value="#{sucessivoBean.quantidadeLimiteDeAcordaos}"
+					size="3" />
+				<h:commandButton value="Consultar"
+					action="#{sucessivoBean.carregarSucessivos}" />
+			</rich:panel>
+
+			<br />
+			<rich:separator height="2" lineType="dotted" />
+			<br />
+
+			<rich:dataTable id="acordaos" value="#{sucessivoBean.predecessores}"
+				var="predecessor"
+				rendered="#{not empty sucessivoBean.predecessores}" rows="20">
+				<rich:column style="vertical-align: top;">
+					<f:facet name="header">
+						<h:outputText value="Predecessor" />
+					</f:facet>
+					<h:outputText value="[ #{predecessor} ]" />
+					<br />
+					<h:outputText
+						value="#{sucessivoBean.indexacaoDoAcordao(predecessor)}" />
+				</rich:column>
+				<rich:column style="vertical-align: top;">
+					<f:facet name="header">
+						<h:outputText value="Sucessivo" />
+					</f:facet>
+					<rich:dataTable id="sucessores"
+						value="#{sucessivoBean.acordaos[predecessor]}" var="sucessivo">
+						<rich:column>
+							<h:outputText value="[ #{sucessivo} ] " />
+							<br />
+							<h:outputText
+								value="#{sucessivoBean.indexacaoDoAcordao(sucessivo)}" />
+						</rich:column>
+					</rich:dataTable>
+				</rich:column>
+
+				<f:facet name="footer">
+					<rich:datascroller />
+				</f:facet>
+
+			</rich:dataTable>
+
+			<rich:panel rendered="#{empty sucessivoBean.predecessores}">
+				<h:outputText value="Atenção: nenhum acórdão indexado para mostrar." />
+			</rich:panel>
+
+		</rich:panel>
+	</ui:define>
+</ui:composition>

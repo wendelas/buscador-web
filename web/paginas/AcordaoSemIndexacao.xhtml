@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" template="comum/template.xhtml">
+
+	<title>Acórdãos sem Indexação</title>
+
+	<ui:define name="body">
+		<rich:panel header="Acórdãos sem Indexação"
+			style="margin-left: 10%; margin-right: 10%;">
+
+			<rich:panel>
+				<h:outputText value="Limite:  " />
+				<h:inputText value="#{sucessivoBean.quantidadeLimiteDeAcordaos}"
+					size="3" />
+				<h:commandButton value="Consultar"
+					action="#{sucessivoBean.carregarAcordaosSemIndexacao}" />
+			</rich:panel>
+
+			<br />
+			<rich:separator height="2" lineType="dotted"
+				rendered="#{not empty sucessivoBean.acordaosSemIndexacao}" />
+			<br />
+
+			<rich:panel
+				rendered="#{not empty sucessivoBean.acordaosSemIndexacao}">
+				<h:outputText
+					value="Exibindo os #{sucessivoBean.acordaosSemIndexacao.size()} primeiros acórdão encontrados (#{sucessivoBean.duracaoBusca} segundos)" />
+			</rich:panel>
+
+			<br />
+			<rich:separator height="2" lineType="dotted"
+				rendered="#{not empty sucessivoBean.acordaosSemIndexacao}" />
+			<br />
+
+			<rich:dataTable id="acordaos"
+				value="#{sucessivoBean.acordaosSemIndexacao}" var="acordao"
+				rendered="#{not empty sucessivoBean.acordaosSemIndexacao}">
+				<rich:column style="vertical-align: top">
+					<f:facet name="header">
+						<h:outputText value="Acórdão" />
+					</f:facet>
+					<h:outputText value="#{acordao.get('NumAcordao')}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Ementa" />
+					</f:facet>
+					<c:set var="ementa" value="#{acordao.get('Ementa')}" />
+					<h:outputText value="#{ementa}" rendered="#{ementa.length() > 0}" />
+					<h:outputText
+						value="Este acórdão ainda não foi processado. Deseja processá-lo agora?"
+						rendered="#{ementa.length() == 0}" />
+					<a4j:commandButton value="Indexar"
+						action="#{sucessivoBean.indexar(acordao)}"
+						rendered="#{ementa.length() == 0}" />
+				</rich:column>
+				<rich:column style="vertical-align: top">
+					<f:facet name="header">
+						<h:outputText value="Indexação" />
+					</f:facet>
+					<h:outputText value="#{acordao.get('Indexacao')}" />
+				</rich:column>
+			</rich:dataTable>
+
+			<!-- 			
+			<rich:panel rendered="#{empty sucessivoBean.acordaosSemIndexacao}">
+				<h:outputText value="Nenhum registro encontrado" />
+			</rich:panel>
+			 -->
+		</rich:panel>
+	</ui:define>
+</ui:composition>

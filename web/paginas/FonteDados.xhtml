@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" template="comum/template.xhtml">
+
+	<ui:define name="body">
+		<rich:panel header="Fonte de Dados"
+			style="margin-left: 3%; margin-right: 3%;" columns="1">
+
+			<h:inputHidden value="#{fonteDadosBean.fonteDados.password}"
+				rendered="#{not empty fonteDadosBean.fonteDados.password}" />
+
+			<rich:panel styleClass="panelInterno">
+				<h:panelGrid styleClass="fullWidthClass" columns="2">
+					<h:outputText value="Nome:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.nome}"
+						styleClass="fullWidthClass" />
+					<h:outputText value="Query:" />
+					<h:inputTextarea value="#{fonteDadosBean.fonteDados.query}"
+						styleClass="fullWidthClass" cols="65" rows="5" />
+					<h:outputText value="URL:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.url}"
+						styleClass="fullWidthClass" />
+					<h:outputText value="User:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.usuario}" />
+					<h:outputText value="Password:" />
+					<h:inputSecret value="#{fonteDadosBean.fonteDados.password}"
+						rendered="#{empty fonteDadosBean.fonteDados.password}" />
+					<h:outputLabel value="*********"
+						rendered="#{not empty fonteDadosBean.fonteDados.password}" />
+					<h:outputText value="Nome do driver JDBC:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.nomeDriver}"
+						styleClass="fullWidthClass" />
+					<h:outputText value="Data Source:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.dataSource}"
+						styleClass="fullWidthClass" />
+				</h:panelGrid>
+			</rich:panel>
+
+			<rich:spacer height="6px" />
+
+			<rich:panel styleClass="panelInterno">
+				<h:panelGrid columns="4">
+					<h:outputText value="Diretório de documentos:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.diretorio}"
+						size="100" />
+					<h:graphicImage id="ajuda_dir_doc" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip
+						value="Diretório contendo documentos que você pretende indexar"
+						for="ajuda_dir_doc" />
+				</h:panelGrid>
+			</rich:panel>
+
+			<rich:spacer height="6px" />
+
+			<rich:panel>
+				<a4j:commandButton value="Visualizar" type="submit"
+					reRender="tabelaMetaData"
+					action="#{fonteDadosBean.carregarDadosVisualizacao}"
+					onclick="Richfaces.showModalPanel('painelAguarde');"
+					oncomplete="Richfaces.hideModalPanel('painelAguarde');" />
+				<a4j:commandButton value="Salvar" type="submit"
+					action="#{fonteDadosBean.salvar}" />
+				<a4j:commandButton value="Cancelar" type="submit" action="cancelar" />
+			</rich:panel>
+
+			<rich:spacer height="6px" />
+
+			<rich:panel styleClass="panelInterno">
+				<h:panelGrid styleClass="fullWidthClass" columns="2">
+					<rich:dataTable id="tabelaMetaData" width="100%" rows="20"
+						value="#{fonteDadosBean.metaDados.tuplas}" var="tupla"
+						columnClasses="noWrapClass,noWrapClass,noWrapClass">
+						<c:set var="indice" value="0" />
+						<c:forEach items="#{fonteDadosBean.metaDados.colunas}"
+							var="coluna">
+							<c:set var="indice" value="#{indice + 1}" />
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{coluna}" />
+								</f:facet>
+								<h:outputText value="#{tupla[indice]}" />
+							</rich:column>
+						</c:forEach>
+						<f:facet name="footer">
+							<rich:datascroller renderIfSinglePage="false" />
+						</f:facet>
+					</rich:dataTable>
+				</h:panelGrid>
+			</rich:panel>
+		</rich:panel>
+
+	</ui:define>
+</ui:composition>

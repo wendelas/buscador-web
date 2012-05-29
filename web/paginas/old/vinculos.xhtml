@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+				xmlns:ui="http://java.sun.com/jsf/facelets" 
+				xmlns:h="http://java.sun.com/jsf/html" 
+				xmlns:a4j="http://richfaces.org/a4j" 
+				xmlns:rich="http://richfaces.org/rich">
+	<rich:tree immediate="true" id="arvoreVinculo" adviseNodeOpened="#{usuarioVinculadoBean.adviseNodeOpened}" style="width:300px" binding="#{usuarioVinculadoBean.uiTree}" value="#{usuarioVinculadoBean.arvoreAcesso}" var="node" nodeFace="#{node.type}" icon="/common/images/tree_folder_open.gif" reRender="arvoreVinculo, mensagens">
+		<rich:treeNode type="raiz">
+			<h:selectBooleanCheckbox value="#{node.checked}" >
+				<a4j:support event="onclick" actionListener="#{usuarioVinculadoBean.onCheck}" reRender="arvore, messages"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}"/>
+		</rich:treeNode>	
+		<rich:treeNode type="DEPARTAMENTO_NACIONAL">
+			<h:selectBooleanCheckbox value="#{node.checked}" rendered="#{node.exibeCheckbox}">
+				<a4j:support event="onclick" actionListener="#{usuarioVinculadoBean.onCheck}" reRender="arvore, messages"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}"/>
+		</rich:treeNode>
+		<rich:treeNode type="DEPARTAMENTO_REGIONAL">
+			<h:selectBooleanCheckbox value="#{node.checked}" rendered="#{node.exibeCheckbox}">
+				<a4j:support event="onclick" actionListener="#{usuarioVinculadoBean.onCheck}" reRender="arvore, messages"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}"/>
+		</rich:treeNode>
+		<rich:treeNode type="UNIDADE">
+			<h:selectBooleanCheckbox value="#{node.checked}" rendered="#{node.exibeCheckbox}">
+				<a4j:support event="onclick" actionListener="#{usuarioVinculadoBean.onCheck}" reRender="arvore, messages"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}"/>
+		</rich:treeNode>				
+		<rich:treeNode type="LABORATORIO">
+			<h:selectBooleanCheckbox value="#{node.checked}" rendered="#{node.exibeCheckbox}">
+				<a4j:support event="onclick" actionListener="#{usuarioVinculadoBean.onCheck}" reRender="arvore, messages"/>
+			</h:selectBooleanCheckbox>
+			<h:outputText value="#{node.label}"/>
+		</rich:treeNode>
+				
+	</rich:tree>
+</ui:composition>							
