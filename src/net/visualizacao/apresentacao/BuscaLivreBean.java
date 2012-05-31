@@ -97,17 +97,27 @@ public class BuscaLivreBean extends BaseBean {
     StringBuilder saida = new StringBuilder();
     try {
       Document documento = doc(doc);
+      //Arquivo no disco
+      if (metaDados == null) {
+        return limitaTamanho(documento.get("Texto"));
+      }
+      //Registro do banco
       for (String campo : metaDados.getColunas()) {
         String conteudo = documento.get(campo);
-        if (conteudo != null && conteudo.length() > 400) {
-          conteudo = conteudo.substring(0, 400) + " (...)";
-        }
+        conteudo = limitaTamanho(conteudo);
         saida.append(conteudo + " - ");
       }
     } catch (Exception e) {
     }
     //    conteudo = conteudo.replaceAll("\n", "<br />");
     return saida.toString();
+  }
+
+  private String limitaTamanho(String conteudo) {
+    if (conteudo != null && conteudo.length() > 400) {
+      conteudo = conteudo.substring(0, 400) + " (...)";
+    }
+    return conteudo;
   }
 
   public void setIdFonteDados(int idFonteDados) {

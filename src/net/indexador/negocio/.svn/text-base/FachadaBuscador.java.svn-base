@@ -51,8 +51,8 @@ public class FachadaBuscador {
   @SuppressWarnings("unchecked")
   public Collection<FonteDados> buscarFontes() {
     EntityManager em = emf.createEntityManager();
-    List<FonteDados> lista = em.createQuery("select f from FonteDados f order by f.nome")
-        .getResultList();
+    List<FonteDados> lista = em.createQuery(
+        "select f from FonteDados f order by f.nome").getResultList();
     return lista;
   }
 
@@ -68,6 +68,8 @@ public class FachadaBuscador {
       //Indexa arquivos no disco
       if (!StringUtils.vazia(fonteDados.getDiretorio())) {
         idx.indexaArquivosDoDiretorio(new File(fonteDados.getDiretorio()));
+        logger.info("Total de arquivos indexados: "
+            + idx.getQuantidadeArquivosIndexados());
       }
       //Indexa banco de dados
       Connection con = null;
