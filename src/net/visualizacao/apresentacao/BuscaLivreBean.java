@@ -4,8 +4,6 @@ import java.io.*;
 import java.math.*;
 import java.util.*;
 
-import javax.persistence.*;
-
 import net.indexador.entidades.*;
 import net.indexador.negocio.*;
 import net.utilitarios.*;
@@ -22,6 +20,7 @@ public class BuscaLivreBean extends BaseBean {
   private ScoreDoc[] itens;
   private int idFonteDados;
   private FonteDados fonte;
+  private VOMetaDados metaDados;
 
   public void setConsulta(String consulta) {
     this.consulta = consulta;
@@ -37,8 +36,24 @@ public class BuscaLivreBean extends BaseBean {
     return bd;
   }
 
-  public String[] getCamposSelecionados() {
-    return new String[] {"Texto"};
+  public int getQuantidadeDeItens() {
+    try {
+      return getItens().length;
+    } catch (Exception e) {
+      return 0;
+    }
+  }
+
+  public Collection<String> getCamposSelecionados() {
+    try {
+      metaDados = FachadaBuscador.getInstancia().buscarMetaData(fonte);
+      return metaDados.getColunas();
+    } catch (Exception e) {
+      logger.error(e);
+    }
+    Collection<String> listaCamposArquivo = new ArrayList<String>();
+    listaCamposArquivo.add("Texto");
+    return listaCamposArquivo;
   }
 
   public void consultar() {
@@ -73,20 +88,25 @@ public class BuscaLivreBean extends BaseBean {
       UtilBusca buscador = new UtilBusca(getFonte().getDiretorioIndice());
       return buscador.doc(doc.doc);
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error(e);
     }
     return null;
   }
 
   public String mostraDados(ScoreDoc doc) {
     StringBuilder saida = new StringBuilder();
-    Document documento = doc(doc);
-    String conteudo = documento.get("Texto");
-    if (conteudo.length() > 400) {
-      conteudo = conteudo.substring(0, 400) + " (...)";
+    try {
+      Document documento = doc(doc);
+      for (String campo : metaDados.getColunas()) {
+        String conteudo = documento.get(campo);
+        if (conteudo != null && conteudo.length() > 400) {
+          conteudo = conteudo.substring(0, 400) + " (...)";
+        }
+        saida.append(conteudo + " - ");
+      }
+    } catch (Exception e) {
     }
     //    conteudo = conteudo.replaceAll("\n", "<br />");
-    saida.append(conteudo);
     return saida.toString();
   }
 

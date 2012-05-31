@@ -43,13 +43,15 @@ public class FachadaBuscador {
       em.getTransaction().commit();
     } catch (Exception e) {
       em.getTransaction().rollback();
+      logger.error(e);
       throw new RuntimeException(e);
     }
   }
 
+  @SuppressWarnings("unchecked")
   public Collection<FonteDados> buscarFontes() {
     EntityManager em = emf.createEntityManager();
-    List<FonteDados> lista = em.createQuery("select f from FonteDados f")
+    List<FonteDados> lista = em.createQuery("select f from FonteDados f order by f.nome")
         .getResultList();
     return lista;
   }
@@ -58,6 +60,7 @@ public class FachadaBuscador {
     EntityManager em = emf.createEntityManager();
     FonteDados fonteDados = em.find(FonteDados.class, idFonteDados);
     Indexador idx = null;
+    int qtdeItensIndexados = 0;
     try {
       long inicio = System.currentTimeMillis();
       new File(fonteDados.getDiretorioIndice() + "/write.lock").delete();
@@ -85,39 +88,45 @@ public class FachadaBuscador {
             String tipoDado = rsMetaDados.getColumnTypeName(i);
             Object valor = query.getObject(i);
             String texto = "";
-            if ("LONGVARBINARY".equalsIgnoreCase(tipoDado)) {
-              if (valor != null) {
-                texto = valor.toString();
-                //TODO
-                //                try {
-                //                  texto = UtilExtrator.fromDoc((InputStream) query.getObject(i));
-                //                } catch (Exception e) {
-                //                  //Tenta com DOC
-                //                  try {
-                //                    texto = UtilExtrator.fromPDF((InputStream) query.getObject(i));
-                //                  } catch (Exception e1) {
-                //                    //Nao eh nem DOC nem PDF
-                //                  }
-                //                }
+            if (valor instanceof InputStream) {
+              //              FileOutputStream fos = new FileOutputStream(
+              //                  "/Users/marcoreis/teste");
+              //              IOUtils.write(IOUtils.toCharArray(query.getBinaryStream(i)), fos);
+              try {
+                texto = UtilExtrator.fromDoc((InputStream) query.getObject(i));
+              } catch (Exception e) {
+                System.out.println(e);
               }
-            } else {
+            } else if (valor != null) {
               texto = valor.toString();
             }
-            mapa.put(coluna, texto);
+            if (!StringUtils.vazia(texto)) {
+              mapa.put(coluna, texto);
+            }
           } catch (Exception e) {
-            mapa.put(coluna, "[Erro ao recuperar metadados - " + e + "]");
+            logger.error(e);
           }
         }
-        idx.indexar(mapa);
+        if (idx.indexar(mapa)) {
+          qtdeItensIndexados++;
+        }
+        if (qtdeItensIndexados > 0 && qtdeItensIndexados % 100 == 0) {
+          logger.info("Estatistica parcial: " + qtdeItensIndexados
+              + " itens indexados.");
+        }
       }
       long fim = System.currentTimeMillis();
       String msg = "Tempo para indexar: " + ((fim - inicio) / 1000)
           + " segundos.";
       logger.info(msg);
+      logger.info("Quantidade itens indexados: " + qtdeItensIndexados);
     } catch (Exception e) {
       throw new ExcecaoIndexador(e);
     } finally {
-      idx.fecha();
+      try {
+        idx.fecha();
+      } catch (Exception e) {
+      }
     }
   }
 
@@ -151,6 +160,7 @@ public class FachadaBuscador {
             }
             valores.add(valor);
           } catch (Exception e) {
+            logger.error(e);
             valores.add("[Erro Metadados]");
           }
         }
@@ -184,6 +194,8 @@ public class FachadaBuscador {
       em.remove(fonte);
       em.getTransaction().commit();
     } catch (Exception e) {
+      logger.error(e);
+      throw new RuntimeException(e);
     }
   }
 

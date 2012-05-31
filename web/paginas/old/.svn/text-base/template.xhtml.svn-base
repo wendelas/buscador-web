@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:inova="http://cni.org.br/inova"
+	xmlns:c="http://java.sun.com/jstl/core">
+<c:set var="ctx"
+	value="#{facesContext.externalContext.request.contextPath}" />
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+<link href="${ctx}/common/styles/geral.css" type="text/css"
+	rel="stylesheet" />
+<link rel="stylesheet" type="text/css"
+	href="${ctx}/common/styles/inova.css" />
+<link rel="stylesheet" type="text/css"
+	href="${ctx}/common/styles/jqtransform.css" />
+<script type="text/javascript" src="${ctx}/common/scripts/jquery.min.js"></script>
+<script type="text/javascript">
+	//         
+	var $j = jQuery.noConflict();
+	function enablejqTransform() {
+		var form = $j("form");
+		form.jqTransform();
+	}
+	//
+</script>
+<script type="text/javascript"
+	src="${ctx}/common/scripts/jquery.jqtransform.js" />
+<script src="${ctx}/common/scripts/global.js" type="text/javascript" />
+<script src="${ctx}/common/scripts/formatacao.js" type="text/javascript" />
+
+<title><ui:insert name="title" /></title>
+<inova:metaHeader />
+</head>
+
+<body onload="enablejqTransform();">
+	<div class="banner-sistema"></div>
+
+	<div id="header">
+		<inova:menuRichfaces />
+
+		<inova:infoUsuario />
+	</div>
+
+	<div id="content">
+		<inova:mensagens />
+
+		<div class="titulo-sistema">
+			<ui:insert name="titulo">Título</ui:insert>
+		</div>
+
+		<ui:insert name="body">Body</ui:insert>
+	</div>
+
+	<a4j:outputPanel ajaxRendered="true">
+		<h:form style="display:none" prependId="false">
+			<h:inputHidden id="maximumSeverity"
+				value="#{facesContext.maximumSeverity.ordinal}" />
+			<c:if test="#{facesContext.maximumSeverity.ordinal >= 0}">
+				<script type="text/javascript">
+					window.scrollTo(0, 0);
+				</script>
+			</c:if>
+		</h:form>
+	</a4j:outputPanel>
+	<inova:status />
+</body>
+</html>

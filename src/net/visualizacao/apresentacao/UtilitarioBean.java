@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.indexador.entidades.*;
 import net.indexador.negocio.*;
-import net.utilitarios.*;
 
 import org.ajax4jsf.model.*;
 import org.apache.log4j.*;
@@ -24,7 +23,7 @@ public class UtilitarioBean extends BaseBean {
     try {
       FachadaBuscador.getInstancia().indexar(getIdFonteDados());
       infoMsg("mensagem", "Arquivos indexados");
-    } catch (ExcecaoIndexador e) {
+    } catch (Exception e) {
       errorMsg("erro.generico", e);
       logger.error(e);
     }

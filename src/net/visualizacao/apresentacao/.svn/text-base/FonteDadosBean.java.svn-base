@@ -33,7 +33,7 @@ public class FonteDadosBean extends BaseBean {
     //    fonteDados.setUrl("jdbc:mysql://localhost:3306/sgm");
     fonteDados.setNomeDriver("com.intersys.jdbc.CacheDriver");
     fonteDados.setUsuario("sistjweb");
-    fonteDados.setPassword("N974T6gR");
+    //    fonteDados.setPassword("N974T6gR");
     fonteDados.setQuery("SELECT * FROM CACHE_SISTJ_ATO.TEXTODOATO");
     fonteDados.setUrl("jdbc:Cache://tjdf78:1972/sistjweb");
   }
@@ -52,9 +52,8 @@ public class FonteDadosBean extends BaseBean {
       infoMsg("mensagem", "Fonte de dados gravada com sucesso");
       return "sucesso";
     } catch (Exception e) {
-      logger.error(e);
       errorMsg("erro.generico", e);
-      return null;
+      return "";
     }
   }
 
@@ -98,7 +97,12 @@ public class FonteDadosBean extends BaseBean {
   }
 
   public String excluir() {
-    FachadaBuscador.getInstancia().excluirFonteDados(getFonteDados().getId());
+    try {
+      FachadaBuscador.getInstancia().excluirFonteDados(getFonteDados().getId());
+      infoMsg("mensagem", "Fonte excluida com sucesso");
+    } catch (Exception e) {
+      errorMsg("erro.generico", e);
+    }
     return "";
   }
 }

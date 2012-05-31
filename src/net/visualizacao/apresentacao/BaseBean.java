@@ -19,7 +19,7 @@ public class BaseBean implements Serializable {
   protected static final String MSG_SUCESSO = "mensagem.sucesso";
   protected static final String MSG_ERRO = "erro.generico";
   private HtmlToolBar toolBar;
-  private String[] camposSelecionados;
+  private Collection<String> camposSelecionados;
 
   protected final FacesContext getFacesContext() {
     return JSFUtils.getFacesContext();
@@ -146,11 +146,11 @@ public class BaseBean implements Serializable {
     return null;
   }
 
-  public void setCamposSelecionados(String[] camposSelecionados) {
+  public void setCamposSelecionados(Collection<String> camposSelecionados) {
     this.camposSelecionados = camposSelecionados;
   }
 
-  public String[] getCamposSelecionados() {
+  public Collection<String> getCamposSelecionados() {
     return camposSelecionados;
   }
 }

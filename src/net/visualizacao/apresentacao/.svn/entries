@@ -35,14 +35,14 @@ svn:special svn:externals svn:needs-lock
 
 BaseBean.java
 file
-15
+19
 
 
 
-2012-05-26T01:17:00.000000Z
-7af7ed11dee8f14560371a559f31c4c3
-2012-05-26T04:08:19.929066Z
-15
+2012-05-30T21:19:05.000000Z
+c01c4984fabcae5d46cbfc46f8bbe6a3
+2012-05-31T13:51:31.460361Z
+19
 el.marcon@gmail.com
 
 
@@ -65,18 +65,18 @@ el.marcon@gmail.com
 
 
 
-4582
+4620
 
 BuscaLivreBean.java
 file
-17
+19
 
 
 
-2012-05-28T22:31:52.000000Z
-e07fcf49018836ab8ad39408f5458930
-2012-05-28T23:02:19.290642Z
-17
+2012-05-30T20:43:24.000000Z
+cd32019eed5325b3e201ea57121a2024
+2012-05-31T13:51:31.460361Z
+19
 el.marcon@gmail.com
 
 
@@ -99,7 +99,7 @@ el.marcon@gmail.com
 
 
 
-2525
+3148
 
 Constantes.java
 file
@@ -137,14 +137,14 @@ el.marcon@gmail.com
 
 FonteDadosBean.java
 file
-17
+19
 
 
 
-2012-05-28T20:32:34.000000Z
-3347d05368c895d63961b2bd0e2c342b
-2012-05-28T23:02:19.290642Z
-17
+2012-05-30T10:38:07.000000Z
+a53c5d5ef02e35ee63e758105bc34c38
+2012-05-31T13:51:31.460361Z
+19
 el.marcon@gmail.com
 
 
@@ -167,18 +167,18 @@ el.marcon@gmail.com
 
 
 
-2706
+2826
 
 FrequenciaDosTermosBean.java
 file
-13
+19
 
 
 
-2012-05-25T04:00:16.000000Z
-2f78c6c2bfad0c27cacf3cbe821f9c27
-2012-05-25T05:41:42.515448Z
-13
+2012-05-30T21:20:03.000000Z
+707fcdce0e8f6ff25b5e429ffc1fdf56
+2012-05-31T13:51:31.460361Z
+19
 el.marcon@gmail.com
 
 
@@ -201,18 +201,18 @@ el.marcon@gmail.com
 
 
 
-1970
+2058
 
 UtilitarioBean.java
 file
-17
+19
 
 
 
-2012-05-28T21:14:14.000000Z
-16b3d772c9b340c77fe78289a1990511
-2012-05-28T23:02:19.290642Z
-17
+2012-05-30T20:23:49.000000Z
+9691c6784f9eda4c2aa253a1cfc64cf0
+2012-05-31T13:51:31.460361Z
+19
 el.marcon@gmail.com
 
 
@@ -235,7 +235,7 @@ el.marcon@gmail.com
 
 
 
-2166
+2026
 
 VOMetaDados.java
 file

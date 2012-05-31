@@ -33,8 +33,11 @@ public class FrequenciaDosTermosBean extends BaseBean {
   }
 
   @Override
-  public String[] getCamposSelecionados() {
-    return new String[] {"TermoIndexacao", "TermoEmenta"};
+  public Collection<String> getCamposSelecionados() {
+    Collection<String> lista = new ArrayList<String>();
+    lista.add("TermoIndexacao");
+    lista.add("TermoEmenta");
+    return lista;
   }
 
   public void carregarDados() {

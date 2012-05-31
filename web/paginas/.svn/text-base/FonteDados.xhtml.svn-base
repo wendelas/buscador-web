@@ -14,6 +14,9 @@
 		<rich:panel header="Fonte de Dados"
 			style="margin-left: 3%; margin-right: 3%;" columns="1">
 
+			<h:inputHidden value="#{fonteDadosBean.fonteDados.password}"
+				rendered="#{not empty fonteDadosBean.fonteDados.password}" />
+
 			<rich:panel styleClass="panelInterno">
 				<h:panelGrid styleClass="fullWidthClass" columns="2">
 					<h:outputText value="Nome:" />
@@ -28,7 +31,10 @@
 					<h:outputText value="User:" />
 					<h:inputText value="#{fonteDadosBean.fonteDados.usuario}" />
 					<h:outputText value="Password:" />
-					<h:inputSecret value="#{fonteDadosBean.fonteDados.password}" />
+					<h:inputSecret value="#{fonteDadosBean.fonteDados.password}"
+						rendered="#{empty fonteDadosBean.fonteDados.password}" />
+					<h:outputLabel value="*********"
+						rendered="#{not empty fonteDadosBean.fonteDados.password}" />
 					<h:outputText value="Nome do driver JDBC:" />
 					<h:inputText value="#{fonteDadosBean.fonteDados.nomeDriver}"
 						styleClass="fullWidthClass" />
