@@ -7,7 +7,7 @@ faces-config.xml
 K 25
 svn:wc:ra_dav:version-url
 V 58
-/svn/!svn/ver/16/trunk/fontes/web/WEB-INF/faces-config.xml
+/svn/!svn/ver/29/trunk/fontes/web/WEB-INF/faces-config.xml
 END
 web.xml
 K 25
@@ -19,11 +19,5 @@ END
 K 25
 svn:wc:ra_dav:version-url
 V 66
-/svn/!svn/ver/16/trunk/fontes/web/WEB-INF/.faces-config.xml.jsfdia
-END
-.directory
-K 25
-svn:wc:ra_dav:version-url
-V 51
-/svn/!svn/ver/8/trunk/fontes/web/WEB-INF/.directory
+/svn/!svn/ver/29/trunk/fontes/web/WEB-INF/.faces-config.xml.jsfdia
 END

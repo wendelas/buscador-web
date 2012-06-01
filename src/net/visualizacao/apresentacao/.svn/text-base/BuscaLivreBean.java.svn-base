@@ -3,10 +3,12 @@ package net.visualizacao.apresentacao;
 import java.io.*;
 import java.math.*;
 import java.util.*;
+import java.util.regex.*;
 
 import net.indexador.entidades.*;
 import net.indexador.negocio.*;
 import net.utilitarios.*;
+import net.visualizacao.util.*;
 
 import org.ajax4jsf.model.*;
 import org.apache.lucene.document.*;
@@ -21,6 +23,7 @@ public class BuscaLivreBean extends BaseBean {
   private int idFonteDados;
   private FonteDados fonte;
   private VOMetaDados metaDados;
+  private Document documento;
 
   public void setConsulta(String consulta) {
     this.consulta = consulta;
@@ -84,13 +87,33 @@ public class BuscaLivreBean extends BaseBean {
   }
 
   public Document doc(ScoreDoc doc) {
+    return doc(doc.doc);
+  }
+
+  public Document doc(int doc) {
     try {
       UtilBusca buscador = new UtilBusca(getFonte().getDiretorioIndice());
-      return buscador.doc(doc.doc);
+      return buscador.doc(doc);
     } catch (IOException e) {
       logger.error(e);
     }
     return null;
+  }
+
+  public String visualizarDetalhe() {
+    try {
+      //solucao tosca para recuperar o id do documento
+      String scoreDoc = JSFUtils.getParametro("scoreDoc");
+      Pattern p = Pattern.compile("doc.(\\d+).*");
+      Matcher matcher = p.matcher(scoreDoc);
+      if (matcher.find()) {
+        String id = matcher.group(1);
+        documento = doc(new Integer(id));
+      }
+    } catch (Exception e) {
+      logger.error(e);
+    }
+    return "detalhar";
   }
 
   public String mostraDados(ScoreDoc doc) {
@@ -108,6 +131,7 @@ public class BuscaLivreBean extends BaseBean {
         saida.append(conteudo + " - ");
       }
     } catch (Exception e) {
+      saida.append("Erro: " + e);
     }
     //    conteudo = conteudo.replaceAll("\n", "<br />");
     return saida.toString();
@@ -130,5 +154,20 @@ public class BuscaLivreBean extends BaseBean {
 
   public FonteDados getFonte() {
     return fonte;
+  }
+
+  public Document getDocumento() {
+    return documento;
+  }
+
+  public String abrirPaginaBusca() {
+    return "consultar";
+  }
+
+  public static void main(String[] args) {
+    Pattern p = Pattern.compile("doc.(\\d*).*");
+    Matcher matcher = p.matcher("doc=1052 score=0.43030652");
+    //    System.out.println(matcher.find());
+    System.out.println(matcher.group(1));
   }
 }

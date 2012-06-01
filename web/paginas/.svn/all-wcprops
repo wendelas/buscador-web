@@ -1,13 +1,13 @@
 K 25
 svn:wc:ra_dav:version-url
-V 40
-/svn/!svn/ver/7/trunk/fontes/web/paginas
+V 41
+/svn/!svn/ver/25/trunk/fontes/web/paginas
 END
 BuscaLivre.xhtml
 K 25
 svn:wc:ra_dav:version-url
 V 58
-/svn/!svn/ver/19/trunk/fontes/web/paginas/BuscaLivre.xhtml
+/svn/!svn/ver/30/trunk/fontes/web/paginas/BuscaLivre.xhtml
 END
 Menu.xhtml
 K 25
@@ -68,6 +68,12 @@ K 25
 svn:wc:ra_dav:version-url
 V 58
 /svn/!svn/ver/19/trunk/fontes/web/paginas/FonteDados.xhtml
+END
+DetalheDocumento.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/29/trunk/fontes/web/paginas/DetalheDocumento.xhtml
 END
 AcordaoComSucessivo.xhtml
 K 25

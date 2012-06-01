@@ -2,6 +2,7 @@ package net.indexador.negocio;
 
 import java.io.*;
 import java.sql.*;
+import java.sql.Connection;
 import java.util.*;
 
 import javax.persistence.*;
@@ -11,6 +12,9 @@ import net.utilitarios.*;
 import net.visualizacao.apresentacao.*;
 
 import org.apache.log4j.*;
+import org.apache.tika.*;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
 
 /**
  * 
@@ -56,6 +60,12 @@ public class FachadaBuscador {
     return lista;
   }
 
+  /**
+   * Recupera os dados/metadados do banco para gerar o indice
+   * @param idFonteDados
+   * @throws ExcecaoIndexador
+   */
+  //FIXME melhorar esse codigo
   public void indexar(int idFonteDados) throws ExcecaoIndexador {
     EntityManager em = emf.createEntityManager();
     FonteDados fonteDados = em.find(FonteDados.class, idFonteDados);
@@ -87,21 +97,26 @@ public class FachadaBuscador {
           String coluna = "";
           try {
             coluna = rsMetaDados.getColumnName(i);
-            String tipoDado = rsMetaDados.getColumnTypeName(i);
             Object valor = query.getObject(i);
-            String texto = "";
+            String texto = "[ColunaVazia]";
+            //
             if (valor instanceof InputStream) {
-              //              FileOutputStream fos = new FileOutputStream(
-              //                  "/Users/marcoreis/teste");
-              //              IOUtils.write(IOUtils.toCharArray(query.getBinaryStream(i)), fos);
               try {
                 texto = UtilExtrator.fromDoc((InputStream) query.getObject(i));
               } catch (Exception e) {
-                System.out.println(e);
+                //Nao eh doc/xls/pdf/etc...
               }
             } else if (valor != null) {
               texto = valor.toString();
             }
+            //
+            try {
+              Document doc = Jsoup.parse(texto);
+              texto = doc.text();
+            } catch (Exception e1) {
+              //Nao eh arquivo html
+            }
+            //
             if (!StringUtils.vazia(texto)) {
               mapa.put(coluna, texto);
             }
@@ -152,11 +167,12 @@ public class FachadaBuscador {
       }
       metaDados.setColunas(colunas);
       //
-      while (query.next()) {
+      if (query.next()) {
         Collection<String> valores = new ArrayList<String>();
         for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
           try {
             String valor = query.getString(i);
+            if (StringUtils.vazia(valor)) continue;
             if (valor.length() > 100) {
               valor = valor.substring(0, 99);
             }

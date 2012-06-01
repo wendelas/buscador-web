@@ -62,4 +62,20 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<navigation-rule>
+		<from-view-id>/paginas/BuscaLivre.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>detalhar</from-outcome>
+			<to-view-id>/paginas/DetalheDocumento.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/paginas/DetalheDocumento.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>consultar</from-outcome>
+			<to-view-id>/paginas/BuscaLivre.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>

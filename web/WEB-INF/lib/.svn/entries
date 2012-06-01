@@ -1,14 +1,14 @@
 10
 
 dir
-9
+28
 https://search-web-beta.googlecode.com/svn/trunk/fontes/web/WEB-INF/lib
 https://search-web-beta.googlecode.com/svn
 
 
 
-2012-05-22T22:11:39.134438Z
-9
+2012-05-31T21:18:03.288592Z
+22
 el.marcon@gmail.com
 
 
@@ -33,43 +33,9 @@ svn:special svn:externals svn:needs-lock
 
 0
 
-.directory
-file
-
-
-
-
-2012-05-22T23:38:24.000000Z
-6252341f120da90e8f41621e64323503
-2012-05-22T21:19:22.991791Z
-8
-el.marcon@gmail.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-50
-
 CacheDB.jar
 file
-15
+
 
 
 
@@ -169,499 +135,9 @@ has-props
 
 443432
 
-cglib-2.2.jar
-file
-10
-
-
-
-2012-05-22T23:41:49.000000Z
-54bd85d9ebe3f194edba210fe0e5f255
-2012-05-23T00:11:26.926342Z
-10
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-278682
-
-common-annotations.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-d6a187df4a6dd255603ab1966aff557f
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-48742
-
-commons-beanutils-1.8.2.jar
-file
-13
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-commons-beanutils-1.8.3.jar
-file
-13
-
-
-
-2012-05-25T03:55:29.000000Z
-b45be74134796c89db7126083129532f
-2012-05-25T05:41:42.515448Z
-13
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-232019
-
-commons-codec-1.3.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-8e149c1053741c03736a52df83974dcc
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-46725
-
-commons-collections-3.2.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-7b9216b608d550787bdf43a63d88bf3b
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-571259
-
-commons-dbcp-1.2.2.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-590f45b612433a50665bc4f369fc77d0
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-121757
-
-commons-digester-1.8.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-cf89c593f0378e9509a06fce7030aeba
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-143602
-
-commons-discovery-0.2.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-9a2fb56e6a79169b2fb6c8a0dc79abb0
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-71442
-
-commons-fileupload-1.1.1.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-adb15d9a4da4a30d77e88b32a45cbddb
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-31909
-
-commons-io-1.4.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-b6a50c8a15ece8753e37cbe5700bf84f
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-109043
-
-commons-logging-1.0.4.jar
-file
-13
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-commons-logging-1.1.1.jar
-file
-13
-
-
-
-2012-05-25T03:55:29.000000Z
-ed448347fc0104034aa14c8189bf37de
-2012-05-25T05:41:42.515448Z
-13
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-60686
-
-commons-pool-1.3.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-e48fa47bd0c1a31518df6cf79ac903b8
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-62103
-
-commons-validator-1.3.1.jar
-file
-
-
-
-
-2011-12-04T20:30:21.000000Z
-4fe711769d6d61f51c21d6c89d70e904
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-138956
-
 cssparser-0.9.6.jar
 file
-15
+
 
 
 
@@ -693,91 +169,9 @@ has-props
 
 279533
 
-dom4j-1.6.1.jar
-file
-
-
-
-
-2012-05-22T23:42:09.000000Z
-4d8f51d3fe3900efc6e395be48030d6d
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-313898
-
-ejb3-persistence.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-el-api.jar
-file
-13
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
 el-ri.jar
 file
-15
+
 
 
 
@@ -811,7 +205,7 @@ has-props
 
 guava-10.0.1.jar
 file
-15
+
 
 
 
@@ -842,190 +236,6 @@ has-props
 
 
 1501575
-
-hibernate-annotations.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-hibernate-commons-annotations.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-hibernate-jpa-2.0-api-1.0.1.Final.jar
-file
-
-
-
-
-2012-05-22T23:42:01.000000Z
-d7e7d8f60fc44a127ba702d43e71abec
-2012-05-22T00:44:36.503369Z
-3
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-102661
-
-hibernate-testing.jar
-file
-10
-
-
-
-2012-05-22T23:41:41.000000Z
-defd9e921e2528c2e728579e1493dd66
-2012-05-23T00:11:26.926342Z
-10
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-47369
-
-hibernate-validator.jar
-file
-10
-
-
-
-2012-05-22T23:57:07.000000Z
-1d4621d2f23f897a021bdf7072e088c0
-2012-05-23T00:11:26.926342Z
-10
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-70039
-
-hibernate3.jar
-file
-
-
-
-
-2012-05-31T14:38:16.000000Z
-d93f8f925f6a708fa50c6c2b4424a65a
-2012-05-22T21:19:22.991791Z
-8
-el.marcon@gmail.com
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2421736
 
 hsqldb.jar
 file
@@ -1063,7 +273,7 @@ has-props
 
 javassist-3.12.0.GA.jar
 file
-10
+
 
 
 
@@ -1095,33 +305,9 @@ has-props
 
 633312
 
-javassist-3.9.0.GA.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
 jsf-api.jar
 file
-15
+
 
 
 
@@ -1155,7 +341,7 @@ has-props
 
 jsf-facelets.jar
 file
-15
+
 
 
 
@@ -1189,7 +375,7 @@ has-props
 
 jsf-impl.jar
 file
-15
+
 
 
 
@@ -1220,30 +406,6 @@ has-props
 
 
 841338
-
-jsp-api.jar
-file
-13
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
 
 jstl.jar
 file
@@ -1347,81 +509,9 @@ has-props
 
 391834
 
-myfaces-api-2.1.7.jar
-file
-15
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-myfaces-bundle-2.1.7.jar
-file
-15
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-myfaces-impl-2.1.7.jar
-file
-15
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
 mysql-connector-java-5.1.18-bin.jar
 file
-15
+
 
 
 
@@ -1453,9 +543,18 @@ has-props
 
 789885
 
-primefaces-3.2.jar
+ojdbc14.jar
 file
-14
+
+
+
+
+2012-06-01T02:31:12.000000Z
+a28ee417a523434db522fe593a41d7d0
+2012-05-29T17:03:12.795625Z
+18
+el.marcon@gmail.com
+has-props
 
 
 
@@ -1475,11 +574,21 @@ file
 
 
 
-deleted
+
+1536797
 
-primefaces-3.3.RC1.jar
+postgresql-9.1-902.jdbc4.jar
 file
-15
+
+
+
+
+2012-06-01T02:31:09.000000Z
+42b118950c660485a77dc7e79a8e06b1
+2012-05-29T17:03:12.795625Z
+18
+el.marcon@gmail.com
+has-props
 
 
 
@@ -1499,11 +608,12 @@ file
 
 
 
-deleted
+
+561969
 
 richfaces-api-3.3.3.Final.jar
 file
-15
+
 
 
 
@@ -1537,7 +647,7 @@ has-props
 
 richfaces-impl-3.3.3.Final.jar
 file
-15
+
 
 
 
@@ -1571,7 +681,7 @@ has-props
 
 richfaces-ui-3.3.3.Final.jar
 file
-15
+
 
 
 
@@ -1605,7 +715,7 @@ has-props
 
 sac-1.3.jar
 file
-15
+
 
 
 
@@ -1637,57 +747,9 @@ has-props
 
 14526
 
-servlet-api.jar
-file
-13
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
-slf4j-api-1.5.8.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
 slf4j-api-1.6.1.jar
 file
-10
+
 
 
 
@@ -1719,33 +781,9 @@ has-props
 
 25496
 
-slf4j-log4j12-1.5.8.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
-
 slf4j-log4j12-1.6.1.jar
 file
-10
+
 
 
 
@@ -1776,6 +814,40 @@ has-props
 
 
 9753
+
+sqljdbc4.jar
+file
+
+
+
+
+2012-06-01T02:31:10.000000Z
+a99205071acbe2709103b971662992e0
+2012-05-29T17:03:12.795625Z
+18
+el.marcon@gmail.com
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+584207
 
 sqltool.jar
 file
@@ -1810,30 +882,6 @@ has-props
 
 
 147507
-
-validation-api-1.0.0.GA.jar
-file
-10
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-deleted
 
 wvtool.jar
 file

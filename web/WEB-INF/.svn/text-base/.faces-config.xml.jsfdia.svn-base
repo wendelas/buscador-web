@@ -21,4 +21,22 @@
     TARGET="rules:#paginas#FonteDados.xhtml" TITLE="editar" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#paginas#BuscaLivre.xhtml"
+  PATH="/paginas/BuscaLivre.xhtml" SHAPE="32,273,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#paginas#BuscaLivre.xhtml:0" NAME="item"
+   PATH="/paginas/BuscaLivre.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="detalhar::#paginas#DetalheDocumento.xhtml"
+    NAME="output" PATH="/paginas/DetalheDocumento.xhtml"
+    TARGET="rules:#paginas#DetalheDocumento.xhtml" TITLE="detalhar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#paginas#DetalheDocumento.xhtml"
+  PATH="/paginas/DetalheDocumento.xhtml" SHAPE="240,289,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#paginas#DetalheDocumento.xhtml:0" NAME="item"
+   PATH="/paginas/DetalheDocumento.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="consultar::#paginas#BuscaLivre.xhtml"
+    NAME="output" PATH="/paginas/BuscaLivre.xhtml"
+    TARGET="rules:#paginas#BuscaLivre.xhtml" TITLE="consultar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
 </PROCESS>
