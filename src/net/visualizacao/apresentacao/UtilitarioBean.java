@@ -21,8 +21,10 @@ public class UtilitarioBean extends BaseBean {
 
   public String indexar() {
     try {
-      FachadaBuscador.getInstancia().indexar(getIdFonteDados());
-      infoMsg("mensagem", "Arquivos indexados");
+      int qtd = FachadaBuscador.getInstancia().indexar(getIdFonteDados());
+      String msg = "Indexação concluída com sucesso. Foram indexados " + qtd
+          + " itens.";
+      infoMsg("mensagem", msg);
     } catch (Exception e) {
       errorMsg("erro.generico", e);
       logger.error(e);

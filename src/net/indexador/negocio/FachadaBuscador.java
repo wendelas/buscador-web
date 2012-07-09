@@ -12,7 +12,6 @@ import net.utilitarios.*;
 import net.visualizacao.apresentacao.*;
 
 import org.apache.log4j.*;
-import org.apache.tika.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 
@@ -21,6 +20,7 @@ import org.jsoup.nodes.*;
  * @author marcoreis
  *
  */
+@SuppressWarnings("unchecked")
 public class FachadaBuscador {
   private static final Logger logger = Logger.getLogger(FachadaBuscador.class);
   private EntityManagerFactory emf = Persistence
@@ -62,11 +62,13 @@ public class FachadaBuscador {
 
   /**
    * Recupera os dados/metadados do banco para gerar o indice
+   * Atencao: no mysql o getColumnLabel retorna valores em uppercase, por isso os campos indexados estao assim.
    * @param idFonteDados
+   * @return 
    * @throws ExcecaoIndexador
    */
   //FIXME melhorar esse codigo
-  public void indexar(int idFonteDados) throws ExcecaoIndexador {
+  public int indexar(int idFonteDados) throws ExcecaoIndexador {
     EntityManager em = emf.createEntityManager();
     FonteDados fonteDados = em.find(FonteDados.class, idFonteDados);
     Indexador idx = null;
@@ -90,13 +92,18 @@ public class FachadaBuscador {
           fonteDados.getUsuario(), fonteDados.getPassword());
       stmt = con.createStatement();
       query = stmt.executeQuery(fonteDados.getQuery());
+      removeMetadados(fonteDados);
       ResultSetMetaData rsMetaDados = query.getMetaData();
+      for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
+        String coluna = rsMetaDados.getColumnLabel(i).toUpperCase();
+        persistir(fonteDados, coluna);
+      }
       while (query.next()) {
         Map<String, String> mapa = new HashMap<String, String>();
         for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
           String coluna = "";
           try {
-            coluna = rsMetaDados.getColumnName(i);
+            coluna = rsMetaDados.getColumnLabel(i).toUpperCase();
             Object valor = query.getObject(i);
             String texto = "[ColunaVazia]";
             //
@@ -137,6 +144,7 @@ public class FachadaBuscador {
           + " segundos.";
       logger.info(msg);
       logger.info("Quantidade itens indexados: " + qtdeItensIndexados);
+      return qtdeItensIndexados;
     } catch (Exception e) {
       throw new ExcecaoIndexador(e);
     } finally {
@@ -144,6 +152,40 @@ public class FachadaBuscador {
         idx.fecha();
       } catch (Exception e) {
       }
+    }
+  }
+
+  private void removeMetadados(FonteDados fonteDados) {
+    EntityManager em = emf.createEntityManager();
+    for (MetaDado metadado : fonteDados.getMetadados()) {
+      try {
+        em.getTransaction().begin();
+        MetaDado m = metadado;
+        m = em.merge(metadado);
+        em.remove(m);
+        em.getTransaction().commit();
+      } catch (Exception e) {
+        logger.error(e);
+        em.getTransaction().rollback();
+      }
+    }
+  }
+
+  private void persistir(FonteDados fonteDados, String coluna) {
+    EntityManager em = emf.createEntityManager();
+    try {
+      String hql = "select m from MetaDado m where ucase(m.campo) like '"
+          + coluna + "' and m.fonte.id = " + fonteDados.getId();
+      List<MetaDado> list = em.createQuery(hql).getResultList();
+      if (list.size() > 0) return;
+      MetaDado md = new MetaDado();
+      md.setCampo(coluna);
+      md.setFonte(fonteDados);
+      em.getTransaction().begin();
+      em.persist(md);
+      em.getTransaction().commit();
+    } catch (Exception e) {
+      em.getTransaction().rollback();
     }
   }
 
@@ -163,7 +205,7 @@ public class FachadaBuscador {
       //
       List<String> colunas = new ArrayList<String>();
       for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
-        colunas.add(rsMetaDados.getColumnName(i));
+        colunas.add(rsMetaDados.getColumnLabel(i));
       }
       metaDados.setColunas(colunas);
       //
@@ -194,7 +236,7 @@ public class FachadaBuscador {
         con.close();
         stmt.close();
         query.close();
-      } catch (SQLException e) {
+      } catch (Exception e) {
       }
     }
   }
@@ -222,5 +264,17 @@ public class FachadaBuscador {
     List<Indice> lista = em.createQuery("select i from Indice i")
         .getResultList();
     return lista;
+  }
+
+  public FonteDados buscarFontePeloNome(String dirHome) {
+    try {
+      EntityManager em = emf.createEntityManager();
+      FonteDados fonte = (FonteDados) em.createQuery(
+          "select f from FonteDados f where f.nome like '" + dirHome + "'")
+          .getSingleResult();
+      return fonte;
+    } catch (Exception e) {
+      return null;
+    }
   }
 }

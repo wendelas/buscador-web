@@ -1,5 +1,7 @@
 package net.indexador.entidades;
 
+import java.util.*;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,6 +15,7 @@ public class FonteDados {
   private String diretorio;
   private String nome;
   private String nomeDriver;
+  private List<MetaDado> metadados;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -92,5 +95,14 @@ public class FonteDados {
   @Transient
   public String getDiretorioIndice() {
     return System.getProperty("user.home") + "/indices/" + getNome();
+  }
+
+  public void setMetadados(List<MetaDado> metadados) {
+    this.metadados = metadados;
+  }
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "fonte")
+  public List<MetaDado> getMetadados() {
+    return metadados;
   }
 }

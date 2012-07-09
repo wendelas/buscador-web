@@ -18,17 +18,14 @@
 
 			<rich:panel>
 				<h:panelGrid columns="2" styleClass="formClass">
-					<h:panelGrid columns="3">
+					<h:panelGrid columns="5"
+						columnClasses="noStyleClass, fullWidthClass, noStyleClass, alignRightClass, alignRighClass">
 						<h:outputText value="Argumento:" />
 						<h:inputText value="#{buscaLivreBean.consulta}" size="100"
 							label="Consulta">
 							<f:validateLength minimum="1" />
 						</h:inputText>
-						<h:commandButton value="Consultar"
-							action="#{buscaLivreBean.consultar}" />
-					</h:panelGrid>
 
-					<h:panelGrid columns="2" style="right: 42px;">
 						<h:outputText value="Índice:" />
 						<h:selectOneMenu layout="lineDirection" label="Índice"
 							value="#{buscaLivreBean.idFonteDados}">
@@ -36,6 +33,10 @@
 								<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
 							</c:forEach>
 						</h:selectOneMenu>
+
+						<h:commandButton value="Consultar"
+							action="#{buscaLivreBean.consultar}" />
+
 					</h:panelGrid>
 				</h:panelGrid>
 			</rich:panel>
@@ -53,13 +54,19 @@
 					value="Nenhum documento encontrado para o argumento pesquisado" />
 			</rich:panel>
 
-			<h:panelGrid columns="1" rendered="#{not empty buscaLivreBean.itens}">
-				<rich:panel>
+			<rich:panel rendered="#{not empty buscaLivreBean.itens}">
+				<h:panelGrid columns="1">
 					<h:outputText
-						value="Duração da consulta: #{buscaLivreBean.duracaoBusca}ms. " />
+						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
 					<h:outputText
-						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}" />
-				</rich:panel>
+						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}." />
+				</h:panelGrid>
+			</rich:panel>
+
+			<rich:spacer height="10px"
+				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
+
+			<rich:panel rendered="#{not empty buscaLivreBean.itens}">
 				<rich:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
 					var="item" rows="20">
 					<rich:column>
@@ -73,7 +80,7 @@
 					</rich:column>
 					<rich:column>
 						<f:facet name="header">
-							<h:outputText value="Texto" />
+							<h:outputText value="Conteúdo" />
 						</f:facet>
 						<h:outputText escape="false"
 							value="#{buscaLivreBean.mostraDados(item)}" />
@@ -83,7 +90,8 @@
 					</f:facet>
 
 				</rich:dataTable>
-			</h:panelGrid>
+
+			</rich:panel>
 
 		</rich:panel>
 	</ui:define>

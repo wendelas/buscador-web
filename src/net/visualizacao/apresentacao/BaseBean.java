@@ -84,7 +84,7 @@ public class BaseBean implements Serializable {
     //FIXME Gerar codigo dinamico
     toolBar = new HtmlToolBar();
     HtmlDropDownMenu menu = new HtmlDropDownMenu();
-    menu.setValue("Indexação");
+    menu.setValue("Opções");
     //
     HtmlMenuItem menuItem = null;
     //
@@ -101,8 +101,8 @@ public class BaseBean implements Serializable {
     menu.getChildren().add(menuItem);
     //
     menuItem = new HtmlMenuItem();
-    menuItem.setValue("Similaridade");
-    //    menuItem.setOnclick("document.location.href='AcordaosSimilares.faces'");
+    menuItem.setValue("Documentos Similares");
+    menuItem.setOnclick("document.location.href='Similaridade.faces'");
     menuItem.setSubmitMode("none");
     menu.getChildren().add(menuItem);
     //
@@ -117,12 +117,6 @@ public class BaseBean implements Serializable {
     menuReindexar.setValue("Utilitário");
     menuReindexar.setOnclick("document.location.href='Utilitario.faces'");
     menuReindexar.setSubmitMode("none");
-    utilitarios.getChildren().add(menuReindexar);
-    //
-//    menuReindexar = new HtmlMenuItem();
-//    menuReindexar.setValue("Fonte de Dados");
-//    menuReindexar.setOnclick("document.location.href='FonteDados.faces'");
-//    menuReindexar.setSubmitMode("none");
     utilitarios.getChildren().add(menuReindexar);
     //
     toolBar.getChildren().add(utilitarios);

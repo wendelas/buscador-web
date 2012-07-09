@@ -20,21 +20,30 @@
 				<h:commandButton value="Voltar" action="consultar" />
 			</rich:panel>
 			<rich:spacer height="6px" />
-			
+
 			<c:forEach items="#{buscaLivreBean.documento.fields}" var="item">
 				<rich:panel>
 					<f:facet name="header">
 						<h:outputText value="#{item.name()}" />
 					</f:facet>
+					<div style="display: inline;">
+						<h:commandLink
+							action="#{buscaLivreBean.download(item.stringValue())}"
+							immediate="true"
+							rendered="#{buscaLivreBean.caminhoArquivo(item.stringValue())}">
+							<h:graphicImage value="imagens/view-cinza.png"
+								alt="Download do arquivo original" />
+						</h:commandLink>
+					</div>
 					<h:outputText value="#{item.stringValue()}" />
 				</rich:panel>
 				<rich:spacer height="6px" />
 			</c:forEach>
-			
+
 			<rich:panel>
 				<h:commandButton value="Voltar" action="consultar" />
 			</rich:panel>
-			
+
 		</rich:panel>
 	</ui:define>
 </ui:composition>

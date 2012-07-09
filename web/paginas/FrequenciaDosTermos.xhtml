@@ -14,63 +14,45 @@
 		<rich:panel header="Consulta termos mais frequentes"
 			style="margin-left: 30%; margin-right: 30%;">
 
-			<rich:panel cols="2">
-				<f:facet name="header">
-					<h:outputText styleClass="headerText"
-						value="Quantidade de ocorrências" />
-				</f:facet>
-				<h:outputText value="Mínimo:" />
-				<h:inputText value="#{frequenciaDosTermosBean.limite}" size="6" />
-				<h:commandButton value="Consultar" type="submit"
-					action="#{frequenciaDosTermosBean.carregarDados}" reRender="termos" />
-			</rich:panel>
-
-			<br />
-
 			<rich:panel>
-				<h:panelGrid columns="2">
-					<h:outputText value="Acórdãos Indexados:" />
-					<h:outputText
-						value="#{frequenciaDosTermosBean.totalAcordaosIndexados}" />
-					<h:outputText value="Termos Processados:" />
-					<h:outputText
-						value="#{frequenciaDosTermosBean.totalTermosIndexados}" />
+				<h:panelGrid columns="4" styleClass="fullWidthClass"
+					columnClasses="fullWidthClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Quantidade mínima de ocorrências: " />
+					<h:inputText value="#{frequenciaDosTermosBean.limite}" size="6" />
+					<h:commandButton value="Consultar" type="submit"
+						action="#{frequenciaDosTermosBean.carregarDados}"
+						onclick="Richfaces.showModalPanel('painelAguarde');"
+						oncomplete="Richfaces.hideModalPanel('painelAguarde');"
+						reRender="termos" />
+					<h:graphicImage id="ajuda_nome" url="imagens/question.png"
+						style="border:none;" />
+					<rich:toolTip
+						value="Serão mostrados apenas os termos com a quantidade mínima de ocorrências. "
+						for="ajuda_nome" />
 				</h:panelGrid>
+
+				<h:panelGrid columns="4" styleClass="fullWidthClass">
+					<h:outputText value="Índice:" />
+					<h:selectOneMenu layout="lineDirection" label="Índice"
+						value="#{frequenciaDosTermosBean.idFonteDados}">
+						<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
+							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+						</c:forEach>
+					</h:selectOneMenu>
+				</h:panelGrid>
+
 			</rich:panel>
 
-			<br />
+			<rich:spacer height="10"
+				rendered="#{not empty frequenciaDosTermosBean.termos}" />
+			<rich:separator height="2" lineType="dotted"
+				rendered="#{not empty frequenciaDosTermosBean.termos}" />
+			<rich:spacer height="10"
+				rendered="#{not empty frequenciaDosTermosBean.termos}" />
 
-			<!-- rich:panel>
-				<f:facet name="header">
-					<h:outputText styleClass="headerText"
-						value="Campos disponíveis para consulta" />
-				</f:facet>
-
-				<h:selectManyListbox required="true" label="Lista de campos"
-					value="#{frequenciaDosTermosBean.camposSelecionados}" size="7">
-					<c:forEach items="#{frequenciaDosTermosBean.camposDisponiveis}"
-						var="item">
-						<f:selectItem itemValue="#{item}" itemLabel="#{item}" />
-					</c:forEach>
-				</h:selectManyListbox>
-			</rich:panel>
-
-			<br /-->
-
-			<rich:panel>
-				<h:outputText
-					value="Serão mostrados apenas os termos com a quantidade mínima de ocorrências nos campos selecionados." />
-			</rich:panel>
-
-			<br />
-			<rich:separator height="2" lineType="dotted" />
-			<br />
-
-			<rich:panel header="Termos mais frequentes" id="termos"
-				rendered="#{frequenciaDosTermosBean.termos.size() > 0}">
-
-				<rich:dataTable value="#{frequenciaDosTermosBean.termos}" rows="20"
-					var="termo">
+			<h:panelGrid columns="1" styleClass="fullWidthClass">
+				<rich:dataTable value="#{frequenciaDosTermosBean.termos}" rows="15"
+					rendered="#{not empty frequenciaDosTermosBean.termos}" var="termo">
 					<rich:column sortBy="#{termo.termo}">
 						<f:facet name="header">
 							<h:outputText styleClass="headerText" value="Termo" />
@@ -87,11 +69,11 @@
 						<rich:datascroller />
 					</f:facet>
 				</rich:dataTable>
-			</rich:panel>
+			</h:panelGrid>
 
-			<rich:panel>
+			<rich:panel rendered="false">
 				<h:outputText styleClass="headerText"
-					rendered="#{frequenciaDosTermosBean.termos.size() == 0}"
+					rendered="#{empty frequenciaDosTermosBean.termos}"
 					value="Não foi encontrado nenhum registro para a quantidade informada. Tente diminuir a quantidade mínima de ocorrências." />
 			</rich:panel>
 
