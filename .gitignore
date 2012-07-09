@@ -46,3 +46,11 @@ build/classes/log4j.properties
 build/classes/net/indexador/entidades/FonteDados.class
 
 build/classes/net/indexador/filtro/IndexadorListener.class
+
+build/classes/net/indexador/negocio/FachadaBuscador.class
+
+build/classes/net/visualizacao/apresentacao/BaseBean.class
+
+build/classes/net/visualizacao/apresentacao/BuscaLivreBean.class
+
+build/classes/net/visualizacao/apresentacao/FonteDadosBean.class

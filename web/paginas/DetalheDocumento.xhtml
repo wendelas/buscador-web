@@ -35,7 +35,9 @@
 								alt="Download do arquivo original" />
 						</h:commandLink>
 					</div>
-					<h:outputText value="#{item.stringValue()}" />
+					<h:outputText
+						value="#{buscaLivreBean.formataTexto(item.stringValue())}"
+						escape="false" />
 				</rich:panel>
 				<rich:spacer height="6px" />
 			</c:forEach>

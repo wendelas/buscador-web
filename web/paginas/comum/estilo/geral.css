@@ -116,19 +116,18 @@ frame {
 	border: 0px;
 }
 
-
 .erro {
 	background: url(../../common/images/warning.gif) no-repeat left;
 	color: red;
 }
 
-.rich-messages {
-	#background-color: #F5F5F5;
+.rich-messages { #
+	background-color: #F5F5F5;
 	border: 2px solid #E0DFE3;
 	margin-bottom: 15px;
 	margin-right: auto;
-	margin-left: auto;
-	#color: #E0DFE3;
+	margin-left: auto; #
+	color: #E0DFE3;
 	width: 90%;
 	padding: 5px;
 }
@@ -185,18 +184,23 @@ p.noteMain {
 	right: 42px;
 }
 
+.alignRightClass {
+	width: 100%;
+	position: relative;
+	right: 0px;
+	position: relative;
+}
+
 .alignCenterClass {
 	margin: 0px auto 0px auto;
 	text-align: center;
 }
 
-.newFormClass {
-	/* border: 2px solid #F0F0F0; */
+.newFormClass { /* border: 2px solid #F0F0F0; */
 	width: 100%;
 }
 
-.formClass {
-	/* background-color: #F0F0F0; */
+.formClass { /* background-color: #F0F0F0; */
 	width: 100%;
 }
 
