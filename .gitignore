@@ -3,6 +3,7 @@ build/*.*
 .svn/*.*
 .svn/
 */.svn/*
+.svn*/*.*
 
 # Compiled source #
 ###################
@@ -38,3 +39,10 @@ build/*.*
 ehthumbs.db
 Icon?
 Thumbs.db
+.svn/all-wcprops
+
+build/classes/log4j.properties
+
+build/classes/net/indexador/entidades/FonteDados.class
+
+build/classes/net/indexador/filtro/IndexadorListener.class
