@@ -9,10 +9,10 @@ import javax.servlet.http.*;
 
 import net.indexador.entidades.*;
 import net.indexador.negocio.*;
-import net.utilitarios.*;
+import net.utilitarios.comum.*;
+import net.utilitarios.indexador.*;
 import net.visualizacao.util.*;
 
-import org.ajax4jsf.model.*;
 import org.apache.commons.io.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.search.*;

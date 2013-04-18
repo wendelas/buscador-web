@@ -1,10 +1,8 @@
 package net.indexador.importacao.teste;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 
-import net.indexador.entidades.Indice;
+import net.indexador.entidades.*;
 
 public class Teste {
 	public static void main(String[] args) {

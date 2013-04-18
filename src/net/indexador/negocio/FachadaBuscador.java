@@ -8,10 +8,12 @@ import java.util.*;
 import javax.persistence.*;
 
 import net.indexador.entidades.*;
-import net.utilitarios.*;
+import net.utilitarios.comum.*;
+import net.utilitarios.indexador.*;
 import net.visualizacao.apresentacao.*;
 
 import org.apache.log4j.*;
+import org.apache.tika.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 
@@ -26,6 +28,7 @@ public class FachadaBuscador {
   private EntityManagerFactory emf = Persistence
       .createEntityManagerFactory("idx-pu");
   private static FachadaBuscador instancia;
+  private Tika tika;
 
   public FachadaBuscador() {
   }
@@ -109,7 +112,8 @@ public class FachadaBuscador {
             //
             if (valor instanceof InputStream) {
               try {
-                texto = UtilExtrator.fromDoc((InputStream) query.getObject(i));
+                texto = getTika().parseToString(
+                    (InputStream) query.getObject(i));
               } catch (Exception e) {
                 //Nao eh doc/xls/pdf/etc...
               }
@@ -276,5 +280,12 @@ public class FachadaBuscador {
     } catch (Exception e) {
       return null;
     }
+  }
+
+  public Tika getTika() {
+    if (tika == null) {
+      tika = new Tika();
+    }
+    return tika;
   }
 }

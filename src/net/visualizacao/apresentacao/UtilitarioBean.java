@@ -5,7 +5,6 @@ import java.util.*;
 import net.indexador.entidades.*;
 import net.indexador.negocio.*;
 
-import org.ajax4jsf.model.*;
 import org.apache.log4j.*;
 
 @KeepAlive

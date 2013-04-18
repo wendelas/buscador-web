@@ -1,13 +1,9 @@
 package net.indexador.filtro;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 
-import net.indexador.entidades.FonteDados;
-import net.indexador.negocio.FachadaBuscador;
-
-import com.sun.faces.config.ConfigureListener;
+import net.indexador.entidades.*;
+import net.indexador.negocio.*;
 
 public class IndexadorListener extends ConfigureListener {
 	/**

@@ -3,7 +3,7 @@ package net.indexador.persistencia;
 import javax.persistence.*;
 import javax.persistence.Query;
 
-import net.utilitarios.*;
+import net.utilitarios.comum.*;
 
 import org.apache.log4j.*;
 import org.hibernate.*;

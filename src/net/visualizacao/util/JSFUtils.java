@@ -1,18 +1,13 @@
 package net.visualizacao.util;
 
-import java.util.Map;
+import java.util.*;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.faces.application.*;
+import javax.faces.component.*;
+import javax.faces.context.*;
+import javax.servlet.http.*;
 
-import org.apache.log4j.Logger;
-
-import com.sun.faces.util.MessageFactory;
+import org.apache.log4j.*;
 
 public class JSFUtils {
   protected static final Logger logger = Logger.getLogger(JSFUtils.class);

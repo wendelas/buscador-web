@@ -5,9 +5,8 @@ import javax.faces.model.*;
 
 import net.indexador.entidades.*;
 import net.indexador.negocio.*;
-import net.utilitarios.*;
+import net.utilitarios.comum.*;
 
-import org.ajax4jsf.model.*;
 import org.apache.log4j.*;
 
 /**

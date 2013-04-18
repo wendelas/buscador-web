@@ -10,7 +10,6 @@ import javax.servlet.http.*;
 import net.visualizacao.util.*;
 
 import org.apache.log4j.*;
-import org.richfaces.component.html.*;
 
 public class BaseBean implements Serializable {
   private static final long serialVersionUID = -5895396595360064610L;

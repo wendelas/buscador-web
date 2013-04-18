@@ -1,10 +1,10 @@
 package net.indexador.filtro;
 
-import org.apache.log4j.Logger;
+import net.indexador.entidades.*;
+import net.indexador.negocio.*;
+import net.utilitarios.indexador.*;
 
-import net.indexador.entidades.FonteDados;
-import net.indexador.negocio.FachadaBuscador;
-import net.utilitarios.ExcecaoIndexador;
+import org.apache.log4j.*;
 
 public class ProcessoIndexador extends Thread {
 	private static final Logger logger = Logger

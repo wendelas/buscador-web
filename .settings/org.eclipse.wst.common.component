@@ -3,6 +3,9 @@
     <wb-module deploy-name="visualizador-de-dados">
         <wb-resource deploy-path="/" source-path="/web"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="utilitarios-java-0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/utilitarios-java/utilitarios-java">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/visualizador-de-dados/build/classes"/>
         <property name="context-root" value="search-web-beta"/>
     </wb-module>
