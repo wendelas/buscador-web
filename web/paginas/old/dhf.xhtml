@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+	<ui:define name="title">Sistema de Guarda de Volumes - Manutenção de DHF...</ui:define>
+	<ui:define name="body">
+		<h:form id="dhfForm">
+			<h1 class="cont">
+				<span>Cadastro de DHF</span>
+			</h1>
+			<rich:panel styleClass="viewContent">
+				<rich:panel id="informacoesGerais" styleClass="panelInterno">
+					<f:facet name="header">
+						<h:outputText>
+								DHF: Informações Gerais <i><font size="1">(Os campos
+									marcados com * são de preenchimento obrigatório. Por favor,
+									informe-os antes de prosseguir)</font> </i>
+						</h:outputText>
+					</f:facet>
+
+					<h:panelGrid columns="1" styleClass="fullWidthClass"
+						columnClasses="fullWidthClass">
+						<h:panelGrid rows="4" styleClass="fullWidthClass">
+							<h:panelGrid columns="2" styleClass="formClass fieldPadding"
+								columnClasses="duasColunasClass, duasColunasClass">
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+									<span>*</span>
+									<h:outputText value="Título" for="titulo"
+										styleClass="labelClass" />
+									<h:inputText id="titulo" label="Título"
+										value="#{dhfBean.voDHF.titulo}" required="true" maxlength="50"
+										styleClass="inputTextClass fullWidthClass" />
+								</h:panelGrid>
+								<h:panelGrid columns="2"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="Subtítulo" for="subtitulo"
+										styleClass="labelClass" />
+									<h:inputText id="subtitulo" label="Subtítulo"
+										value="#{dhfBean.voDHF.subtitulo}" maxlength="50"
+										styleClass="inputTextClass fullWidthClass" />
+								</h:panelGrid>
+								<h:panelGrid columns="2"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="Sugestão" for="sugestao"
+										styleClass="labelClass" />
+									<h:inputText id="sugestao" label="Sugestão"
+										value="#{dhfBean.voDHF.sugestao}" maxlength="100"
+										styleClass="inputTextClass fullWidthClass" />
+								</h:panelGrid>
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="Parent" for="tituloParent"
+										styleClass="labelClass" />
+									<h:inputText id="tituloParent" label="Parent"
+										value="#{dhfBean.voDHF.tituloParent}" maxlength="50"
+										styleClass="inputTextClass fullWidthClass" />
+									<a4j:region>
+										<rich:suggestionbox for="tituloParent" var="parent"
+											fetchValue="#{parent.titulo}" immediate="true" width="350"
+											height="150" suggestionAction="#{dhfBean.autocompleteParent}">
+											<f:facet name="nothingLabel">
+												<h:outputText value="Nenhum dhf parent encontrado" />
+											</f:facet>
+											<f:facet name="header">
+												<h:outputText value="Selecione o dhf parent" />
+											</f:facet>
+											<h:column>
+												<h:outputText rendered="${parent.parent.titulo != null}"
+													value="#{parent.parent.titulo} --> #{parent.titulo}" />
+												<h:outputText rendered="${parent.parent.titulo == null}"
+													value="#{parent.titulo}" />
+											</h:column>
+											<a4j:support ajaxSingle="true" event="onselect">
+												<f:setPropertyActionListener value="#{parent.id}"
+													target="#{dhfBean.voDHF.idParent}" />
+											</a4j:support>
+										</rich:suggestionbox>
+									</a4j:region>
+								</h:panelGrid>
+								<h:panelGrid columns="2"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="URL" for="url" styleClass="labelClass" />
+									<h:inputText id="url" label="URL" value="#{dhfBean.voDHF.url}"
+										maxlength="200" styleClass="inputTextClass fullWidthClass" />
+								</h:panelGrid>
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="Caminho Ícone" for="caminhoIcone"
+										styleClass="labelClass" />
+									<h:inputText id="caminhoIcone" label="Caminho Ícone"
+										value="#{dhfBean.voDHF.caminhoIcone}" maxlength="200"
+										styleClass="inputTextClass fullWidthClass" />
+								</h:panelGrid>
+							</h:panelGrid>
+							<h:panelGrid columns="3" styleClass="formClass fieldPadding"
+								columnClasses="tresColunasClass, tresColunasClass,tresColunasClass">
+								<h:panelGrid columns="3"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+									<span>*</span>
+									<h:outputLabel for="tipo" value="Tipo :"
+										styleClass="labelClass" />
+									<h:selectOneMenu id="tipo" label="Tipo"
+										styleClass="inputTextClass" required="true"
+										value="#{dhfBean.voDHF.tipo}">
+										<f:selectItem itemValue="" itemLabel="Escolha um item" />
+										<f:selectItem itemValue="FUNCAO" itemLabel="Função" />
+										<f:selectItem itemValue="HOLDER" itemLabel="Holder" />
+										<f:selectItem itemValue="MENU" itemLabel="Menu" />
+										<f:selectItem itemValue="SUBMENU" itemLabel="Submenu" />
+									</h:selectOneMenu>
+								</h:panelGrid>
+								<h:panelGrid columns="2"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="Ordem" for="ordem" styleClass="labelClass" />
+									<h:inputText id="ordem" label="Ordem"
+										value="#{dhfBean.voDHF.ordem}" maxlength="50"
+										styleClass="inputTextClass fullWidthClass" />
+								</h:panelGrid>
+								<h:panelGrid columns="2"
+									styleClass="noCellBorderClass fullWidthClass"
+									columnClasses="noStyleClass, fullWidthClass">
+									<h:outputText value="Situação" styleClass="labelClass" />
+									<h:selectBooleanCheckbox id="ativo"
+										value="#{dhfBean.voDHF.situacao}" converter="ConversorSimNao">Ativo</h:selectBooleanCheckbox>
+								</h:panelGrid>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+				</rich:panel>
+
+				<rich:spacer height="6" />
+
+				<rich:panel styleClass="panelInterno">
+					<h:panelGrid columns="3"
+						columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+						<h:commandButton value="Salvar" action="#{dhfBean.salvar}"
+							styleClass="buttonClass"
+							onclick="if (!confirm('Deseja salvar os dados do DHF?')) return false;" />
+						<h:outputText />
+						<h:commandButton value="Cancelar" action="pesquisarDHF"
+							immediate="true" styleClass="buttonClass" />
+					</h:panelGrid>
+				</rich:panel>
+
+			</rich:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

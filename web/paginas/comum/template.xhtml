@@ -1,0 +1,83 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<c:set var="ctx"
+	value="#{facesContext.externalContext.request.contextPath}" />
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<link href="${ctx}/paginas/comum/estilo/geral.css" type="text/css"
+	rel="stylesheet" />
+
+<script src="${ctx}/paginas/comum/scripts/global.js" type="text/javascript" />
+<script src="${ctx}/paginas/comum/scripts/formatacao.js" type="text/javascript" />
+<script src="${ctx}/paginas/comum/scripts/util.js" type="text/javascript" />
+
+<title>MetaBusca</title>
+
+</head>
+
+<body onload="javascript:focoNoPrimeiroItem();">
+	<a4j:form>
+		<f:loadBundle basename="net.visualizacao.apresentacao.mensagens"
+			var="msgs" />
+
+		<div id="header">
+			<f:view>
+				<rich:toolBar binding="#{baseBean.toolBar}" />
+			</f:view>
+		</div>
+
+		<rich:messages tooltip="true" showDetail="false" showSummary="true"
+			id="mensagens">
+			<f:facet name="errorMarker">
+				<h:graphicImage url="imagens/error.png" />
+			</f:facet>
+			<f:facet name="infoMarker">
+				<h:graphicImage url="imagens/info.png" />
+			</f:facet>
+		</rich:messages>
+
+		<rich:spacer height="6px" />
+
+		<div id="content">
+			<ui:insert name="body">Body</ui:insert>
+		</div>
+
+		<div id="footer"
+			style="height: 30px; width: 100%; position: fixed; bottom: 0px; z-index: 5; text-align: center">
+			<ui:insert name="rodape"></ui:insert>
+		</div>
+	</a4j:form>
+</body>
+
+<rich:modalPanel id="painelAguarde">
+	<h:panelGrid columns="1" styleClass="alignCenterClass">
+		<rich:spacer height="20px" />
+		<h:graphicImage url="imagens/ampulheta.png" />
+		<br />
+		<rich:separator height="2" lineType="dotted" />
+		<br />
+		<h:outputText value="Por favor, aguarde..." />
+	</h:panelGrid>
+</rich:modalPanel>
+
+<a4j:outputPanel ajaxRendered="true">
+	<h:form style="display:none;" prependId="false">
+		<h:inputHidden id="maximumSeverity"
+			value="#{facesContext.maximumSeverity.ordinal}" />
+		<h:outputText value="#{facesContext.maximumSeverity.ordinal}" />
+		<c:if test="#{facesContext.maximumSeverity.ordinal >= 0}">
+			<script type="text/javascript">
+					window.scrollTo(0, 0);
+				</script>
+		</c:if>
+	</h:form>
+</a4j:outputPanel>
+
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:#paginas#FonteDados.xhtml"
+  PATH="/paginas/FonteDados.xhtml" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#paginas#FonteDados.xhtml:0" NAME="item"
+   PATH="/paginas/FonteDados.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="sucesso::#paginas#Utilitario.xhtml"
+    NAME="output" PATH="/paginas/Utilitario.xhtml"
+    TARGET="rules:#paginas#Utilitario.xhtml" TITLE="sucesso" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="cancelar::#paginas#Utilitario.xhtml"
+    NAME="output1" PATH="/paginas/Utilitario.xhtml"
+    TARGET="rules:#paginas#Utilitario.xhtml" TITLE="cancelar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#paginas#Utilitario.xhtml"
+  PATH="/paginas/Utilitario.xhtml" SHAPE="256,177,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#paginas#Utilitario.xhtml:0" NAME="item"
+   PATH="/paginas/Utilitario.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="editar::#paginas#FonteDados.xhtml"
+    NAME="output" PATH="/paginas/FonteDados.xhtml"
+    TARGET="rules:#paginas#FonteDados.xhtml" TITLE="editar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#paginas#BuscaLivre.xhtml"
+  PATH="/paginas/BuscaLivre.xhtml" SHAPE="32,273,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#paginas#BuscaLivre.xhtml:0" NAME="item"
+   PATH="/paginas/BuscaLivre.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="detalhar::#paginas#DetalheDocumento.xhtml"
+    NAME="output" PATH="/paginas/DetalheDocumento.xhtml"
+    TARGET="rules:#paginas#DetalheDocumento.xhtml" TITLE="detalhar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#paginas#DetalheDocumento.xhtml"
+  PATH="/paginas/DetalheDocumento.xhtml" SHAPE="240,289,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#paginas#DetalheDocumento.xhtml:0" NAME="item"
+   PATH="/paginas/DetalheDocumento.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="consultar::#paginas#BuscaLivre.xhtml"
+    NAME="output" PATH="/paginas/BuscaLivre.xhtml"
+    TARGET="rules:#paginas#BuscaLivre.xhtml" TITLE="consultar" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+</PROCESS>

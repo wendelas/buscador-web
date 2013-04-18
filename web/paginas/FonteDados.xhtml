@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" template="comum/template.xhtml">
+
+	<ui:define name="body">
+		<rich:panel header="Fonte de Dados"
+			style="margin-left: 25%; margin-right: 25%;" columns="1">
+
+			<h:inputHidden value="#{fonteDadosBean.fonteDados.password}"
+				rendered="#{not empty fonteDadosBean.fonteDados.password}" />
+
+			<rich:panel>
+				<h:outputLabel value="#{fonteDadosBean.mensagemFonteDados}"
+					escape="false" />
+			</rich:panel>
+
+			<rich:spacer height="6px" />
+
+			<rich:panel>
+				<h:panelGrid columns="4" styleClass="fullWidthClass"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Nome:" styleClass="fullWidthClass" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.nome}"
+						styleClass="fullWidthClass" />
+					<h:graphicImage id="ajuda_nome" url="imagens/question.png"
+						style="border:none;" />
+					<rich:toolTip value="#{fonteDadosBean.mensagemNomeFonte}"
+						for="ajuda_nome" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="4" styleClass="fullWidthClass"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Query:" />
+					<h:inputTextarea value="#{fonteDadosBean.fonteDados.query}"
+						styleClass="fullWidthClass" cols="65" rows="5" />
+					<h:graphicImage id="ajuda_query" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip value="#{fonteDadosBean.mensagemQuery}"
+						for="ajuda_query" />
+				</h:panelGrid>
+
+				<h:panelGrid styleClass="fullWidthClass" columns="4"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="URL:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.url}"
+						styleClass="fullWidthClass" />
+					<h:graphicImage id="ajuda_url" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip
+						value="Url para acessar o banco. Deve estar no formato jdbc:banco://nome_servidor:porta/databasename."
+						for="ajuda_url" />
+				</h:panelGrid>
+
+				<h:panelGrid styleClass="fullWidthClass" columns="4"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="User:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.usuario}" />
+					<h:graphicImage id="ajuda_user" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip
+						value="Usuário com acesso às tabelas que fazem parte da query. Altamente recomendável que seja um usuário para somente leitura."
+						for="ajuda_user" />
+				</h:panelGrid>
+
+				<h:panelGrid styleClass="fullWidthClass" columns="4"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Password:" />
+					<h:inputSecret value="#{fonteDadosBean.fonteDados.password}"
+						rendered="#{empty fonteDadosBean.fonteDados.password}" />
+					<h:outputLabel value="*********"
+						rendered="#{not empty fonteDadosBean.fonteDados.password}" />
+					<h:graphicImage id="ajuda_password" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip
+						value="Senha para acessar o banco de dados. Ainda não faz alteração de senha."
+						for="ajuda_password" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="4" styleClass="fullWidthClass"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Nome do driver JDBC:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.nomeDriver}"
+						styleClass="fullWidthClass" />
+					<h:graphicImage id="ajuda_nomedriver" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip value="#{fonteDadosBean.mensagemAjudaNomeDriver}"
+						for="ajuda_nomedriver" />
+				</h:panelGrid>
+
+				<h:panelGrid styleClass="fullWidthClass" columns="4"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Data Source:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.dataSource}"
+						styleClass="fullWidthClass" />
+					<h:graphicImage id="ajuda_datasource" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip
+						value="Conexão via DataSource (ainda não implementado, mas fique à vontade)"
+						for="ajuda_datasource" />
+
+				</h:panelGrid>
+			</rich:panel>
+
+			<rich:spacer height="6px" />
+
+			<rich:panel>
+				<h:panelGrid columns="4"
+					columnClasses="quatroColunasClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Diretório de documentos:" />
+					<h:inputText value="#{fonteDadosBean.fonteDados.diretorio}"
+						styleClass="fullWidthClass" />
+					<h:graphicImage id="ajuda_dir_doc" url="imagens/question.png"
+						style="border: none" />
+					<rich:toolTip
+						value="Diretório contendo documentos que você pretende indexar"
+						for="ajuda_dir_doc" />
+				</h:panelGrid>
+			</rich:panel>
+
+			<rich:spacer height="6px" />
+
+			<rich:panel>
+				<h:commandButton value="Visualizar" reRender="tabelaMetaData"
+					action="#{fonteDadosBean.carregarDadosVisualizacao}"
+					onclick="Richfaces.showModalPanel('painelAguarde');"
+					oncomplete="Richfaces.hideModalPanel('painelAguarde');" />
+				<h:commandButton value="Salvar" action="#{fonteDadosBean.salvar}" />
+				<h:commandButton value="Cancelar" type="submit" action="cancelar" />
+			</rich:panel>
+		</rich:panel>
+
+		<rich:spacer height="6px" />
+
+		<rich:panel styleClass="panelInterno" header="Amostra de dados"
+			rendered="#{not empty fonteDadosBean.metaDados.tuplas}">
+			<h:panelGrid styleClass="fullWidthClass" columns="2">
+				<rich:dataTable id="tabelaMetaData" width="100%" rows="20"
+					value="#{fonteDadosBean.metaDados.tuplas}" var="tupla"
+					columnClasses="noWrapClass,noWrapClass,noWrapClass">
+					<c:set var="indice" value="-1" />
+					<c:forEach items="#{fonteDadosBean.metaDados.colunas}" var="coluna">
+						<c:set var="indice" value="#{indice + 1}" />
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{coluna}" />
+							</f:facet>
+							<h:outputText value="#{tupla[indice]}" />
+						</rich:column>
+					</c:forEach>
+				</rich:dataTable>
+			</h:panelGrid>
+		</rich:panel>
+
+
+
+	</ui:define>
+</ui:composition>

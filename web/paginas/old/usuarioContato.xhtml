@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<ui:composition
+	template="/common/decorators/arearestrita/template.xhtml">
+		<ui:define name="title">Sistema de Gestão de Volumes - Manutenção de Usuário Contato...</ui:define>
+		<ui:define name="body">
+			<h:form id="usuarioForm" >				
+				<h:inputHidden id="idPessoaTemp" value="#{usuarioContatoBean.voParecer.idPessoaTemp}" />							
+				<h1 class="cont"><span>Cadastro de Usuário Contato</span></h1>
+				<rich:panel styleClass="viewContent" >	  
+					<rich:panel id="informacoesGerais" styleClass="panelInterno">
+						<f:facet name="header">
+							<h:outputText>
+								Usuário Contato: Informações Gerais
+							</h:outputText>	
+						</f:facet>
+					
+						<h:panelGrid columns="1" styleClass="fullWidthClass" columnClasses="fullWidthClass">
+							<h:panelGrid rows="4" styleClass="fullWidthClass">
+								<h:panelGrid columns="2" styleClass="formClass fieldPadding" columnClasses="duasColunasClass, duasColunasClass">
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="Código :" for="codigo" styleClass="labelClass"/>
+										<h:outputText value="#{usuarioContatoBean.voUsuario.codigo}" />										
+									</h:panelGrid>																		
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="Nome :" for="nome" styleClass="labelClass"/>
+										<h:outputText value="#{usuarioContatoBean.voUsuario.nome}" />										
+									</h:panelGrid>																		
+								</h:panelGrid>															
+								<h:panelGrid columns="3" styleClass="formClass fieldPadding" columnClasses="tresColunasClass, tresColunasClass, tresColunasClass">
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="Tipo de perfil :"  styleClass="labelClass"/>
+										<h:outputText value="#{usuarioContatoBean.voUsuario.tipoPerfil.descricao}" />										
+									</h:panelGrid>									
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputText value="E-mail :" for="email" styleClass="labelClass"/>
+										<h:outputText value="#{usuarioContatoBean.voUsuario.email}" />
+									</h:panelGrid>									
+									<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+										<span>*</span>										
+										<h:outputText value="Situação :"  styleClass="labelClass"/>
+										<h:outputText value="#{usuarioContatoBean.voUsuario.situacao ? 'Ativo' : 'Inativo'}" />																				
+									</h:panelGrid>									
+								</h:panelGrid>																																	
+								<h:panelGrid columns="1" styleClass="formClass" columnClasses="fullWidthClass">
+									<h:panelGrid columns="2" styleClass="noCellBorderClass fullWidthClass" columnClasses="noStyleClass, fullWidthClass">
+										<h:outputLabel value="Grupos:" styleClass="labelClass" />
+										<rich:pickList value="#{usuarioContatoBean.voUsuario.grupos}" sourceListWidth="450px" targetListWidth="450px" listsHeight="200px" showButtonsLabel="false">										
+											<c:forEach items="#{usuarioContatoBean.grupos}" var="grupo">
+												<f:selectItem itemValue="#{grupo.id}" itemLabel="${grupo.descricao}" />
+											</c:forEach>
+										</rich:pickList>
+									</h:panelGrid>										
+								</h:panelGrid>																																					
+							</h:panelGrid>
+						</h:panelGrid>
+					</rich:panel>
+					
+					<rich:spacer height="6"/>
+					
+					<rich:panel id="despachoPanel" styleClass="panelInterno">
+						<f:facet name="header">
+							<h:outputText>
+								Despacho: Aprovação/Reprovação de Usuário
+							</h:outputText>	
+						</f:facet>
+						<h:panelGrid columns="1" styleClass="fullWidthClass" columnClasses="fullWidthClass">
+							<h:panelGrid rows="4" styleClass="fullWidthClass">
+								<h:panelGrid columns="1" styleClass="formClass"
+										columnClasses="noStyleClass, noStyleClass, fullWidthClass">
+									<h:panelGrid columns="3"
+										styleClass="noCellBorderClass fullWidthClass"
+										columnClasses="obrigatorio,noStyleClass, fullWidthClass">
+										<span>*</span>
+										<h:outputLabel for="despacho" value="Despacho:"
+											styleClass="labelClass" />
+										<h:inputTextarea id="despacho" required="true"
+											value="#{usuarioContatoBean.voParecer.despachoResponsavel}"
+											style="width:50%"
+											styleClass="inputTextClass" rows="10" cols="50">
+											<f:validateLength minimum="3" maximum="4000" />
+										</h:inputTextarea>
+									</h:panelGrid>
+								</h:panelGrid>								
+							</h:panelGrid>
+						</h:panelGrid>
+					</rich:panel>
+						
+						<rich:spacer height="6"/>
+					
+					<!-- ======================================================================================================= -->
+					<!-- Vínculos ============================================================== -->			  
+					<rich:simpleTogglePanel id="vinculosPessoas" styleClass="panelInterno" >
+						<f:facet name="header">
+							<h:outputText value="Vínculos"/>
+						</f:facet>
+						<a4j:outputPanel id="vinculosPanel" layout="block">
+							<ui:include src="vinculos.xhtml"/>					
+						</a4j:outputPanel>
+					</rich:simpleTogglePanel>	
+					<rich:spacer height="6"/>
+					
+					<!-- ======================================================================================================= -->
+					<!-- Permissões ============================================================== -->			  
+					<rich:simpleTogglePanel id="permissoesDHF" styleClass="panelInterno" >
+						<f:facet name="header">
+							<h:outputText value="Permissões"/>
+						</f:facet>
+						<a4j:outputPanel id="permissoesPanel" layout="block">
+							<ui:include src="permissoes.xhtml"/>					
+						</a4j:outputPanel>
+					</rich:simpleTogglePanel>					
+				
+				<rich:panel styleClass="panelInterno" rendered="#{usuarioContatoBean.exibeBotoes}">
+					<h:panelGrid columns="3" columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+						<a4j:commandButton value="Aprovar" reRender="messages"
+							action="#{usuarioContatoBean.aprovar}" styleClass="buttonClass"
+							onclick="if (!confirm('Deseja aprovar o cadastro do usuário?')) return false;"
+							oncomplete="if (!ajaxRequestContainsErrors()) {redirecionaCaixa('#{facesContext.externalContext.request.contextPath}');}" />
+						<h:outputText />
+						<a4j:commandButton value="Reprovar"
+							action="#{usuarioContatoBean.reprovar}" styleClass="buttonClass"
+							reRender="messages"
+							onclick="if (!confirm('Deseja reprovar o cadastro do usuário?')) return false;"
+							oncomplete="if (!ajaxRequestContainsErrors()) {redirecionaCaixa('#{facesContext.externalContext.request.contextPath}');}" />
+					</h:panelGrid>
+				</rich:panel>
+				
+			</rich:panel>
+		</h:form>	
+		</ui:define>
+	</ui:composition>
+</html>

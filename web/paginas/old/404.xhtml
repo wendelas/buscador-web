@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich" 
+	xml:lang="pt" lang="pt">
+	<ui:composition template="/common/decorators/template.xhtml">
+		<ui:define name="body">
+			<h1 class="cont"><span>Página não encontrada</span></h1>
+			<rich:panel styleClass="viewContent">
+				<div class="errorMessage">
+					A página que você requisitou não foi encontrada.<br/>
+					Por favor, verifique se você digitou o endereço corretamente.<br/>
+					
+					<br/><h:outputLink value="${ctx}/view/caixaentrada/caixaPessoal.faces">Voltar</h:outputLink> à página inicial.
+				</div>
+			</rich:panel>	
+		</ui:define>
+	</ui:composition>	
+</html>

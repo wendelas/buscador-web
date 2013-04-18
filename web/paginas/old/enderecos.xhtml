@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<rich:panel id="painelEnderecos" styleClass="panelInterno">
+		<f:facet name="header">
+			<h:outputText>Endereços:</h:outputText>
+		</f:facet>
+		<!-- Endereco: Lista =============================================================================== -->
+		<rich:dataTable id="enderecos" width="100%"
+			value="#{enderecoBean.itens}" var="ender" rowKeyVar="index"
+			rendered="#{not empty enderecoBean.itens.wrappedData}"
+			columnClasses="fieldPadding, fieldPadding, fieldPadding, noStyleClass">
+			<rich:column style="width:55%" sortBy="#{ender.logradouro}">
+				<f:facet name="header">
+					<h:outputText value="Endereço" />
+				</f:facet>
+				<a4j:commandLink id="editarEndLinkEnd"
+					action="#{enderecoBean.editar}" immediate="true"
+					oncomplete="Richfaces.showModalPanel('enderecoPanel'); return false;"
+					reRender="enderecoPanel, messagesEnderecosPanel">
+					<h:outputText value="#{ender.logradouro} - #{ender.complemento}" />
+				</a4j:commandLink>	
+			</rich:column>
+			<rich:column style="width:23%" sortBy="#{ender.descricaoTipo}">
+				<f:facet name="header">
+					<h:outputText value="Tipo" />
+				</f:facet>
+				<a4j:commandLink id="editarEndLinkTipo"
+					action="#{enderecoBean.editar}" immediate="true"
+					oncomplete="Richfaces.showModalPanel('enderecoPanel'); return false;"
+					reRender="enderecoPanel, messagesEnderecosPanel">
+					<h:outputText value="#{ender.descricaoTipo}" />
+				</a4j:commandLink>				
+			</rich:column>	
+			<rich:column style="width:10%" sortBy="#{ender.principal}">
+				<f:facet name="header">
+					<h:outputText value="Principal" />
+				</f:facet>
+					<a4j:commandLink id="editarEndLinkPrin"
+						action="#{enderecoBean.editar}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('enderecoPanel'); return false;"
+						reRender="enderecoPanel, messagesEnderecosPanel">
+						<h:outputText value="#{ender.principal ? 'Sim' : 'Não'}" />
+					</a4j:commandLink>				
+			</rich:column>				
+			<rich:column style="width:10%" sortBy="#{ender.situacao}">
+				<f:facet name="header">
+					<h:outputText value="Situação" />
+				</f:facet>
+					<a4j:commandLink id="editarEndLinkSit"
+						action="#{enderecoBean.editar}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('enderecoPanel'); return false;"
+						reRender="enderecoPanel, messagesEnderecosPanel">
+						<h:outputText value="#{ender.situacao ? 'Ativo' : 'Inativo'}" />
+					</a4j:commandLink>				
+			</rich:column>					
+			<rich:column style="width:2%" rendered="#{pessoaBean.permiteEdicao}">
+				<f:facet name="header">
+					<a4j:commandLink id="novoEndLink"
+						action="#{enderecoBean.novo}" immediate="true"
+						oncomplete="Richfaces.showModalPanel('enderecoPanel'); return false;"
+						reRender="enderecoPanel">
+						<h:graphicImage url="/common/images/bt_incluir.gif"
+							style="border: none" title="Novo"/>
+					</a4j:commandLink>
+				</f:facet>
+				<a4j:commandLink id="removerEndLink"
+					action="#{enderecoBean.remover}"
+					reRender="painelEnderecos, messagesEnderecosPanel"
+					onclick="if (!confirm('Deseja excluir o endereço?')) return false;">
+					<h:graphicImage url="/common/images/bt_excluir.gif"
+						style="border: none" title="Excluir" />
+				</a4j:commandLink>
+			</rich:column>			
+		</rich:dataTable>
+		<h:outputText rendered="#{empty enderecoBean.itens.wrappedData}">
+			<p class="note"><i><b>Endereços:</b> Não há endereços
+			associados a essa pessoa. Clique <b> <a4j:commandLink
+				id="novoEnderecoLink" action="#{enderecoBean.novo}" value="aqui"
+				immediate="true"
+				oncomplete="Richfaces.showModalPanel('enderecoPanel'); return false;"
+				reRender="enderecoPanel" /> </b> para criar e associar um novo endereço.
+			</i></p>
+		</h:outputText>
+	</rich:panel>
+</ui:composition>

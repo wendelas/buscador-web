@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:metrologia="http://cni.org.br/metrologia" 
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<!-- Movimento: Formulario ========================================================================== -->			  
+	<rich:modalPanel id="movimentoPanel" width="600" height="350">
+		<f:facet name="header">
+			<h:panelGroup>
+				<h:outputText value="Movimentação Financeira: Formulário..."></h:outputText>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="controls">
+			<h:panelGroup>
+				<h:graphicImage value="/common/images/close.png" style="cursor:pointer" onclick="Richfaces.hideModalPanel('movimentoPanel')" />
+			</h:panelGroup>
+		</f:facet>
+		<a4j:outputPanel id="messagesMovimentoPanel">
+			<t:messages id="mensagensMovimentos" infoClass="info"
+				infoStyle="color: green;" errorClass="erro" errorStyle="color: red;"
+				layout="table" />
+		</a4j:outputPanel>		
+		<h:form id="movimentoForm">
+			<h:panelGrid rows="2" rendered="#{movimentoBean.item != null}" styleClass="fullWidthClass">
+				<h:panelGrid columns="2" styleClass="formClass" columnClasses="duasColunasClass, duasColunasClass">
+					<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+						<span>*</span>
+						<h:outputLabel value="Natureza:" for="naturezaConta" styleClass="labelClass"/>
+						<h:selectOneRadio id="naturezaConta" layout="lineDirection"
+							value="#{movimentoBean.item.naturezaConta}" label="Natureza"
+							valueChangeListener="#{movimentoBean.naturezaChanged}">
+							<c:forEach items="#{movimentoBean.naturezasContas}"
+								var="nat">
+								<f:selectItem itemValue="#{nat}" itemLabel="#{nat.descricao}" />
+							</c:forEach>
+							<a4j:support event="onclick" reRender="conta" onsubmit="" />
+						</h:selectOneRadio>	
+					</h:panelGrid>	
+					<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+						<span>*</span>
+						<h:outputLabel value="Conta:" for="conta" styleClass="labelClass"/>
+						<h:selectOneMenu value="#{movimentoBean.item.idConta}"
+							valueChangeListener="#{movimentoBean.contaChanged}"
+							id="conta" styleClass="inputTextClass fullWidthClass">
+							<f:selectItem itemValue="0" itemLabel="Escolha um item" />
+							<c:forEach items="#{movimentoBean.contas}" var="conta">
+								<f:selectItem itemValue="#{conta.id}"
+									itemLabel="#{conta.descricao}" />
+							</c:forEach>
+						</h:selectOneMenu>
+					</h:panelGrid>									
+					<h:panelGrid columns="3" styleClass="noCellBorderClass fullWidthClass" columnClasses="obrigatorio, noStyleClass, fullWidthClass">
+						<span >*</span>
+						<h:outputLabel for="dataMovimento" value="Data:"  styleClass="labelClass"/>
+						<rich:calendar id="dataMovimento"
+							value="#{movimentoBean.item.dataMovimento}"
+							datePattern="dd/MM/yyyy" showWeeksBar="false"
+							inputClass="inputTextClass">
+						</rich:calendar>
+					</h:panelGrid>	
+					<h:panelGrid columns="2" styleClass="noCellBorderClass fullWidthClass" columnClasses="noStyleClass, fullWidthClass">
+						<h:outputLabel for="valorMovimento" value="Valor:"  styleClass="labelClass"/>
+						<h:inputText value="#{movimentoBean.item.valorMovimento}"
+							id="valorMovimento"
+							onkeypress="somenteNumeros(event);FormataValor(this,11,event)"
+							onblur="formataValorBlur(this)" size="11" maxlength="10"
+							styleClass="inputTextClass fullWidthClass">
+							<f:converter converterId="MoedaConverter" />
+							<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+						</h:inputText>
+					</h:panelGrid>		
+				</h:panelGrid>	
+			</h:panelGrid>
+			<rich:spacer height="3"/>
+			<rich:separator height="2" lineType="dotted"/>
+			<h:panelGrid columns="3" columnClasses="noStyleClass, fullWidthClass, noStyleClass">
+				<a4j:commandButton rendered="#{pessoaBean.permiteEdicao}" id="salvarMovimento" value="Salvar" action="#{movimentoBean.salvar}" reRender="painelMovimento, messagesMovimentoPanel"  oncomplete="if (!ajaxRequestContainsErrors()) {Richfaces.hideModalPanel('movimentoPanel');}" style="margin-top: 5px" styleClass="buttonClass"/> <h:outputText/>
+				<h:commandButton value="Cancelar" onclick="Richfaces.hideModalPanel('movimentoPanel'); return false;" style="margin-top: 5px" styleClass="buttonClass"/>
+			</h:panelGrid>
+		</h:form>
+	</rich:modalPanel>	
+</ui:composition>
