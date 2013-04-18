@@ -19,11 +19,8 @@
 			<artifactId>utilitarios-java</artifactId>
 			<version>0.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.1.7</version>
-		</dependency>
+		<!-- <dependency> <groupId>com.sun.faces</groupId> <artifactId>jsf-api</artifactId> 
+			<version>2.1.7</version> </dependency> -->
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
@@ -79,21 +76,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.myfaces.core</groupId>
-			<artifactId>myfaces-api</artifactId>
-			<version>2.1.7</version>
+			<groupId>javax.faces</groupId>
+			<artifactId>javax.faces-api</artifactId>
+			<version>2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.myfaces.core</groupId>
-			<artifactId>myfaces-impl</artifactId>
-			<version>2.0.1</version>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+			<version>2.1.17</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.myfaces.shared</groupId>
-			<artifactId>myfaces-shared-impl</artifactId>
-			<version>4.0.2</version>
-		</dependency>
-
 
 		<!--<dependency> <groupId>org.richfaces.ui</groupId> <artifactId>richfaces-ui</artifactId> 
 			<version>3.3.3.Final</version> </dependency> <dependency> <groupId>org.richfaces.framework</groupId> 
@@ -156,11 +147,6 @@
 			<url>http://repository.jboss.com/maven2</url>
 		</repository>
 		<repository>
-			<id>guice-maven</id>
-			<name>guice maven</name>
-			<url>http://guice-maven.googlecode.com/svn/trunk</url>
-		</repository>
-		<repository>
 			<id>java.net.m2</id>
 			<url>http://download.java.net/maven/2</url>
 		</repository>
@@ -168,6 +154,12 @@
 			<id>java.net.glassfish.m2</id>
 			<url>http://download.java.net/maven/glassfish</url>
 		</repository>
+		<repository>
+			<id>jvnet-nexus-releases</id>
+			<name>jvnet-nexus-releases</name>
+			<url>https://maven.java.net/content/repositories/releases/</url>
+		</repository>
+
 	</repositories>
 
 </project>
