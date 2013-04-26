@@ -1,23 +1,30 @@
 package net.visualizacao.apresentacao;
 
-import java.io.*;
-import java.math.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletResponse;
 
-import net.indexador.entidades.*;
-import net.indexador.negocio.*;
-import net.utilitarios.comum.*;
-import net.utilitarios.indexador.*;
-import net.visualizacao.util.*;
+import net.indexador.entidades.FonteDados;
+import net.indexador.entidades.MetaDado;
+import net.indexador.negocio.FachadaBuscador;
+import net.visualizacao.util.JSFUtils;
+import net.visualizacao.util.StringUtils;
+import net.visualizacao.util.UtilBusca;
 
-import org.apache.commons.io.*;
-import org.apache.lucene.document.*;
-import org.apache.lucene.search.*;
+import org.apache.commons.io.IOUtils;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 
-@KeepAlive
 public class BuscaLivreBean extends BaseBean {
   private static final long serialVersionUID = -7508553590263034662L;
   private String consulta;

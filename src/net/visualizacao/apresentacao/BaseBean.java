@@ -1,15 +1,19 @@
 package net.visualizacao.apresentacao;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collection;
 
-import javax.faces.component.*;
-import javax.faces.context.*;
-import javax.servlet.http.*;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import net.visualizacao.util.*;
+import net.visualizacao.util.JSFUtils;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 
 public class BaseBean implements Serializable {
   private static final long serialVersionUID = -5895396595360064610L;
@@ -17,7 +21,7 @@ public class BaseBean implements Serializable {
   protected static final String MAPEAMENTO_SUCESSO = "sucesso";
   protected static final String MSG_SUCESSO = "mensagem.sucesso";
   protected static final String MSG_ERRO = "erro.generico";
-  private HtmlToolBar toolBar;
+  //  private HtmlToolBar toolBar;
   private Collection<String> camposSelecionados;
 
   protected final FacesContext getFacesContext() {
@@ -77,54 +81,6 @@ public class BaseBean implements Serializable {
   }
 
   protected void inicializa() {
-  }
-
-  public HtmlToolBar getToolBar() {
-    //FIXME Gerar codigo dinamico
-    toolBar = new HtmlToolBar();
-    HtmlDropDownMenu menu = new HtmlDropDownMenu();
-    menu.setValue("Opções");
-    //
-    HtmlMenuItem menuItem = null;
-    //
-    menuItem = new HtmlMenuItem();
-    menuItem.setValue("Busca Livre");
-    menuItem.setOnclick("document.location.href='BuscaLivre.faces'");
-    menuItem.setSubmitMode("none");
-    menu.getChildren().add(menuItem);
-    //
-    menuItem = new HtmlMenuItem();
-    menuItem.setValue("Frequência dos Termos");
-    menuItem.setOnclick("document.location.href='FrequenciaDosTermos.faces'");
-    menuItem.setSubmitMode("none");
-    menu.getChildren().add(menuItem);
-    //
-    menuItem = new HtmlMenuItem();
-    menuItem.setValue("Documentos Similares");
-    menuItem.setOnclick("document.location.href='Similaridade.faces'");
-    menuItem.setSubmitMode("none");
-    menu.getChildren().add(menuItem);
-    //
-    toolBar.getChildren().add(menu);
-    //
-    HtmlDropDownMenu utilitarios = new HtmlDropDownMenu();
-    utilitarios.setValue("Configuração");
-    //
-    HtmlMenuItem menuReindexar = null;
-    //
-    menuReindexar = new HtmlMenuItem();
-    menuReindexar.setValue("Utilitário");
-    menuReindexar.setOnclick("document.location.href='Utilitario.faces'");
-    menuReindexar.setSubmitMode("none");
-    utilitarios.getChildren().add(menuReindexar);
-    //
-    toolBar.getChildren().add(utilitarios);
-    //
-    return toolBar;
-  }
-
-  public void setToolBar(HtmlToolBar toolBar) {
-    this.toolBar = toolBar;
   }
 
   protected final void errorMsg(String msg, Object... parametros) {

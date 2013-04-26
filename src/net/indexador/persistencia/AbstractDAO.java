@@ -1,12 +1,12 @@
 package net.indexador.persistencia;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import net.utilitarios.comum.*;
+import net.visualizacao.util.StringUtils;
 
-import org.apache.log4j.*;
-import org.hibernate.*;
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 public abstract class AbstractDAO {
   protected static final Logger logger = Logger.getLogger(AbstractDAO.class);

@@ -1,13 +1,12 @@
 package net.visualizacao.apresentacao;
 
-import java.util.*;
+import java.util.Collection;
 
-import net.indexador.entidades.*;
-import net.indexador.negocio.*;
+import net.indexador.entidades.FonteDados;
+import net.indexador.negocio.FachadaBuscador;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 
-@KeepAlive
 public class UtilitarioBean extends BaseBean {
   protected static final Logger logger = Logger.getLogger(UtilitarioBean.class);
   private static final long serialVersionUID = 5150692753297895526L;

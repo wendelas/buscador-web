@@ -1,21 +1,34 @@
 package net.indexador.negocio;
 
-import java.io.*;
-import java.sql.*;
+import java.io.File;
+import java.io.InputStream;
 import java.sql.Connection;
-import java.util.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
-import net.indexador.entidades.*;
-import net.utilitarios.comum.*;
-import net.utilitarios.indexador.*;
-import net.visualizacao.apresentacao.*;
+import net.indexador.entidades.FonteDados;
+import net.indexador.entidades.Indice;
+import net.indexador.entidades.MetaDado;
+import net.visualizacao.apresentacao.VOMetaDados;
+import net.visualizacao.util.ExcecaoIndexador;
+import net.visualizacao.util.Indexador;
+import net.visualizacao.util.StringUtils;
 
-import org.apache.log4j.*;
-import org.apache.tika.*;
-import org.jsoup.*;
-import org.jsoup.nodes.*;
+import org.apache.log4j.Logger;
+import org.apache.tika.Tika;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  * 

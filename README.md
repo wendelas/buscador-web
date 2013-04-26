@@ -8,3 +8,6 @@ Make the URLs self explanatory so that they can be more easily discoverable.
 Similarly to 7, make your service as discoverable as possible, both for SEO and social media.
 Your application should be clean, and get users started fast.
 Being playful is extremely important. If possible, make your application a game.
+
+
+Migrar para PrimeFaces

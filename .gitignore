@@ -4,6 +4,7 @@
 nbproject/private/
 target/
 build/
+
 ## generic files to ignore
 *~
 *.lock

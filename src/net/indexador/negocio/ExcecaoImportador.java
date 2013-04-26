@@ -6,8 +6,7 @@ package net.indexador.negocio;
  *
  */
 public class ExcecaoImportador extends Exception {
-
   public ExcecaoImportador(Exception e) {
-    super (e);
+    super(e);
   }
 }

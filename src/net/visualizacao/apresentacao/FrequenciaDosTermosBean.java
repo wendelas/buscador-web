@@ -1,16 +1,18 @@
 package net.visualizacao.apresentacao;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import net.indexador.entidades.*;
-import net.indexador.negocio.*;
-import net.utilitarios.indexador.*;
+import net.indexador.entidades.FonteDados;
+import net.indexador.negocio.FachadaBuscador;
+import net.visualizacao.util.FrequenciaDoTermo;
+import net.visualizacao.util.UtilBusca;
 
-import org.apache.log4j.*;
-import org.apache.lucene.index.*;
+import org.apache.log4j.Logger;
+import org.apache.lucene.index.IndexNotFoundException;
 
-@KeepAlive
 public class FrequenciaDosTermosBean extends BaseBean {
   private static final long serialVersionUID = 6837431655685273498L;
   protected static final Logger logger = Logger
