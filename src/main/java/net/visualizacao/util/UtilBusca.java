@@ -52,7 +52,7 @@ public class UtilBusca {
     }
   }
 
-  public synchronized void reopen() throws IOException {
+  public void reopen() throws IOException {
     diretorio = FSDirectory.open(new File(diretorioIndice));
     reader = IndexReader.open(diretorio);
     buscador = new IndexSearcher(reader);
@@ -79,8 +79,8 @@ public class UtilBusca {
     this.quantidadeLimiteRegistros = quantidadeLimiteDeAcordaos;
   }
 
-  public synchronized TopDocs busca(Collection<String> campos,
-      String argumentoDePesquisa) throws ParseException, IOException {
+  public TopDocs busca(Collection<String> campos, String argumentoDePesquisa)
+      throws ParseException, IOException {
     String[] arrCampos = new String[campos.size()];
     int i = 0;
     for (String campo : campos) {
@@ -89,7 +89,7 @@ public class UtilBusca {
     return busca(arrCampos, argumentoDePesquisa);
   }
 
-  public synchronized TopDocs busca(String[] campos, String argumentoDePesquisa)
+  public TopDocs busca(String[] campos, String argumentoDePesquisa)
       throws ParseException, IOException {
     //
     long time = System.currentTimeMillis();
@@ -110,7 +110,7 @@ public class UtilBusca {
     return hits;
   }
 
-  public synchronized void fecha() {
+  public void fecha() {
     try {
       diretorio.close();
     } catch (Exception e) {
@@ -128,8 +128,7 @@ public class UtilBusca {
     }
   }
 
-  public synchronized TopDocs buscaExata(String campo,
-      String argumentoDePesquisa) {
+  public TopDocs buscaExata(String campo, String argumentoDePesquisa) {
     try {
       Query query = new TermQuery(new Term(campo, argumentoDePesquisa));
       TopDocs hits = getBuscador().search(query, 100);
@@ -145,7 +144,7 @@ public class UtilBusca {
     return buscador;
   }
 
-  public synchronized Document doc(int docID) throws IOException {
+  public Document doc(int docID) throws IOException {
     Document doc = getBuscador().doc(docID);
     fecha();
     return doc;
@@ -177,7 +176,7 @@ public class UtilBusca {
   }
 
   // FIXME Desacoplar do Lucene (nao sei como).
-  public synchronized TopDocs processaSimilaridade(String campo, String[] termos)
+  public TopDocs processaSimilaridade(String campo, String[] termos)
       throws IOException {
     // An easier way might be to submit doc A as a query
     // (adding all words to the query as OR terms,
@@ -201,7 +200,7 @@ public class UtilBusca {
     return duracaoBusca;
   }
 
-  public synchronized TopDocs busca(Query query) throws IOException {
+  public TopDocs busca(Query query) throws IOException {
     TopDocs hits;
     try {
       long time = System.currentTimeMillis();
@@ -248,7 +247,7 @@ public class UtilBusca {
     }
   }
 
-  public synchronized TopDocs busca(String campo, String argumentoDePesquisa)
+  public TopDocs busca(String campo, String argumentoDePesquisa)
       throws ParseException, IOException {
     return busca(new String[] {campo}, argumentoDePesquisa);
   }
