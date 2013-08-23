@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import net.visualizacao.util.FrequenciaDoTermo;
 
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.store.FSDirectory;
 
 public class UtilFrequenciaDosTermos {
@@ -47,19 +46,18 @@ public class UtilFrequenciaDosTermos {
     IndexReader reader = null;
     try {
       reader = IndexReader.open(FSDirectory.open(new File(diretorioIndice)));
-      TermEnum enumeracao = reader.terms();
-      List<FrequenciaDoTermo> termList = new ArrayList<FrequenciaDoTermo>();
-      while (enumeracao.next()) {
-        if (enumeracao.docFreq() >= threshold.intValue()
-            && campos.contains(enumeracao.term().field())) {
-          FrequenciaDoTermo freq = new FrequenciaDoTermo(enumeracao.term()
-              .text(), enumeracao.docFreq());
-          termList.add(freq);
-        }
-      }
-      Collections.sort(termList);
-      Collections.reverse(termList);
-      return termList;
+      //TermEnum enumeracao = reader.terms();
+      //List<FrequenciaDoTermo> termList = new ArrayList<FrequenciaDoTermo>();
+      //while (enumeracao.next()) {
+      //if (enumeracao.docFreq() >= threshold.intValue()       && campos.contains(enumeracao.term().field())) {
+      //FrequenciaDoTermo freq = new FrequenciaDoTermo(enumeracao.term()    .text(), enumeracao.docFreq());
+      //termList.add(freq);
+      //}
+      //}
+      //Collections.sort(termList);
+      //Collections.reverse(termList);
+      //return termList;
+      return null;
     } finally {
       try {
         reader.close();

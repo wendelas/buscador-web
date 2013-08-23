@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpServletResponse;
 
 import net.indexador.entidades.FonteDados;
@@ -25,6 +26,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
+@ManagedBean
 public class BuscaLivreBean extends BaseBean {
   private static final long serialVersionUID = -7508553590263034662L;
   private String consulta;

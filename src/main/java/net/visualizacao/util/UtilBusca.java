@@ -11,19 +11,17 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Explanation.IDFExplanation;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Similarity;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
@@ -96,11 +94,11 @@ public class UtilBusca {
     argumentoDePesquisa = StringUtils.limpacaracter(argumentoDePesquisa);
     QueryParser analisador = null;
     if (campos.length == 1) {
-      analisador = new QueryParser(Version.LUCENE_36, campos[0],
-          new StandardAnalyzer(Version.LUCENE_36));
+      analisador = new QueryParser(Version.LUCENE_44, campos[0],
+          new StandardAnalyzer(Version.LUCENE_44));
     } else {
-      analisador = new MultiFieldQueryParser(Version.LUCENE_36, campos,
-          new StandardAnalyzer(Version.LUCENE_36));
+      analisador = new MultiFieldQueryParser(Version.LUCENE_44, campos,
+          new StandardAnalyzer(Version.LUCENE_44));
     }
     //    analisador.setDefaultOperator(Operator.AND);
     Query consulta = analisador.parse(argumentoDePesquisa);
@@ -118,11 +116,6 @@ public class UtilBusca {
     }
     try {
       reader.close();
-    } catch (IOException e) {
-      logger.error(e);
-    }
-    try {
-      buscador.close();
     } catch (IOException e) {
       logger.error(e);
     }
@@ -150,23 +143,20 @@ public class UtilBusca {
     return doc;
   }
 
-  public float getIdf(String termo, String campo) throws IOException {
-    Term term = new Term(campo, termo);
-    IDFExplanation explicacao = Similarity.getDefault().idfExplain(term,
-        buscador);
-    return explicacao.getIdf();
-  }
-
-  public double getTfIdf(String termo) {
-    return Math.sqrt(buscador.maxDoc());
-  }
-
+  //public float getIdf(String termo, String campo) throws IOException {
+  // Term term = new Term(campo, termo);
+  //IDFExplanation explicacao = Similarity.getDefault().idfExplain(term,        buscador);
+  //return explicacao.getIdf();
+  //}
+  //public double getTfIdf(String termo) {
+  // return Math.sqrt(buscador.maxDoc());
+  //}
   public static void main(String[] args) {
     try {
       UtilBusca buscador = new UtilBusca("");
       long time = System.currentTimeMillis();
       String query = "PERANTE AUTORIDADE POLICIAL";
-      TopDocs resultado = buscador.busca("*", query);
+      TopDocs resultado = null; //buscador.busca("*", query);
       long total = System.currentTimeMillis() - time;
       // System.out.println(new BigDecimal(total / 1000d));
       System.out.println(resultado.totalHits);
@@ -189,7 +179,6 @@ public class UtilBusca {
       // tQuery.setBoost(getIdf(termo));
       // FuzzyQuery fQuery = new FuzzyQuery(term, 0.8f);
       FuzzyQuery fQuery = new FuzzyQuery(term);
-      fQuery.setBoost(getIdf(termo, campo));
       query.add(fQuery, Occur.SHOULD);
     }
     TopDocs hits = getBuscador().search(query, quantidadeLimiteRegistros);
@@ -232,8 +221,8 @@ public class UtilBusca {
       if (hits.totalHits > 1) {
         buscador.reopen();
         Document doc = buscador.doc(hits.scoreDocs[0].doc);
-        List<Fieldable> fields = doc.getFields();
-        for (Fieldable f : fields) {
+        List<IndexableField> fields = doc.getFields();
+        for (IndexableField f : fields) {
           // if (f.name().contains(Constantes.FIM_DO_REGISTRO)) {
           // continue;
           // }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 
+import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -13,6 +14,7 @@ import net.visualizacao.util.JSFUtils;
 
 import org.apache.log4j.Logger;
 
+@ManagedBean
 public class BaseBean implements Serializable {
   private static final long serialVersionUID = -5895396595360064610L;
   protected static final Logger logger = Logger.getLogger(BaseBean.class);
@@ -77,9 +79,9 @@ public class BaseBean implements Serializable {
   public void infoMsg(String string, String string2) {
     // TODO Auto-generated method stub
   }
+
   public HttpServletResponse getResponse() {
     // TODO Auto-generated method stub
     return null;
   }
-
 }

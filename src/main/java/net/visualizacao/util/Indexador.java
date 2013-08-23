@@ -22,7 +22,6 @@ import org.apache.lucene.document.Field.TermVector;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
@@ -44,8 +43,8 @@ public class Indexador {
     }
     Directory d = new NIOFSDirectory(file);
     logger.info("Diretorio do indice: " + diretorioIndice);
-    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36, getStopWords());
-    IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36,
+    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+    IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
         analyzer);
     writer = new IndexWriter(d, config);
   }
@@ -170,7 +169,7 @@ public class Indexador {
             .replaceAll("_+", "_")).toLowerCase();
   }
 
-  public static void main(String[] args) throws IOException, ParseException {
+  public static void main(String[] args) throws IOException {
     String arquivo = "/Users/marcoreis/Documents/teste.txt";
     FileReader fileReader = new FileReader(arquivo);
     BufferedReader bufferedReader = new BufferedReader(fileReader);

@@ -6,17 +6,16 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich" template="comum/template.xhtml">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core" template="comum/template.xhtml">
 
 	<title>Busca Livre</title>
 
 	<ui:define name="body">
-		<rich:panel header="Busca Livre"
+		<p:panel header="Busca Livre"
 			style="margin-left: 4%; margin-right: 4%;">
 
-			<rich:panel>
+			<p:panel>
 				<h:panelGrid columns="2" styleClass="formClass">
 					<h:panelGrid columns="5"
 						columnClasses="noStyleClass, fullWidthClass, noStyleClass, alignRightClass, alignRighClass">
@@ -39,37 +38,37 @@
 
 					</h:panelGrid>
 				</h:panelGrid>
-			</rich:panel>
+			</p:panel>
 
-			<rich:spacer height="10px"
+			<p:spacer height="10px"
 				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
-			<rich:separator height="2" lineType="dotted"
+			<p:separator height="2" lineType="dotted"
 				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
-			<rich:spacer height="10px"
+			<p:spacer height="10px"
 				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
-			<rich:panel
+			<p:panel
 				rendered="#{empty buscaLivreBean.itens and not empty buscaLivreBean.consulta}">
 				<h:outputText
 					value="Nenhum documento encontrado para o argumento pesquisado" />
-			</rich:panel>
+			</p:panel>
 
-			<rich:panel rendered="#{not empty buscaLivreBean.itens}">
+			<p:panel rendered="#{not empty buscaLivreBean.itens}">
 				<h:panelGrid columns="1">
 					<h:outputText
 						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
 					<h:outputText
 						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}." />
 				</h:panelGrid>
-			</rich:panel>
+			</p:panel>
 
-			<rich:spacer height="10px"
+			<p:spacer height="10px"
 				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
-			<rich:panel rendered="#{not empty buscaLivreBean.itens}">
-				<rich:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
+			<p:panel rendered="#{not empty buscaLivreBean.itens}">
+				<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
 					var="item" rows="20">
-					<rich:column>
+					<p:column>
 						<f:facet name="header">
 							<h:outputText value="View" />
 						</f:facet>
@@ -77,22 +76,22 @@
 							<f:param value="#{item}" name="scoreDoc" />
 							<h:graphicImage value="imagens/view.png" />
 						</h:commandLink>
-					</rich:column>
-					<rich:column>
+					</p:column>
+					<p:column>
 						<f:facet name="header">
 							<h:outputText value="Conteúdo" />
 						</f:facet>
 						<h:outputText escape="false"
 							value="#{buscaLivreBean.mostraDados(item)}" />
-					</rich:column>
+					</p:column>
 					<f:facet name="footer">
-						<rich:datascroller />
+						<p:datascroller />
 					</f:facet>
 
-				</rich:dataTable>
+				</p:dataTable>
 
-			</rich:panel>
+			</p:panel>
 
-		</rich:panel>
+		</p:panel>
 	</ui:define>
 </ui:composition>
