@@ -1,5 +1,10 @@
+Personalização do ambiente
+Gravar histórico de buscas
+
+
 Speed is not only a feature -- it's a requirement.
-The application has to be useful instantaneously. Even if you are building a service which requires days of use before getting to the heart of its features, give the user something right away.
+The application has to be useful instantaneously. 
+Even if you are building a service which requires days of use before getting to the heart of its features, give the user something right away.
 The service must have a personality, with a unique style.
 Do one little thing very well. Less is more, specially at the beginning.
 The service should have APIs so that others can add more value to your service.
@@ -8,6 +13,3 @@ Make the URLs self explanatory so that they can be more easily discoverable.
 Similarly to 7, make your service as discoverable as possible, both for SEO and social media.
 Your application should be clean, and get users started fast.
 Being playful is extremely important. If possible, make your application a game.
-
-
-Migrar para PrimeFaces
