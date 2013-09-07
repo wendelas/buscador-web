@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.indexador.entidades.FonteDados;
 import net.indexador.entidades.MetaDado;
 import net.indexador.negocio.FachadaBuscador;
-import net.visualizacao.util.JSFUtils;
 import net.visualizacao.util.StringUtils;
 import net.visualizacao.util.UtilBusca;
 
@@ -88,7 +87,7 @@ public class BuscaLivreBean extends BaseBean {
       setItens(hits.scoreDocs);
       duracaoBusca = buscador.getDuracaoBusca();
     } catch (Exception e) {
-      errorMsg(Constantes.ERRO_BUSCA_LUCENE, e);
+      //errorMsg(Constantes.ERRO_BUSCA_LUCENE, e);
       logger.error(e);
     }
   }
@@ -122,7 +121,7 @@ public class BuscaLivreBean extends BaseBean {
   public String visualizarDetalhe() {
     try {
       // solucao tosca para recuperar o id do documento
-      String scoreDoc = JSFUtils.getParametro("scoreDoc");
+      String scoreDoc = null;//JSFUtils.getParametro("scoreDoc");
       Pattern p = Pattern.compile("doc.(\\d+).*");
       Matcher matcher = p.matcher(scoreDoc);
       if (matcher.find()) {
@@ -202,7 +201,7 @@ public class BuscaLivreBean extends BaseBean {
 
   public void download(String fileName) {
     try {
-      HttpServletResponse response = getResponse();
+      HttpServletResponse response = null;//getResponse();
       File arquivo = new File(fileName);
       response.addHeader("Content-Disposition:", "attachment; filename="
           + arquivo.getName());
@@ -211,10 +210,9 @@ public class BuscaLivreBean extends BaseBean {
       IOUtils.copy(input, out);
       out.flush();
       out.close();
-      getFacesContext().responseComplete();
+      //getFacesContext().responseComplete();
     } catch (Exception e) {
-      errorMsg("erro.generico",
-          "Nï¿½o foi possï¿½vel baixar o arquivo. Erro Java: " + e);
+      //errorMsg("erro.generico",     "Nï¿½o foi possï¿½vel baixar o arquivo. Erro Java: " + e);
       logger.error(e);
     }
   }

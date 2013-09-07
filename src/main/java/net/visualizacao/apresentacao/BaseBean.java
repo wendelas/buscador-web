@@ -1,87 +1,72 @@
 package net.visualizacao.apresentacao;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.ExternalContext;
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Model;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-
-import net.visualizacao.util.JSFUtils;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.primefaces.model.menu.DefaultMenuItem;
+import org.primefaces.model.menu.DefaultMenuModel;
+import org.primefaces.model.menu.DefaultSubMenu;
+import org.primefaces.model.menu.MenuModel;
 
-@ManagedBean
+@Model
 public class BaseBean implements Serializable {
   private static final long serialVersionUID = -5895396595360064610L;
   protected static final Logger logger = Logger.getLogger(BaseBean.class);
-  protected static final String MAPEAMENTO_SUCESSO = "sucesso";
-  protected static final String MSG_SUCESSO = "mensagem.sucesso";
-  protected static final String MSG_ERRO = "erro.generico";
-  //  private HtmlToolBar toolBar;
-  private Collection<String> camposSelecionados;
+  private FacesContext facesContext;
+  private MenuModel menu;
 
-  protected final FacesContext getFacesContext() {
-    return JSFUtils.getFacesContext();
+  public MenuModel getMenu() {
+    return menu;
   }
 
-  protected final UIViewRoot getViewRoot() {
-    return JSFUtils.getViewRoot();
+  @PostConstruct
+  public void inicializa() {
+    menu = new DefaultMenuModel();
+    //First submenu
+    DefaultSubMenu firstSubmenu = new DefaultSubMenu("Dynamic Submenu");
+    DefaultMenuItem item = new DefaultMenuItem("External");
+    item.setUrl("http://www.primefaces.org");
+    item.setIcon("ui-icon-home");
+    firstSubmenu.addElement(item);
+    menu.addElement(firstSubmenu);
+    //Second submenu
+    DefaultSubMenu secondSubmenu = new DefaultSubMenu("Dynamic Actions");
+    item = new DefaultMenuItem("Save");
+    item.setIcon("ui-icon-disk");
+    item.setCommand("#{menuBean.save}");
+    item.setUpdate("mensagens");
+    secondSubmenu.addElement(item);
+    item = new DefaultMenuItem("Delete");
+    item.setIcon("ui-icon-close");
+    item.setCommand("#{menuBean.delete}");
+    item.setAjax(false);
+    secondSubmenu.addElement(item);
+    item = new DefaultMenuItem("Redirect");
+    item.setIcon("ui-icon-search");
+    item.setCommand("#{menuBean.redirect}");
+    secondSubmenu.addElement(item);
+    menu.addElement(secondSubmenu);
   }
 
-  protected final ExternalContext getExternalContext() {
-    return JSFUtils.getExternalContext();
+  protected void infoMsg(String message, String detail) {
+    facesContext.addMessage(message, new FacesMessage(detail));
   }
 
-  protected final String getParametro(String nome) {
-    return JSFUtils.getParametro(nome);
-  }
-
-  protected final boolean possuiErros() {
-    return getFacesContext().getMessages("erro").hasNext();
-  }
-
-  protected final void redirecionaSemEnderecoBase(String url) {
-    try {
-      getExternalContext().redirect(url);
-    } catch (IOException e) {
-      logger.error("Erro ao redirecionar ", e);
-      throw new IllegalStateException("Erro ao redirecionar ", e);
-    }
-  }
-
-  protected void inicializa() {
-  }
-
-  public Collection<String> getCamposDisponiveis() {
-    return null;
-  }
-
-  public void setCamposSelecionados(Collection<String> camposSelecionados) {
-    this.camposSelecionados = camposSelecionados;
-  }
-
-  public Collection<String> getCamposSelecionados() {
-    return camposSelecionados;
-  }
-
-  public void errorMsg(String string, String string2) {
+  protected void errorMsg(String string, String string2) {
     // TODO Auto-generated method stub
   }
 
-  public void errorMsg(String string, Exception e) {
+  protected void errorMsg(String string, Throwable t) {
     // TODO Auto-generated method stub
   }
 
-  public void infoMsg(String string, String string2) {
-    // TODO Auto-generated method stub
-  }
-
-  public HttpServletResponse getResponse() {
-    // TODO Auto-generated method stub
-    return null;
+  public boolean possuiErros() {
+    return false;
   }
 }

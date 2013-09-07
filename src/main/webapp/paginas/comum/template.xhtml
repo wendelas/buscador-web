@@ -25,34 +25,39 @@
 </h:head>
 
 <h:body onload="javascript:focoNoPrimeiroItem();">
-	<f:loadBundle basename="net.visualizacao.apresentacao.mensagens"
-		var="msgs" />
+	
+	<f:view>
+		<h:form>
+			<div id="header">
+				<f:view>
+					<p:menu model="#{baseBean.menu}" />
+				</f:view>
+			</div>
 
-	<div id="header">
-		<f:view>
-		</f:view>
-	</div>
+			<p:messages tooltip="true" showDetail="false" showSummary="true"
+				id="mensagens">
+				<f:facet name="errorMarker">
+					<h:graphicImage url="imagens/error.png" />
+				</f:facet>
+				<f:facet name="infoMarker">
+					<h:graphicImage url="imagens/info.png" />
+				</f:facet>
+			</p:messages>
 
-	<p:messages tooltip="true" showDetail="false" showSummary="true"
-		id="mensagens">
-		<f:facet name="errorMarker">
-			<h:graphicImage url="imagens/error.png" />
-		</f:facet>
-		<f:facet name="infoMarker">
-			<h:graphicImage url="imagens/info.png" />
-		</f:facet>
-	</p:messages>
+			<p:spacer height="6px" />
 
-	<p:spacer height="6px" />
+			<div id="content">
+				<ui:insert name="body">Body</ui:insert>
+			</div>
 
-	<div id="content">
-		<ui:insert name="body">Body</ui:insert>
-	</div>
+			<div id="footer"
+				style="height: 30px; width: 100%; position: fixed; bottom: 0px; z-index: 5; text-align: center">
+				<ui:insert name="rodape"></ui:insert>
+			</div>
+		</h:form>
 
-	<div id="footer"
-		style="height: 30px; width: 100%; position: fixed; bottom: 0px; z-index: 5; text-align: center">
-		<ui:insert name="rodape"></ui:insert>
-	</div>
+	</f:view>
+	
 </h:body>
 
 </html>

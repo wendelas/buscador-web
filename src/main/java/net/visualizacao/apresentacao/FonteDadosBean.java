@@ -56,6 +56,7 @@ public class FonteDadosBean extends BaseBean {
     return "";
   }
 
+
   private boolean validar() {
     // somente diretorio de arquivos
     if (!StringUtils.vazia(getFonteDados().getDiretorio())) {

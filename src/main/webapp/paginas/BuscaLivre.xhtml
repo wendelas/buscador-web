@@ -15,30 +15,28 @@
 		<p:panel header="Busca Livre"
 			style="margin-left: 4%; margin-right: 4%;">
 
-			<p:panel>
-				<h:panelGrid columns="2" styleClass="formClass">
-					<h:panelGrid columns="5"
-						columnClasses="noStyleClass, fullWidthClass, noStyleClass, alignRightClass, alignRighClass">
-						<h:outputText value="Argumento:" />
-						<h:inputText value="#{buscaLivreBean.consulta}" size="100"
-							label="Consulta">
-							<f:validateLength minimum="1" />
-						</h:inputText>
+			<h:panelGrid columns="2" styleClass="formClass">
+				<h:panelGrid columns="5"
+					columnClasses="noStyleClass, fullWidthClass, noStyleClass, alignRightClass, alignRighClass">
+					<h:outputText value="Argumento:" />
+					<h:inputText value="#{buscaLivreBean.consulta}" size="100"
+						label="Consulta">
+						<f:validateLength minimum="1" />
+					</h:inputText>
 
-						<h:outputText value="Índice:" />
-						<h:selectOneMenu layout="lineDirection" label="Índice"
-							value="#{buscaLivreBean.idFonteDados}">
-							<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
-								<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
-							</c:forEach>
-						</h:selectOneMenu>
+					<h:outputText value="Índice:" />
+					<h:selectOneMenu layout="lineDirection" label="Índice"
+						value="#{buscaLivreBean.idFonteDados}">
+						<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
+							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+						</c:forEach>
+					</h:selectOneMenu>
 
-						<h:commandButton value="Consultar"
-							action="#{buscaLivreBean.consultar}" />
+					<h:commandButton value="Consultar"
+						action="#{buscaLivreBean.consultar}" />
 
-					</h:panelGrid>
 				</h:panelGrid>
-			</p:panel>
+			</h:panelGrid>
 
 			<p:spacer height="10px"
 				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
