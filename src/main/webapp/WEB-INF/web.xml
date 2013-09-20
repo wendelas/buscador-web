@@ -4,13 +4,22 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
 	<display-name>Search-web Beta</display-name>
-	
+
 	<context-param>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
 		<param-value>Development</param-value>
 	</context-param>
 
-	<!-- Welcome page -->
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>cupertino</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>facelets.SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
@@ -40,5 +49,11 @@
 		<url-pattern>*.xhtml</url-pattern>
 	</servlet-mapping>
 
+	<resource-ref>
+		<description>DB Connection</description>
+		<res-ref-name>jdbc/search-web</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
 
 </web-app>

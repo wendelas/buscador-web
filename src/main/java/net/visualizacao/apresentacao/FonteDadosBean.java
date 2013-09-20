@@ -1,21 +1,29 @@
 package net.visualizacao.apresentacao;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import net.indexador.entidades.AnexoFonteDados;
 import net.indexador.entidades.FonteDados;
 import net.indexador.negocio.ExcecaoImportador;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.StringUtils;
 
 import org.apache.log4j.Logger;
+import org.primefaces.event.FileUploadEvent;
 
 /**
  * 
  * @author marcoreis
  * 
  */
+@ManagedBean
+@ViewScoped
 public class FonteDadosBean extends BaseBean {
 	private static Logger logger = Logger.getLogger(FonteDadosBean.class);
 	private static final long serialVersionUID = -7768860623840391492L;
@@ -23,7 +31,7 @@ public class FonteDadosBean extends BaseBean {
 	private VOMetaDados metaDados;
 	private DataModel dadosVisualizacao;
 
-	//@PostConstruct
+	@PostConstruct
 	public void inicializa() {
 		fonteDados = new FonteDados();
 		fonteDados.setNome("tabela-???");
@@ -135,7 +143,7 @@ public class FonteDadosBean extends BaseBean {
 
 	public String novo() {
 		inicializa();
-		return "editar";
+		return "FonteDados.xhtml";
 	}
 
 	public String excluir() {
@@ -147,6 +155,18 @@ public class FonteDadosBean extends BaseBean {
 			errorMsg("erro.generico", e);
 		}
 		return "";
+	}
+
+	public void handleFileUpload(FileUploadEvent event) {
+		AnexoFonteDados anexo = new AnexoFonteDados();
+		anexo.setAnexo(event.getFile().getContents());
+		anexo.setFonteDados(getFonteDados());
+		FachadaBuscador.getInstancia().persistir(getFonteDados());
+		FachadaBuscador.getInstancia().persistir(anexo);
+		//
+		FacesMessage msg = new FacesMessage("Arquivo ", event.getFile()
+				.getFileName() + " enviado com sucesso.");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
 	}
 
 	public String getMensagemAjudaNomeDriver() {

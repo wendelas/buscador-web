@@ -5,65 +5,57 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
 
 <ui:composition template="comum/template.xhtml">
 	<ui:define name="body">
-		<rich:panel header="Utilitário de importação / indexação"
-			style="margin-left: 25%; margin-right: 25%;" columns="1">
 
-			<rich:panel styleClass="panelInterno">
-				<h:panelGrid styleClass="fullWidthClass" columns="5">
-					<h:outputText value="Fontes de dados:" />
-					<h:selectOneMenu layout="lineDirection" label="Fontes"
-						value="#{utilitarioBean.idFonteDados}">
-						<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
-							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
-						</c:forEach>
-					</h:selectOneMenu>
+		<p:panelGrid columns="3">
+			<f:facet name="header">Utilitário de importação / indexação</f:facet>
 
-					<h:commandLink action="#{fonteDadosBean.editar}">
-						<h:graphicImage url="imagens/edit.png" style="border: none" />
-						<f:setPropertyActionListener
-							target="#{fonteDadosBean.fonteDados.id}"
-							value="#{utilitarioBean.idFonteDados}" />
-					</h:commandLink>
+			<p:outputLabel value="Fontes de dados:" />
 
-					<h:commandLink action="#{fonteDadosBean.excluir}"
-						onclick="if (!confirm('Deseja excluir a configuração da fonte de dados (os dados não serão removidos)?')) return false;">
-						<h:graphicImage url="imagens/remove.png" style="border: none" />
-						<f:setPropertyActionListener
-							target="#{fonteDadosBean.fonteDados.id}"
-							value="#{utilitarioBean.idFonteDados}" />
-					</h:commandLink>
+			<p:outputLabel value="Nenhuma fonte cadastrada"
+				rendered="#{empty utilitarioBean.fontes}" />
 
-					<h:commandLink action="#{fonteDadosBean.novo}">
-						<h:graphicImage url="imagens/new.png" alt="Nova fonte de dados"
-							style="border: none" />
-					</h:commandLink>
-				</h:panelGrid>
-			</rich:panel>
+			<p:selectOneMenu layout="lineDirection" label="Fontes"
+				value="#{utilitarioBean.idFonteDados}"
+				rendered="#{not empty utilitarioBean.fontes}">
+				<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
+					<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+				</c:forEach>
+			</p:selectOneMenu>
 
-			<rich:spacer height="6px" />
+			<p:commandButton value="Indexar" type="submit"
+				action="#{utilitarioBean.indexar}" reRender="mensagens" />
 
-			<rich:panel styleClass="panelInterno">
-				<h:panelGrid columns="3">
-					<h:commandButton value="Indexar" type="submit"
-						action="#{utilitarioBean.indexar}"
-						onclick="Richfaces.showModalPanel('painelAguarde');"
-						oncomplete="Richfaces.hideModalPanel('painelAguarde');"
-						reRender="mensagens" />
-				</h:panelGrid>
-			</rich:panel>
-		</rich:panel>
+			<f:facet name="footer">
+				<p:commandLink action="#{fonteDadosBean.editar}">
+					<h:graphicImage url="imagens/edit.png" style="border: none" />
+					<f:setPropertyActionListener
+						target="#{fonteDadosBean.fonteDados.id}"
+						value="#{utilitarioBean.idFonteDados}" />
+				</p:commandLink>
 
+				<p:commandLink action="#{fonteDadosBean.excluir}"
+					onclick="if (!confirm('Deseja excluir a configuração da fonte de dados (os dados não serão removidos)?')) return false;">
+					<h:graphicImage url="imagens/remove.png" style="border: none" />
+					<f:setPropertyActionListener
+						target="#{fonteDadosBean.fonteDados.id}"
+						value="#{utilitarioBean.idFonteDados}" />
+				</p:commandLink>
 
+				<p:commandLink action="#{fonteDadosBean.novo}">
+					<h:graphicImage url="imagens/new.png" alt="Nova fonte de dados"
+						style="border: none" />
+				</p:commandLink>
+
+			</f:facet>
+
+		</p:panelGrid>
 	</ui:define>
-	
-	<a4j:log />
-	
+
 </ui:composition>
 </html>

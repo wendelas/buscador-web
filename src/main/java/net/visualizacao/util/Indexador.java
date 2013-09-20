@@ -18,7 +18,8 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.TermVector;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -26,14 +27,17 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
+import org.apache.tika.Tika;
 
 public class Indexador {
 	private static Logger logger = Logger.getLogger(Indexador.class);
 	private IndexWriter writer;
 	private String diretorioIndice;
-	int quantidadeArquivosIndexados = 0;
+	private int quantidadeArquivosIndexados = 0;
+	private FieldType tipoAnalisado = new FieldType();
+	private FieldType tipoNaoAnalisado = new FieldType();
 
-	//	private Tika tika;
+	private Tika tika;
 
 	public Indexador(String diretorioIndice) throws IOException {
 		this.diretorioIndice = diretorioIndice;
@@ -47,6 +51,16 @@ public class Indexador {
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
 				analyzer);
 		writer = new IndexWriter(d, config);
+		//
+		//
+		tipoNaoAnalisado.setIndexed(true);
+		tipoNaoAnalisado.setStored(true);
+		tipoAnalisado.setIndexed(true);
+		tipoAnalisado.setStored(true);
+		tipoAnalisado.setTokenized(true);
+		tipoAnalisado.setStoreTermVectors(true);
+		//
+
 	}
 
 	private Set<String> getStopWords() {
@@ -79,7 +93,7 @@ public class Indexador {
 					}
 					String textoExtraido = "";
 					InputStream in = new FileInputStream(arquivo);
-					//textoExtraido = getTika().parseToString(in);
+					// textoExtraido = getTika().parseToString(in);
 					if (indexaArquivo(arquivo, textoExtraido)) {
 						quantidadeArquivosIndexados++;
 					}
@@ -126,10 +140,10 @@ public class Indexador {
 				if (StringUtils.vazia(valor))
 					continue;
 				valor = StringUtils.limpacaracter(valor);
+				// TODO Verificar esse tipo: StringField.TYPE_STORED
+				// Verificar em http://lucene.apache.org/core/4_0_0/MIGRATE.html
 				documento
-						.add(new Field(coluna, valor, Field.Store.YES,
-								Field.Index.ANALYZED,
-								TermVector.WITH_POSITIONS_OFFSETS));
+						.add(new Field(coluna, valor, StringField.TYPE_STORED));
 			}
 			writer.addDocument(documento);
 			writer.commit();
@@ -149,19 +163,17 @@ public class Indexador {
 			Document documento = new Document();
 			documento.add(new Field("AnoUltimaModificacao", DateUtils
 					.getYear(new Date(arquivo.lastModified())),
-					Field.Store.YES, Field.Index.NOT_ANALYZED));
+					tipoNaoAnalisado));
 			documento.add(new Field("UltimaModificacao", DateUtils
 					.getDateFormatoAmericano(new Date(arquivo.lastModified())),
-					Field.Store.YES, Field.Index.NOT_ANALYZED));
+					tipoNaoAnalisado));
 			documento.add(new Field("DataIndexacaoLucene", DateUtils
-					.getDateFormatoAmericano(new Date()), Field.Store.YES,
-					Field.Index.NOT_ANALYZED));
+					.getDateFormatoAmericano(new Date()), tipoNaoAnalisado));
 			documento.add(new Field("ID", getNomeArquivoFormatado(arquivo),
-					Field.Store.YES, Field.Index.NOT_ANALYZED));
+					tipoAnalisado));
 			documento.add(new Field("Caminho", arquivo.getAbsolutePath(),
-					Field.Store.YES, Field.Index.NOT_ANALYZED));
-			documento.add(new Field("Texto", textoExtraido, Field.Store.YES,
-					Field.Index.ANALYZED, TermVector.WITH_POSITIONS_OFFSETS));
+					tipoAnalisado));
+			documento.add(new Field("Texto", textoExtraido, tipoAnalisado));
 			writer.addDocument(documento);
 			writer.commit();
 			return true;

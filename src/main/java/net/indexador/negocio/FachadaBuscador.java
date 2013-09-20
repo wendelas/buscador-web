@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
+import net.indexador.entidades.AnexoFonteDados;
 import net.indexador.entidades.FonteDados;
 import net.indexador.entidades.Indice;
 import net.indexador.entidades.MetaDado;
@@ -26,6 +25,7 @@ import net.visualizacao.util.Indexador;
 import net.visualizacao.util.StringUtils;
 
 import org.apache.log4j.Logger;
+import org.apache.tika.Tika;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -38,16 +38,10 @@ import org.jsoup.nodes.Document;
 public class FachadaBuscador {
 	private static final Logger logger = Logger
 			.getLogger(FachadaBuscador.class);
-	private EntityManagerFactory emf = Persistence
-			.createEntityManagerFactory("idx-pu");
 	private static FachadaBuscador instancia;
+	private Tika tika;
 
-	// private Tika tika;
-
-	public FachadaBuscador() {
-	}
-
-	public static synchronized FachadaBuscador getInstancia() {
+	public static FachadaBuscador getInstancia() {
 		if (instancia == null) {
 			instancia = new FachadaBuscador();
 		}
@@ -55,13 +49,13 @@ public class FachadaBuscador {
 	}
 
 	public void persistir(FonteDados fonteDados) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		try {
-			em.getTransaction().begin();
+//			em.getTransaction().begin();
 			FonteDados fd = fonteDados;
 			fd = em.merge(fonteDados);
 			em.persist(fd);
-			em.getTransaction().commit();
+//			em.getTransaction().commit();
 		} catch (Exception e) {
 			em.getTransaction().rollback();
 			logger.error(e);
@@ -71,7 +65,7 @@ public class FachadaBuscador {
 
 	@SuppressWarnings("unchecked")
 	public Collection<FonteDados> buscarFontes() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		List<FonteDados> lista = em.createQuery(
 				"select f from FonteDados f order by f.nome").getResultList();
 		return lista;
@@ -88,7 +82,7 @@ public class FachadaBuscador {
 	 */
 	// FIXME melhorar esse codigo
 	public int indexar(int idFonteDados) throws ExcecaoIndexador {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		FonteDados fonteDados = em.find(FonteDados.class, idFonteDados);
 		Indexador idx = null;
 		int qtdeItensIndexados = 0;
@@ -129,8 +123,8 @@ public class FachadaBuscador {
 						//
 						if (valor instanceof InputStream) {
 							try {
-								// texto = getTika().parseToString(
-								// (InputStream) query.getObject(i));
+								texto = getTika().parseToString(
+										(InputStream) query.getObject(i));
 							} catch (Exception e) {
 								// Nao eh doc/xls/pdf/etc...
 							}
@@ -177,7 +171,7 @@ public class FachadaBuscador {
 	}
 
 	private void removeMetadados(FonteDados fonteDados) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		for (MetaDado metadado : fonteDados.getMetadados()) {
 			try {
 				em.getTransaction().begin();
@@ -193,7 +187,7 @@ public class FachadaBuscador {
 	}
 
 	private void persistir(FonteDados fonteDados, String coluna) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		try {
 			String hql = "select m from MetaDado m where ucase(m.campo) like '"
 					+ coluna + "' and m.fonte.id = " + fonteDados.getId();
@@ -265,13 +259,13 @@ public class FachadaBuscador {
 	}
 
 	public FonteDados buscarFontePeloId(Integer id) {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		return em.find(FonteDados.class, id);
 	}
 
 	public void excluirFonteDados(Integer id) {
 		try {
-			EntityManager em = emf.createEntityManager();
+			EntityManager em = JPAUtil.getInstance().getEntityManager();
 			FonteDados fonte = em.find(FonteDados.class, id);
 			em.getTransaction().begin();
 			em.remove(fonte);
@@ -283,7 +277,7 @@ public class FachadaBuscador {
 	}
 
 	public Collection<Indice> buscarIndices() {
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		List<Indice> lista = em.createQuery("select i from Indice i")
 				.getResultList();
 		return lista;
@@ -291,7 +285,7 @@ public class FachadaBuscador {
 
 	public FonteDados buscarFontePeloNome(String dirHome) {
 		try {
-			EntityManager em = emf.createEntityManager();
+			EntityManager em = JPAUtil.getInstance().getEntityManager();
 			FonteDados fonte = (FonteDados) em.createQuery(
 					"select f from FonteDados f where f.nome like '" + dirHome
 							+ "'").getSingleResult();
@@ -301,10 +295,23 @@ public class FachadaBuscador {
 		}
 	}
 
-	// public Tika getTika() {
-	// if (tika == null) {
-	// tika = new Tika();
-	// }
-	// return tika;
-	// }
+	public Tika getTika() {
+		if (tika == null) {
+			tika = new Tika();
+		}
+		return tika;
+	}
+
+	public void persistir(AnexoFonteDados anexo) {
+		EntityManager em = JPAUtil.getInstance().getEntityManager();
+		try {
+			em.getTransaction().begin();
+			em.persist(anexo);
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+			logger.error(e);
+			throw new RuntimeException(e);
+		}
+	}
 }

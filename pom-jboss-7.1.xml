@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.marcoreis</groupId>
-	<artifactId>modulo-controle-acesso</artifactId>
+	<artifactId>search-web-beta</artifactId>
 	<version>0.1.beta</version>
 	<packaging>war</packaging>
 	<name>Search Web - Beta</name>
