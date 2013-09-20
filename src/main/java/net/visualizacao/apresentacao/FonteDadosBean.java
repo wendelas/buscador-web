@@ -1,7 +1,10 @@
 package net.visualizacao.apresentacao;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -14,6 +17,7 @@ import net.indexador.negocio.ExcecaoImportador;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.StringUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
@@ -158,15 +162,24 @@ public class FonteDadosBean extends BaseBean {
 	}
 
 	public void handleFileUpload(FileUploadEvent event) {
-		AnexoFonteDados anexo = new AnexoFonteDados();
-		anexo.setAnexo(event.getFile().getContents());
-		anexo.setFonteDados(getFonteDados());
-		FachadaBuscador.getInstancia().persistir(getFonteDados());
-		FachadaBuscador.getInstancia().persistir(anexo);
-		//
-		FacesMessage msg = new FacesMessage("Arquivo ", event.getFile()
-				.getFileName() + " enviado com sucesso.");
-		FacesContext.getCurrentInstance().addMessage(null, msg);
+		try {
+			AnexoFonteDados anexo = new AnexoFonteDados();
+			byte[] bytes = IOUtils
+					.toByteArray(event.getFile().getInputstream());
+			anexo.setAnexo(bytes);
+			anexo.setFonteDados(getFonteDados());
+			FachadaBuscador.getInstancia().persistir(getFonteDados());
+			FachadaBuscador.getInstancia().persistir(anexo);
+			//
+			FacesMessage msg = new FacesMessage("Arquivo ", event.getFile()
+					.getFileName() + " enviado com sucesso.");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		} catch (IOException e) {
+			logger.error(e);
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Erro", e.getMessage());
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
 	}
 
 	public String getMensagemAjudaNomeDriver() {

@@ -51,11 +51,12 @@ public class FachadaBuscador {
 	public void persistir(FonteDados fonteDados) {
 		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		try {
-//			em.getTransaction().begin();
-			FonteDados fd = fonteDados;
-			fd = em.merge(fonteDados);
-			em.persist(fd);
-//			em.getTransaction().commit();
+			em.getTransaction().begin();
+			// FonteDados fd = fonteDados;
+			// fd = em.merge(fonteDados);
+			// em.persist(fd);
+			em.persist(fonteDados);
+			em.getTransaction().commit();
 		} catch (Exception e) {
 			em.getTransaction().rollback();
 			logger.error(e);
@@ -309,7 +310,7 @@ public class FachadaBuscador {
 			em.persist(anexo);
 			em.getTransaction().commit();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
+			 em.getTransaction().rollback();
 			logger.error(e);
 			throw new RuntimeException(e);
 		}

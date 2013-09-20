@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
 import net.indexador.entidades.AnexoFonteDados;
@@ -14,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
 @ManagedBean
+@SessionScoped
 public class UtilitarioBean extends BaseBean {
 	protected static final Logger logger = Logger
 			.getLogger(UtilitarioBean.class);
