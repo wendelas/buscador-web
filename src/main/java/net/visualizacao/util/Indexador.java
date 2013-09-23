@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.indexador.entidades.AnexoFonteDados;
+import net.indexador.negocio.GenericXMLParser;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -33,6 +34,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.tika.Tika;
+import org.apache.tika.detect.AutoDetectReader;
 
 public class Indexador {
     private static Logger logger = Logger.getLogger(Indexador.class);
@@ -214,7 +216,76 @@ public class Indexador {
 	return tika;
     }
 
-    public boolean indexaAnexo(AnexoFonteDados anexo) {
+    private void indexarXML(AnexoFonteDados anexo) {
+	GenericXMLParser parser = new GenericXMLParser();
+	parser.parse(new ByteArrayInputStream(anexo.getAnexo()));
+    }
+
+    public void indexaAnexo(AnexoFonteDados anexo) {
+	if (anexo.getNomeArquivo().toLowerCase().endsWith(".xml")) {
+	    indexarXML(anexo);
+	} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".pdf")
+		|| anexo.getNomeArquivo().toLowerCase().endsWith(".doc")
+		|| anexo.getNomeArquivo().toLowerCase().endsWith(".xls")
+		|| anexo.getNomeArquivo().toLowerCase().endsWith(".ppt")
+		|| anexo.getNomeArquivo().toLowerCase().endsWith(".rtf")) {
+	    indexarArquivoBinario(anexo);
+	} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".csv")) {
+	    indexarCSV(anexo);
+	}
+    }
+
+    private void indexarCSV(AnexoFonteDados anexo) {
+	InputStream is = null;
+	BufferedReader br = null;
+	int quantidadeLinhas = 0;
+	try {
+	    is = new ByteArrayInputStream(anexo.getAnexo());
+	    br = new BufferedReader(new AutoDetectReader(is));
+	    String[] metadados = null;
+	    int linha = 1;
+	    String line = br.readLine();
+	    while (line != null) {
+		if (linha == 1) {
+		    linha++;
+		    metadados = line.split(anexo.getSeparador());
+		} else {
+		    Document doc = new Document();
+		    try {
+			String[] dados = line.split(anexo.getSeparador());
+			for (int i = 0; i < metadados.length; i++) {
+			    doc.add(new Field(metadados[i], dados[i],
+				    tipoAnalisado));
+			}
+		    } catch (Exception e) {
+			logger.error("Erro na linha " + quantidadeLinhas);
+		    }
+		    writer.addDocument(doc);
+		}
+		quantidadeLinhas++;
+		if (quantidadeLinhas % 1000 == 0) {
+		    logger.info("Quantidade de linhas processadas: "
+			    + quantidadeLinhas);
+		}
+		line = br.readLine();
+	    }
+	} catch (Exception e) {
+	    logger.info(e);
+	} finally {
+	    try {
+		is.close();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	    try {
+		br.close();
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    private void indexarArquivoBinario(AnexoFonteDados anexo) {
 	try {
 	    String textoExtraido = getTika().parseToString(
 		    new ByteArrayInputStream(anexo.getAnexo()));
@@ -224,7 +295,7 @@ public class Indexador {
 	    if (StringUtils.vazia(textoExtraido)) {
 		logger.warn("O arquivo [" + anexo.getNomeArquivo()
 			+ "] não tem texto");
-		return false;
+		return;
 	    }
 	    Document documento = new Document();
 	    documento.add(new Field("DataIndexacaoLucene", DateUtils
@@ -236,12 +307,9 @@ public class Indexador {
 	    writer.addDocument(documento);
 	    writer.commit();
 	    quantidadeArquivosIndexados++;
-	    return true;
 	} catch (Exception e) {
 	    logger.error(e);
-	    return false;
 	}
-
     }
 
     public void excluirIndice() {

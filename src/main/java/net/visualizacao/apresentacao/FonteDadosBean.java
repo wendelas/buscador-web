@@ -39,6 +39,7 @@ public class FonteDadosBean extends BaseBean {
     private Collection<FonteDados> fontes;
     private Collection<AnexoFonteDados> anexos;
     private int idFonteDados;
+    private String separador;
 
     public String indexar() {
 	try {
@@ -230,6 +231,7 @@ public class FonteDadosBean extends BaseBean {
 	anexo.setAnexo(bytes);
 	anexo.setFonteDados(getFonteDados());
 	anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
+	anexo.setSeparador(getSeparador());
 	FachadaBuscador.getInstancia()
 		.persistir(anexo, getFonteDados().getId());
 	carregarAnexos();
@@ -272,7 +274,8 @@ public class FonteDadosBean extends BaseBean {
     public String getMensagemFonteDados() {
 	StringBuilder msg = new StringBuilder();
 	msg.append("<p>Uma fonte de dados pode ser um arquivo CSV, um binário (PDF, XLS, DOC, PPT, RTF, ZIP) [um XML ou um JSON (not implemented)]. </p>");
-	msg.append("<p>Na versão de produção, a fonte de dados pode ser uma query de banco de dados ou um diretório local no servidor, por exemplo, um NFS.</p>");
+	msg.append("<p>Na versão de produção, a fonte de dados pode ser um de banco de dados relacional (SQL Server, Oracle, PostgreSQL, MySQL)");
+	msg.append(", um diretório local no servidor ou um mapeamento NFS.</p>");
 	// msg.append("<li>Para indexar um diretório, preencha apenas o campo 'Diretório de Documentos' e deixe os demais campos em branco.</li>");
 	// msg.append("<li>Para indexar uma query, preencha os dados de conexão e depois o botão 'Visualizar' para validar a conexão/query. ");
 	msg.append("<p>É essencial que a fonte de dados tenha o campo 'ID'. No caso de um arquivo binário, o ID será o próprio nome.</p>");
@@ -290,5 +293,13 @@ public class FonteDadosBean extends BaseBean {
 
     public Collection<AnexoFonteDados> getAnexos() {
 	return anexos;
+    }
+
+    public void setSeparador(String separador) {
+	this.separador = separador;
+    }
+
+    public String getSeparador() {
+	return separador;
     }
 }

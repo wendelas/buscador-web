@@ -31,15 +31,17 @@
 				<p:panelGrid columns="2">
 
 					<p:outputLabel value="Nome: *" />
-					<p:inputText value="#{fonteDadosBean.fonteDados.nome}" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.nome}" style="width:200px;"/>
 					<!--<h:graphicImage id="ajuda_nome" url="imagens/question.png"
 					style="border:none;" />
 				 <p:tooltip value="#{fonteDadosBean.mensagemNomeFonte}"
 					for="ajuda_nome" /> -->
 
+					<p:outputLabel value="Separador:" />
+					<p:inputText value="#{fonteDadosBean.separador}" style="width:20px;"/>
+
 					<p:outputLabel value="Adicionar anexo:" />
 					<p:fileUpload value="#{fonteDadosBean.arquivo}" mode="simple" />
-
 
 				</p:panelGrid>
 

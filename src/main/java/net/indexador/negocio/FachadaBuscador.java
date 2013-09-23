@@ -189,25 +189,9 @@ public class FachadaBuscador {
     }
 
     private void indexarAnexo(AnexoFonteDados anexo) {
-	if (anexo.getNomeArquivo().toLowerCase().endsWith(".xml")) {
-	    indexarXML(anexo.getAnexo());
-	} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".pdf")) {
-	    indexarPDF(anexo);
-	}
+	getIndexador().indexaAnexo(anexo);
     }
 
-    private void indexarPDF(AnexoFonteDados anexo) {
-	try {
-	    getIndexador().indexaAnexo(anexo);
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	}
-    }
-
-    private void indexarXML(byte[] anexo) {
-	GenericXMLParser parser = new GenericXMLParser();
-	parser.parse(new ByteArrayInputStream(anexo));
-    }
 
     private void removeMetadados(FonteDados fonteDados) {
 	EntityManager em = JPAUtil.getInstance().getEntityManager();

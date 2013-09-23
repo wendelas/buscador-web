@@ -18,6 +18,7 @@ public class AnexoFonteDados {
     private byte[] anexo;
     private Timestamp dataEnvio;
     private long tamanho;
+    private String separador;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -69,5 +70,13 @@ public class AnexoFonteDados {
 
     public Timestamp getDataEnvio() {
 	return dataEnvio;
+    }
+
+    public void setSeparador(String separador) {
+	this.separador = separador;
+    }
+
+    public String getSeparador() {
+	return separador;
     }
 }
