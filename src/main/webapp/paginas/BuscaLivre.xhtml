@@ -12,84 +12,81 @@
 	<title>Busca Livre</title>
 
 	<ui:define name="body">
-		<p:panel header="Busca Livre"
-			style="margin-left: 4%; margin-right: 4%;">
 
-			<h:panelGrid columns="2" styleClass="formClass">
-				<h:panelGrid columns="5"
-					columnClasses="noStyleClass, fullWidthClass, noStyleClass, alignRightClass, alignRighClass">
-					<h:outputText value="Argumento:" />
-					<h:inputText value="#{buscaLivreBean.consulta}" size="100"
+		<h:form>
+			<p:messages id="messages" />
+			<p:panel header="Busca Livre"
+				style="margin-left: 4%; margin-right: 4%;">
+				<p:panel>
+					<p:outputLabel value="Argumento:" />
+					<p:inputText value="#{buscaLivreBean.consulta}" size="100"
 						label="Consulta">
 						<f:validateLength minimum="1" />
-					</h:inputText>
+					</p:inputText>
 
-					<h:outputText value="Índice:" />
-					<h:selectOneMenu layout="lineDirection" label="Índice"
+					<p:commandButton value="Consultar" update="tblItens,messages"
+						ajax="false" actionListener="#{buscaLivreBean.consultar}" />
+				</p:panel>
+
+				<p:spacer height="6px" />
+
+				<p:panel>
+					<p:outputLabel value="Índice:" />
+					<p:selectOneMenu label="Índice"
 						value="#{buscaLivreBean.idFonteDados}">
-						<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
+						<c:forEach items="#{fonteDadosBean.fontes}" var="fonte">
 							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
 						</c:forEach>
-					</h:selectOneMenu>
+					</p:selectOneMenu>
 
-					<h:commandButton value="Consultar"
-						action="#{buscaLivreBean.consultar}" />
+				</p:panel>
+				<p:spacer height="6px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
-				</h:panelGrid>
-			</h:panelGrid>
+				<p:panel
+					rendered="#{empty buscaLivreBean.itens and not empty buscaLivreBean.consulta}">
+					<p:outputLabel
+						value="Nenhum documento encontrado para o argumento pesquisado" />
+				</p:panel>
 
-			<p:spacer height="10px"
-				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
-			<p:separator height="2" lineType="dotted"
-				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
-			<p:spacer height="10px"
-				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
+				<p:spacer height="6px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
-			<p:panel
-				rendered="#{empty buscaLivreBean.itens and not empty buscaLivreBean.consulta}">
-				<h:outputText
-					value="Nenhum documento encontrado para o argumento pesquisado" />
-			</p:panel>
-
-			<p:panel rendered="#{not empty buscaLivreBean.itens}">
-				<h:panelGrid columns="1">
-					<h:outputText
+				<p:panel rendered="#{not empty buscaLivreBean.itens}">
+					<p:outputLabel
 						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
-					<h:outputText
+					<p:outputLabel
 						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}." />
-				</h:panelGrid>
-			</p:panel>
+				</p:panel>
 
-			<p:spacer height="10px"
-				rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
+				<p:spacer height="6px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
-			<p:panel rendered="#{not empty buscaLivreBean.itens}">
-				<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
-					var="item" rows="20">
-					<p:column>
-						<f:facet name="header">
-							<h:outputText value="View" />
-						</f:facet>
-						<h:commandLink action="#{buscaLivreBean.visualizarDetalhe}">
-							<f:param value="#{item}" name="scoreDoc" />
-							<h:graphicImage value="imagens/view.png" />
-						</h:commandLink>
-					</p:column>
-					<p:column>
-						<f:facet name="header">
-							<h:outputText value="Conteúdo" />
-						</f:facet>
-						<h:outputText escape="false"
-							value="#{buscaLivreBean.mostraDados(item)}" />
-					</p:column>
-					<f:facet name="footer">
-						<p:datascroller />
-					</f:facet>
+				<p:panel rendered="#{not empty buscaLivreBean.itens}">
+					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
+						var="item" rows="20">
+						<p:column>
+							<f:facet name="header">
+								<p:outputLabel value="View" />
+							</f:facet>
+							<p:commandLink action="#{buscaLivreBean.visualizarDetalhe}">
+								<f:param value="#{item}" name="scoreDoc" />
+								<p:graphicImage value="imagens/view.png" />
+							</p:commandLink>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<p:outputLabel value="Conteúdo" />
+							</f:facet>
+							<p:outputLabel escape="false"
+								value="#{buscaLivreBean.mostraDados(item)}" />
+						</p:column>
 
-				</p:dataTable>
+					</p:dataTable>
+
+				</p:panel>
 
 			</p:panel>
-
-		</p:panel>
+		</h:form>
 	</ui:define>
 </ui:composition>

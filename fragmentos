@@ -1,0 +1,111 @@
+						<p:fileUpload
+							fileUploadListener="#{fonteDadosBean.handleFileUpload}"
+							auto="true" mode="advanced" update="messages"
+							allowTypes="/(\.|\/)(pdf|xml|json)$/" />
+
+							
+							<p:panel>
+				<f:facet name="header">Amostra dos dados</f:facet>
+
+				<p:dataTable id="tabelaMetaData"
+					value="#{fonteDadosBean.metaDados.tuplas}" var="tupla">
+					<c:set var="indice" value="-1" />
+					<c:forEach items="#{fonteDadosBean.metaDados.colunas}" var="coluna">
+						<c:set var="indice" value="#{indice + 1}" />
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{coluna}" />
+							</f:facet>
+							<h:outputText value="#{tupla[indice]}" />
+						</p:column>
+					</c:forEach>
+				</p:dataTable>
+
+			</p:panel>
+			
+			
+			
+
+			<p:spacer height="6px" />
+
+			<h:form>
+			<p:panel>
+				<p:outputLabel value="Anexo:" />
+
+				<p:fileUpload
+					fileUploadListener="#{fonteDadosBean.handleFileUpload}" auto="true"
+					mode="advanced" update="messages"
+					allowTypes="/(\.|\/)(pdf|xml|json)$/" />
+
+			</p:panel>
+		</h:form>
+		
+		
+			if (fonteDados == null) {
+	    fonteDados = new FonteDados();
+	    fonteDados.setNome("tabela-???");
+	    fonteDados.setNomeDriver("com.mysql.jdbc.Driver");
+	    fonteDados.setUsuario("root");
+	    String query = "SELECT C.NUMCLASSE AS ID, CODCLASSE, DESCRCLASSE, DESCROBSERVACAO, P.NMEPESSOA "
+		    + "FROM PRO_CLASSE C INNER JOIN PRO_PESSOA P ON C.NUMPESSOAJURIDICA = P.NUMPESSOA";
+	    fonteDados.setQuery(query);
+	    fonteDados.setUrl("jdbc:mysql://localhost:3306/proteus");
+	}
+
+
+//FonteDados.xhtml
+					<p:outputLabel value="Query:" />
+					<p:inputTextarea value="#{fonteDadosBean.fonteDados.query}"
+						cols="65" rows="5" />
+					<!--<h:graphicImage id="ajuda_query" url="imagens/question.png"
+					style="border: none" />
+				 <p:tooltip value="#{fonteDadosBean.mensagemQuery}" for="ajuda_query" /> -->
+
+					<p:outputLabel value="URL:" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.url}" />
+					<!--<h:graphicImage id="ajuda_url" url="imagens/question.png"
+					style="border: none" />
+				 <p:tooltip
+					value="Url para acessar o banco. Deve estar no formato jdbc:banco://nome_servidor:porta/databasename."
+					for="ajuda_url" /> -->
+
+					<p:outputLabel value="User:" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.usuario}" />
+					<!-- <h:graphicImage id="ajuda_user" url="imagens/question.png"
+					style="border: none" />
+				<p:tooltip
+					value="Usuário com acesso às tabelas que fazem parte da query. Altamente recomendável que seja um usuário para somente leitura."
+					for="ajuda_user" /> -->
+
+					<p:outputLabel value="Password:" />
+					<p:password value="#{fonteDadosBean.fonteDados.password}"
+						rendered="#{empty fonteDadosBean.fonteDados.password}" />
+					<!--<h:graphicImage id="ajuda_password" url="imagens/question.png"
+					style="border: none" />
+				 <p:tooltip
+					value="Senha para acessar o banco de dados. Ainda não faz alteração de senha."
+					for="ajuda_password" /> -->
+
+					<p:outputLabel value="Nome do driver JDBC:" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.nomeDriver}" />
+					<!--<h:graphicImage id="ajuda_nomedriver" url="imagens/question.png"
+					style="border: none" />
+				 <p:tooltip value="#{fonteDadosBean.mensagemAjudaNomeDriver}"
+					for="ajuda_nomedriver" /> -->
+
+					<p:outputLabel value="Data Source:" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.dataSource}" />
+					<!--<h:graphicImage id="ajuda_datasource" url="imagens/question.png"
+					style="border: none" />
+				 <p:tooltip
+					value="Conexão via DataSource (ainda não implementado, mas fique à vontade)"
+					for="ajuda_datasource" /> -->
+
+					<p:outputLabel value="Diretório de documentos:" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.diretorio}" />
+					<!-- <h:graphicImage id="ajuda_dir_doc" url="imagens/question.png"
+					style="border: none" />
+				<p:tooltip
+					value="Diretório contendo documentos que você pretende indexar"
+					for="ajuda_dir_doc" /> -->
+		

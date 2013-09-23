@@ -2,133 +2,82 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui" template="comum/template.xhtml">
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="comum/template.xhtml">
 
 	<ui:define name="body">
+		<h:form enctype="multipart/form-data">
+			<p:messages id="messages" showDetail="true" autoUpdate="true" />
 
-		<h:inputHidden value="#{fonteDadosBean.fonteDados.password}"
-			rendered="#{not empty fonteDadosBean.fonteDados.password}" />
+			<p:panel header="Informações"
+				style="margin-left: 24%; margin-right: 24%;">
+				<p:outputLabel value="#{fonteDadosBean.mensagemFonteDados}"
+					escape="false" />
+			</p:panel>
 
+			<p:spacer height="3px" />
 
-		<p:panel header="Informações">
-			<p:outputLabel value="#{fonteDadosBean.mensagemFonteDados}"
-				escape="false" />
-		</p:panel>
+			<p:panel header="Fonte de Dados"
+				style="margin-left: 24%; margin-right: 24%;">
 
-		<p:spacer height="6px" />
+				<h:inputHidden value="#{fonteDadosBean.fonteDados.id}" />
 
-		<p:panel header="Fonte de Dados">
-			<p:panelGrid columns="2">
+				<p:panelGrid columns="2">
 
-				<p:outputLabel value="Nome:" styleClass="fullWidthClass" />
-				<p:inputText value="#{fonteDadosBean.fonteDados.nome}" />
-				<!--<h:graphicImage id="ajuda_nome" url="imagens/question.png"
+					<p:outputLabel value="Nome: *" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.nome}" />
+					<!--<h:graphicImage id="ajuda_nome" url="imagens/question.png"
 					style="border:none;" />
 				 <p:tooltip value="#{fonteDadosBean.mensagemNomeFonte}"
 					for="ajuda_nome" /> -->
 
-				<p:outputLabel value="Query:" />
-				<p:inputTextarea value="#{fonteDadosBean.fonteDados.query}"
-					cols="65" rows="5" />
-				<!--<h:graphicImage id="ajuda_query" url="imagens/question.png"
-					style="border: none" />
-				 <p:tooltip value="#{fonteDadosBean.mensagemQuery}" for="ajuda_query" /> -->
-
-				<p:outputLabel value="URL:" />
-				<p:inputText value="#{fonteDadosBean.fonteDados.url}" />
-				<!--<h:graphicImage id="ajuda_url" url="imagens/question.png"
-					style="border: none" />
-				 <p:tooltip
-					value="Url para acessar o banco. Deve estar no formato jdbc:banco://nome_servidor:porta/databasename."
-					for="ajuda_url" /> -->
-
-				<p:outputLabel value="User:" />
-				<p:inputText value="#{fonteDadosBean.fonteDados.usuario}" />
-				<!-- <h:graphicImage id="ajuda_user" url="imagens/question.png"
-					style="border: none" />
-				<p:tooltip
-					value="Usuário com acesso às tabelas que fazem parte da query. Altamente recomendável que seja um usuário para somente leitura."
-					for="ajuda_user" /> -->
-
-				<p:outputLabel value="Password:" />
-				<p:password value="#{fonteDadosBean.fonteDados.password}"
-					rendered="#{empty fonteDadosBean.fonteDados.password}" />
-				<p:outputLabel value="*********"
-					rendered="#{not empty fonteDadosBean.fonteDados.password}" />
-				<!--<h:graphicImage id="ajuda_password" url="imagens/question.png"
-					style="border: none" />
-				 <p:tooltip
-					value="Senha para acessar o banco de dados. Ainda não faz alteração de senha."
-					for="ajuda_password" /> -->
-
-				<p:outputLabel value="Nome do driver JDBC:" />
-				<p:inputText value="#{fonteDadosBean.fonteDados.nomeDriver}" />
-				<!--<h:graphicImage id="ajuda_nomedriver" url="imagens/question.png"
-					style="border: none" />
-				 <p:tooltip value="#{fonteDadosBean.mensagemAjudaNomeDriver}"
-					for="ajuda_nomedriver" /> -->
-
-				<p:outputLabel value="Data Source:" />
-				<p:inputText value="#{fonteDadosBean.fonteDados.dataSource}" />
-				<!--<h:graphicImage id="ajuda_datasource" url="imagens/question.png"
-					style="border: none" />
-				 <p:tooltip
-					value="Conexão via DataSource (ainda não implementado, mas fique à vontade)"
-					for="ajuda_datasource" /> -->
-
-				<p:outputLabel value="Diretório de documentos:" />
-				<p:inputText value="#{fonteDadosBean.fonteDados.diretorio}" />
-				<!-- <h:graphicImage id="ajuda_dir_doc" url="imagens/question.png"
-					style="border: none" />
-				<p:tooltip
-					value="Diretório contendo documentos que você pretende indexar"
-					for="ajuda_dir_doc" /> -->
+					<p:outputLabel value="Adicionar anexo:" />
+					<p:fileUpload value="#{fonteDadosBean.arquivo}" mode="simple" />
 
 
-				<p:outputLabel value="Arquivo:" />
-				<p:fileUpload
-					fileUploadListener="#{fonteDadosBean.handleFileUpload}"
-					mode="advanced" dragDropSupport="true" update="messages"
-					fileLimit="3"
-					allowTypes="/(\.|\/)(xml|json|doc|docx|xls|xlsx|pdf)$/" />
-			</p:panelGrid>
+				</p:panelGrid>
 
+				<p:spacer height="6px" />
 
-			<f:facet name="footer">
-				<p:commandButton value="Visualizar" reRender="tabelaMetaData"
-					action="#{fonteDadosBean.carregarDadosVisualizacao}"
-					onclick="Richfaces.showModalPanel('painelAguarde');"
-					oncomplete="Richfaces.hideModalPanel('painelAguarde');" />
-				<p:commandButton value="Salvar" action="#{fonteDadosBean.salvar}" />
-				<p:commandButton value="Cancelar" type="submit" action="cancelar" />
-			</f:facet>
+				<p:panelGrid columns="1">
+					<f:facet name="header">Anexos</f:facet>
+					<p:outputLabel value="Nenhum anexo cadastrado"
+						rendered="#{empty fonteDadosBean.anexos}" />
+					<p:dataTable var="anexo" value="#{fonteDadosBean.anexos}"
+						rendered="#{not empty fonteDadosBean.anexos}">
+						<p:column headerText="Nome">
+							<h:outputText value="#{anexo.nomeArquivo}" />
+						</p:column>
+						<p:column headerText="Tamanho (MB)">
+							<h:outputText value="#{anexo.tamanho / 1024 / 1024}">
+								<f:convertNumber type="number" groupingUsed="true"
+									minFractionDigits="3" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Envio">
+							<h:outputText value="#{anexo.dataEnvio}" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
 
-		</p:panel>
+				<f:facet name="footer">
+					<p:commandButton value="Visualizar" />
+					<p:commandButton value="Salvar" ajax="false"
+						actionListener="#{fonteDadosBean.salvar}" />
+					<p:commandButton value="Voltar" type="submit" action="Utilitario"
+						ajax="false" />
+				</f:facet>
+			</p:panel>
 
-		<p:spacer height="6px" />
+		</h:form>
 
-		<p:panel>
-			<f:facet name="header">Amostra dos dados</f:facet>
-
-			<p:dataTable id="tabelaMetaData"
-				value="#{fonteDadosBean.metaDados.tuplas}" var="tupla">
-				<c:set var="indice" value="-1" />
-				<c:forEach items="#{fonteDadosBean.metaDados.colunas}" var="coluna">
-					<c:set var="indice" value="#{indice + 1}" />
-					<p:column>
-						<f:facet name="header">
-							<h:outputText value="#{coluna}" />
-						</f:facet>
-						<h:outputText value="#{tupla[indice]}" />
-					</p:column>
-				</c:forEach>
-			</p:dataTable>
-
-		</p:panel>
 	</ui:define>
+
 </ui:composition>
+</html>

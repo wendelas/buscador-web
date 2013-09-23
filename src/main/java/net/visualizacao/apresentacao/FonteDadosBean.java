@@ -1,13 +1,12 @@
 package net.visualizacao.apresentacao;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Collection;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import javax.faces.bean.RequestScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -20,6 +19,7 @@ import net.visualizacao.util.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  * 
@@ -27,190 +27,268 @@ import org.primefaces.event.FileUploadEvent;
  * 
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class FonteDadosBean extends BaseBean {
-	private static Logger logger = Logger.getLogger(FonteDadosBean.class);
-	private static final long serialVersionUID = -7768860623840391492L;
-	private FonteDados fonteDados;
-	private VOMetaDados metaDados;
-	private DataModel dadosVisualizacao;
+    private static Logger logger = Logger.getLogger(FonteDadosBean.class);
+    private static final long serialVersionUID = -7768860623840391492L;
+    private FonteDados fonteDados;
+    private UploadedFile arquivo;
+    private VOMetaDados metaDados;
+    private DataModel dadosVisualizacao;
+    private String nome;
+    private Collection<FonteDados> fontes;
+    private Collection<AnexoFonteDados> anexos;
+    private int idFonteDados;
 
-	@PostConstruct
-	public void inicializa() {
-		fonteDados = new FonteDados();
-		fonteDados.setNome("tabela-???");
-		fonteDados.setNomeDriver("com.mysql.jdbc.Driver");
-		fonteDados.setUsuario("root");
-		String query = "SELECT C.NUMCLASSE AS ID, CODCLASSE, DESCRCLASSE, DESCROBSERVACAO, P.NMEPESSOA "
-				+ "FROM PRO_CLASSE C INNER JOIN PRO_PESSOA P ON C.NUMPESSOAJURIDICA = P.NUMPESSOA";
-		fonteDados.setQuery(query);
-		fonteDados.setUrl("jdbc:mysql://localhost:3306/proteus");
+    public String indexar() {
+	try {
+	    int qtd = FachadaBuscador.getInstancia().indexar(getIdFonteDados());
+	    String msg = "Indexação concluída com sucesso. Foram indexados "
+		    + qtd + " itens.";
+	    infoMsg(msg);
+	} catch (Exception e) {
+	    errorMsg(e);
+	}
+	return "";
+    }
+
+    public void setIdFonteDados(int idFonteDados) {
+	this.idFonteDados = idFonteDados;
+    }
+
+    public int getIdFonteDados() {
+	return idFonteDados;
+    }
+
+    public void setNome(String nome) {
+	this.nome = nome;
+    }
+
+    public String getNome() {
+	return nome;
+    }
+
+    @PostConstruct
+    public void inicializa() {
+	carregarFontes();
+    }
+
+    private void carregarFontes() {
+	fontes = FachadaBuscador.getInstancia().buscarFontes();
+    }
+
+    public void carregarAnexos() {
+	try {
+	    anexos = FachadaBuscador.getInstancia().buscarAnexos(
+		    getFonteDados().getId());
+	} catch (Exception e) {
+	    logger.error(e);
 	}
 
-	public void setFonteDados(FonteDados fonteDados) {
-		this.fonteDados = fonteDados;
+    }
+
+    public Collection<FonteDados> getFontes() {
+	return fontes;
+    }
+
+    public void setFonteDados(FonteDados fonteDados) {
+	this.fonteDados = fonteDados;
+    }
+
+    public FonteDados getFonteDados() {
+	if (fonteDados == null) {
+	    fonteDados = new FonteDados();
+	}
+	return fonteDados;
+    }
+
+    public void upload() {
+	try {
+	    AnexoFonteDados anexo = new AnexoFonteDados();
+	    byte[] bytes = IOUtils.toByteArray(getArquivo().getInputstream());
+	    anexo.setAnexo(bytes);
+	    FachadaBuscador.getInstancia().persistir(getFonteDados());
+	    FachadaBuscador.getInstancia().persistir(anexo,
+		    getFonteDados().getId());
+	    infoMsg("Arquivo gravado com sucesso");
+	} catch (Exception e) {
+	    errorMsg(e);
 	}
 
-	public FonteDados getFonteDados() {
-		return fonteDados;
-	}
+    }
 
-	public String salvar() {
-		try {
-			if (validar()) {
-				FachadaBuscador.getInstancia().persistir(getFonteDados());
-				infoMsg("mensagem", "Fonte de dados gravada com sucesso");
-				return "sucesso";
-			}
-		} catch (Exception e) {
-			errorMsg("erro.generico", e);
-		}
-		return "";
+    public void salvar() {
+	try {
+	    FachadaBuscador.getInstancia().persistir(getFonteDados());
+	    if (getArquivo() != null) {
+		salvarAnexo();
+	    }
+	    infoMsg("Fonte de dados gravada com sucesso");
+	    carregarFontes();
+	} catch (Exception e) {
+	    errorMsg(e);
 	}
+    }
 
-	private boolean validar() {
-		// somente diretorio de arquivos
-		if (!StringUtils.vazia(getFonteDados().getDiretorio())) {
-			if (!StringUtils.vazia(getFonteDados().getUrl())) {
-				String msg = "Não é permitido informar um diretório e uma base de dados para a mesma fonte. "
-						+ "Por favor, escolha apenas uma opção de fonte.";
-				errorMsg("erro.generico", msg);
-			}
-			// somente base de dados
-		} else {
-			if (StringUtils.vazia(getFonteDados().getQuery())) {
-				errorMsg("erro.generico", "A query é obrigatória");
-			}
-			if (StringUtils.vazia(getFonteDados().getNome())) {
-				errorMsg("erro.generico",
-						"O nome da fonte é um campo obrigatório");
-			}
-			if (StringUtils.vazia(getFonteDados().getNomeDriver())) {
-				errorMsg("erro.generico",
-						"o nome do driver é um campo obrigatório");
-			}
-			if (StringUtils.vazia(getFonteDados().getUrl())) {
-				errorMsg("erro.generico", "A url é obrigatória");
-			}
-			if (StringUtils.vazia(getFonteDados().getUsuario())) {
-				errorMsg("erro.generico", "O usuário é um campo obrigatório");
-			}
-		}
-		return !possuiErros();
+    private boolean validar() {
+	// somente diretorio de arquivos
+	if (!StringUtils.vazia(getFonteDados().getDiretorio())) {
+	    if (!StringUtils.vazia(getFonteDados().getUrl())) {
+		String msg = "Não é permitido informar um diretório e uma base de dados para a mesma fonte. "
+			+ "Por favor, escolha apenas uma opção de fonte.";
+		errorMsg(msg);
+	    }
+	    // somente base de dados
+	} else {
+	    if (StringUtils.vazia(getFonteDados().getQuery())) {
+		errorMsg("A query é obrigatória");
+	    }
+	    if (StringUtils.vazia(getFonteDados().getNome())) {
+		errorMsg("O nome da fonte é um campo obrigatório");
+	    }
+	    if (StringUtils.vazia(getFonteDados().getNomeDriver())) {
+		errorMsg("o nome do driver é um campo obrigatório");
+	    }
+	    if (StringUtils.vazia(getFonteDados().getUrl())) {
+		errorMsg("A url é obrigatória");
+	    }
+	    if (StringUtils.vazia(getFonteDados().getUsuario())) {
+		errorMsg("O usuário é um campo obrigatório");
+	    }
 	}
+	return !possuiErros();
+    }
 
-	public void setDadosVisualizacao(DataModel dadosVisualizacao) {
-		this.dadosVisualizacao = dadosVisualizacao;
-	}
+    public void setDadosVisualizacao(DataModel dadosVisualizacao) {
+	this.dadosVisualizacao = dadosVisualizacao;
+    }
 
-	public void carregarDadosVisualizacao() {
-		try {
-			carregarDadosDiretorio();
-			carregarDadosBanco();
-		} catch (Exception e) {
-			String msg = "Não foi possível carregar os dados para visualização. Erro Java: "
-					+ e.getMessage();
-			errorMsg("mensagem", msg);
-			logger.error(e);
-		}
+    public void carregarDadosVisualizacao() {
+	try {
+	    carregarDadosDiretorio();
+	    carregarDadosBanco();
+	} catch (Exception e) {
+	    String msg = "Não foi possível carregar os dados para visualização. Erro Java: "
+		    + e.getMessage();
+	    errorMsg(msg);
+	    logger.error(e);
 	}
+    }
 
-	private void carregarDadosDiretorio() {
-		if (StringUtils.vazia(getFonteDados().getDiretorio())) {
-		}
+    private void carregarDadosDiretorio() {
+	if (StringUtils.vazia(getFonteDados().getDiretorio())) {
 	}
+    }
 
-	private void carregarDadosBanco() throws ExcecaoImportador {
-		metaDados = FachadaBuscador.getInstancia().buscarMetaData(
-				getFonteDados());
-		dadosVisualizacao = new ListDataModel(metaDados.getColunas());
-	}
+    private void carregarDadosBanco() throws ExcecaoImportador {
+	metaDados = FachadaBuscador.getInstancia().buscarMetaData(
+		getFonteDados());
+	dadosVisualizacao = new ListDataModel(metaDados.getColunas());
+    }
 
-	public DataModel getDadosVisualizacao() {
-		return dadosVisualizacao;
-	}
+    public DataModel getDadosVisualizacao() {
+	return dadosVisualizacao;
+    }
 
-	public void setMetaDados(VOMetaDados metaDados) {
-		this.metaDados = metaDados;
-	}
+    public void setMetaDados(VOMetaDados metaDados) {
+	this.metaDados = metaDados;
+    }
 
-	public VOMetaDados getMetaDados() {
-		return metaDados;
-	}
+    public VOMetaDados getMetaDados() {
+	return metaDados;
+    }
 
-	public String editar() {
-		metaDados = new VOMetaDados();
-		fonteDados = FachadaBuscador.getInstancia().buscarFontePeloId(
-				getFonteDados().getId());
-		return "editar";
-	}
+    public String editar() {
+	metaDados = new VOMetaDados();
+	fonteDados = FachadaBuscador.getInstancia().buscarFontePeloId(
+		getFonteDados().getId());
+	carregarAnexos();
+	return "FonteDados.jsf";
+    }
 
-	public String novo() {
-		inicializa();
-		return "FonteDados.xhtml";
-	}
+    public String novo() {
+	inicializa();
+	return "FonteDados";
+    }
 
-	public String excluir() {
-		try {
-			FachadaBuscador.getInstancia().excluirFonteDados(
-					getFonteDados().getId());
-			infoMsg("mensagem", "Fonte excluida com sucesso");
-		} catch (Exception e) {
-			errorMsg("erro.generico", e);
-		}
-		return "";
+    public void excluir() {
+	try {
+	    FachadaBuscador.getInstancia().excluirFonteDados(
+		    getFonteDados().getId());
+	    infoMsg("Fonte excluída com sucesso");
+	} catch (Exception e) {
+	    errorMsg(e);
 	}
+	carregarFontes();
+    }
 
-	public void handleFileUpload(FileUploadEvent event) {
-		try {
-			AnexoFonteDados anexo = new AnexoFonteDados();
-			byte[] bytes = IOUtils
-					.toByteArray(event.getFile().getInputstream());
-			anexo.setAnexo(bytes);
-			anexo.setFonteDados(getFonteDados());
-			FachadaBuscador.getInstancia().persistir(getFonteDados());
-			FachadaBuscador.getInstancia().persistir(anexo);
-			//
-			FacesMessage msg = new FacesMessage("Arquivo ", event.getFile()
-					.getFileName() + " enviado com sucesso.");
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		} catch (IOException e) {
-			logger.error(e);
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Erro", e.getMessage());
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		}
-	}
+    private void salvarAnexo() throws IOException {
+	AnexoFonteDados anexo = new AnexoFonteDados();
+	byte[] bytes = IOUtils.toByteArray(getArquivo().getInputstream());
+	anexo.setNomeArquivo(getArquivo().getFileName());
+	anexo.setTamanho(getArquivo().getSize());
+	anexo.setAnexo(bytes);
+	anexo.setFonteDados(getFonteDados());
+	anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
+	FachadaBuscador.getInstancia()
+		.persistir(anexo, getFonteDados().getId());
+	carregarAnexos();
+    }
 
-	public String getMensagemAjudaNomeDriver() {
-		String msg = "A aplicação já está com os drivers do MySQL (com.mysql.jdbc.Driver), "
-				+ "PostgreSQL(???), "
-				+ "Oracle (???), "
-				+ "MSSQLSERVER (???). "
-				+ "Para registrar um novo driver, apenas copie o arquivo.jar em tomcat/metabusca/web/lib.";
-		return msg;
+    // O Firefox está travando ao usar o upload Advanced
+    public void handleFileUpload(FileUploadEvent event) {
+	try {
+	    FachadaBuscador.getInstancia().persistir(getFonteDados());
+	    infoMsg("Arquivo " + event.getFile().getFileName()
+		    + " enviado com sucesso.");
+	} catch (Exception e) {
+	    errorMsg(e);
 	}
+    }
 
-	public String getMensagemQuery() {
-		String msg = "A query pode ser de uma ou várias tabelas, contendo todos os tipos de dados, inclusive lob. "
-				+ "O campo lob pode conter texto ou documentos (PDF, DOC, DOCX, XLS, PPT). "
-				+ "A query deve conter uma coluna 'ID'. "
-				+ "Datas devem ser utilizadas no formato americano (yyyy-MM-dd HH:mm:ss). ";
-		return msg;
-	}
+    public String getMensagemAjudaNomeDriver() {
+	String msg = "A aplicação já está com os drivers do MySQL (com.mysql.jdbc.Driver), "
+		+ "PostgreSQL(???), "
+		+ "Oracle (???), "
+		+ "MSSQLSERVER (???). "
+		+ "Para registrar um novo driver, apenas copie o arquivo.jar em tomcat/metabusca/web/lib.";
+	return msg;
+    }
 
-	public String getMensagemNomeFonte() {
-		String msg = "Utilize nomes que identifiquem facilmente o tipo de informação. "
-				+ "Exemplo: diretorio-documentos-local, tabela-dados-usuario, tabela-vendas, tabela-historico-compras. ";
-		return msg;
-	}
+    public String getMensagemQuery() {
+	String msg = "A query pode ser de uma ou várias tabelas, contendo todos os tipos de dados, inclusive lob. "
+		+ "O campo lob pode conter texto ou documentos (PDF, DOC, DOCX, XLS, PPT). "
+		+ "A query deve conter uma coluna 'ID'. "
+		+ "Datas devem ser utilizadas no formato americano (yyyy-MM-dd HH:mm:ss). ";
+	return msg;
+    }
 
-	public String getMensagemFonteDados() {
-		String msg = "Uma fonte de dados pode ser uma query no banco de dados ou um diretório local no servidor. "
-				+ "<li>Para indexar um diretório, preencha apenas o campo 'Diretório de Documentos' e deixe os demais campos em branco.</li>"
-				+ "<li>Para indexar uma query, preencha os dados de conexão e depois o botão 'Visualizar' para validar a conexão/query. "
-				+ "<b>É essencial que a query contenha o campo 'ID'</b>.</li>"
-				+ "<li>Não é possível conter as duas opções pois a busca ainda não suporta fontes diferentes.</li>";
-		return msg;
-	}
+    public String getMensagemNomeFonte() {
+	String msg = "Utilize nomes que identifiquem facilmente o tipo de informação. "
+		+ "Exemplo: diretorio-documentos-local, tabela-dados-usuario, tabela-vendas, tabela-historico-compras. ";
+	return msg;
+    }
+
+    public String getMensagemFonteDados() {
+	StringBuilder msg = new StringBuilder();
+	msg.append("<p>Uma fonte de dados pode ser um arquivo CSV, um binário (PDF, XLS, DOC, PPT, RTF, ZIP) [um XML ou um JSON (not implemented)]. </p>");
+	msg.append("<p>Na versão de produção, a fonte de dados pode ser uma query de banco de dados ou um diretório local no servidor, por exemplo, um NFS.</p>");
+	// msg.append("<li>Para indexar um diretório, preencha apenas o campo 'Diretório de Documentos' e deixe os demais campos em branco.</li>");
+	// msg.append("<li>Para indexar uma query, preencha os dados de conexão e depois o botão 'Visualizar' para validar a conexão/query. ");
+	msg.append("<p>É essencial que a fonte de dados tenha o campo 'ID'. No caso de um arquivo binário, o ID será o próprio nome.</p>");
+	// msg.append("<li>Não é possível conter as duas opções pois a busca ainda não suporta fontes diferentes.</li>");
+	return msg.toString();
+    }
+
+    public void setArquivo(UploadedFile arquivo) {
+	this.arquivo = arquivo;
+    }
+
+    public UploadedFile getArquivo() {
+	return arquivo;
+    }
+
+    public Collection<AnexoFonteDados> getAnexos() {
+	return anexos;
+    }
 }

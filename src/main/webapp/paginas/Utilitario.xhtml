@@ -11,50 +11,53 @@
 
 <ui:composition template="comum/template.xhtml">
 	<ui:define name="body">
+		<h:form>
+			<p:messages id="messages" />
 
-		<p:panelGrid columns="3">
-			<f:facet name="header">Utilitário de importação / indexação</f:facet>
+			<p:panel style="margin-left: 24%; margin-right: 24%;">
+				<f:facet name="header">Utilitário de importação e indexação</f:facet>
 
-			<p:outputLabel value="Fontes de dados:" />
+					<p:outputLabel value="Fontes de dados:" />
 
-			<p:outputLabel value="Nenhuma fonte cadastrada"
-				rendered="#{empty utilitarioBean.fontes}" />
+					<p:outputLabel value="Nenhuma fonte cadastrada"
+						rendered="#{empty fonteDadosBean.fontes}" />
 
-			<p:selectOneMenu layout="lineDirection" label="Fontes"
-				value="#{utilitarioBean.idFonteDados}"
-				rendered="#{not empty utilitarioBean.fontes}">
-				<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
-					<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
-				</c:forEach>
-			</p:selectOneMenu>
+					<p:selectOneMenu style="width:155px;" label="Fontes"
+						value="#{fonteDadosBean.idFonteDados}"
+						rendered="#{not empty fonteDadosBean.fontes}">
+						<c:forEach items="#{fonteDadosBean.fontes}" var="fonte">
+							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+						</c:forEach>
+					</p:selectOneMenu>
 
-			<p:commandButton value="Indexar" type="submit"
-				action="#{utilitarioBean.indexar}" reRender="mensagens" />
+					<p:commandButton value="Indexar" type="submit" ajax="false"
+						action="#{fonteDadosBean.indexar}" />
 
-			<f:facet name="footer">
-				<p:commandLink action="#{fonteDadosBean.editar}">
-					<h:graphicImage url="imagens/edit.png" style="border: none" />
-					<f:setPropertyActionListener
-						target="#{fonteDadosBean.fonteDados.id}"
-						value="#{utilitarioBean.idFonteDados}" />
-				</p:commandLink>
+					<f:facet name="footer">
+						<p:commandLink action="#{fonteDadosBean.editar}" ajax="false">
+							<h:graphicImage url="imagens/edit.png" style="border: none" />
+							<f:setPropertyActionListener
+								target="#{fonteDadosBean.fonteDados.id}"
+								value="#{fonteDadosBean.idFonteDados}" />
+						</p:commandLink>
 
-				<p:commandLink action="#{fonteDadosBean.excluir}"
-					onclick="if (!confirm('Deseja excluir a configuração da fonte de dados (os dados não serão removidos)?')) return false;">
-					<h:graphicImage url="imagens/remove.png" style="border: none" />
-					<f:setPropertyActionListener
-						target="#{fonteDadosBean.fonteDados.id}"
-						value="#{utilitarioBean.idFonteDados}" />
-				</p:commandLink>
+						<p:commandLink action="#{fonteDadosBean.excluir}" ajax="false"
+							onclick="if (!confirm('Deseja excluir a configuração da fonte de dados (os dados não serão removidos)?')) return false;">
+							<h:graphicImage url="imagens/remove.png" style="border: none" />
+							<f:setPropertyActionListener
+								target="#{fonteDadosBean.fonteDados.id}"
+								value="#{fonteDadosBean.idFonteDados}" />
+						</p:commandLink>
 
-				<p:commandLink action="#{fonteDadosBean.novo}">
-					<h:graphicImage url="imagens/new.png" alt="Nova fonte de dados"
-						style="border: none" />
-				</p:commandLink>
+						<p:commandLink action="#{fonteDadosBean.novo}" ajax="false">
+							<h:graphicImage url="imagens/new.png" alt="Nova fonte de dados"
+								style="border: none" />
+						</p:commandLink>
 
-			</f:facet>
+					</f:facet>
 
-		</p:panelGrid>
+			</p:panel>
+		</h:form>
 	</ui:define>
 
 </ui:composition>

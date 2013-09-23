@@ -9,12 +9,14 @@
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.current_session_context_class"
+				value="thread" />
 
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:hsqldb:file:db-search-web/db" />
+				value="jdbc:hsqldb:file:db-search-web/db;shutdown=true;hsqldb.write_delay=false;" />
 			<property name="javax.persistence.jdbc.user" value="SA" />
 			<property name="javax.persistence.jdbc.password" value="" />
 

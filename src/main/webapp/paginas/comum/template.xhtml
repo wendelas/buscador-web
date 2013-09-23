@@ -9,13 +9,13 @@
 	value="#{facesContext.externalContext.request.contextPath}" />
 
 <h:head>
-	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<link href="${ctx}/paginas/comum/estilo/geral.css" type="text/css"
 		rel="stylesheet" />
 
-	<!--
+
 	<script src="${ctx}/paginas/comum/scripts/global.js"
 		type="text/javascript" />
+	<!--
 	<script src="${ctx}/paginas/comum/scripts/formatacao.js"
 		type="text/javascript" />
 	<script src="${ctx}/paginas/comum/scripts/util.js"
@@ -25,29 +25,23 @@
 
 </h:head>
 
-<h:body onload="javascript:focoNoPrimeiroItem();">
-
+<h:body>
 	<f:view>
-		<h:form>
-			<div id="header">
-				<f:view>
-					<p:menu model="#{baseBean.menu}" rendered="false" />
-				</f:view>
-			</div>
 
-			<p:spacer height="6px" />
+		<div id="header">
+			<f:view>
+				<!-- p:menu model="#{baseBean.menu}" rendered="false"  -->
+			</f:view>
+		</div>
 
-			<p:growl id="messages" showDetail="true" />
+		<div id="content">
+			<ui:insert name="body">Body</ui:insert>
+		</div>
 
-			<div id="content">
-				<ui:insert name="body">Body</ui:insert>
-			</div>
-
-			<div id="footer"
-				style="height: 30px; width: 100%; position: fixed; bottom: 0px; z-index: 5; text-align: center">
-				<ui:insert name="rodape"></ui:insert>
-			</div>
-		</h:form>
+		<div id="footer"
+			style="height: 30px; width: 100%; position: fixed; bottom: 0px; z-index: 5; text-align: center">
+			<ui:insert name="rodape"></ui:insert>
+		</div>
 
 	</f:view>
 

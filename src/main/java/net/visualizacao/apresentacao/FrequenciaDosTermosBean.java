@@ -11,106 +11,99 @@ import net.visualizacao.util.FrequenciaDoTermo;
 import net.visualizacao.util.UtilBusca;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.IndexNotFoundException;
 
 public class FrequenciaDosTermosBean extends BaseBean {
-  private static final long serialVersionUID = 6837431655685273498L;
-  protected static final Logger logger = Logger
-      .getLogger(FrequenciaDosTermosBean.class);
-  private Integer limite = 1;
-  private Integer idFonteDados;
-  private FonteDados fonte;
-  private VOMetaDados metaDados;
-  private List<FrequenciaDoTermo> termos;
+    private static final long serialVersionUID = 6837431655685273498L;
+    protected static final Logger logger = Logger
+	    .getLogger(FrequenciaDosTermosBean.class);
+    private Integer limite = 1;
+    private Integer idFonteDados;
+    private FonteDados fonte;
+    private VOMetaDados metaDados;
+    private List<FrequenciaDoTermo> termos;
 
-  public void setLimite(Integer limite) {
-    this.limite = limite;
-  }
-
-  public Integer getLimite() {
-    return limite;
-  }
-
-  public Collection<String> getCamposSelecionados() {
-    try {
-      metaDados = FachadaBuscador.getInstancia().buscarMetaData(fonte);
-      return metaDados.getColunas();
-    } catch (Exception e) {
-      //Fonte de dados eh um diretorio
+    public void setLimite(Integer limite) {
+	this.limite = limite;
     }
-    Collection<String> listaCamposArquivo = new ArrayList<String>();
-    listaCamposArquivo.add("Texto");
-    return listaCamposArquivo;
-  }
 
-  public void carregarDados() {
-    fonte = FachadaBuscador.getInstancia().buscarFontePeloId(getIdFonteDados());
-    UtilFrequenciaDosTermos util = new UtilFrequenciaDosTermos(
-        fonte.getDiretorioIndice());
-    try {
-      List<FrequenciaDoTermo> termList = util.getFrequencia(getLimite(),
-          getCamposSelecionados());
-      setTermos(termList);
-    } catch (IndexNotFoundException e) {
-      errorMsg(Constantes.ERRO_INDEX_NOT_FOUND, e.getLocalizedMessage());
-      logger.error(e);
-    } catch (IOException e) {
-      errorMsg(Constantes.ERRO_CARREGAR_FREQUENCIA_TERMOS,
-          e.getLocalizedMessage());
-      logger.error(e);
-    } catch (Exception e) {
-      errorMsg(Constantes.ERRO_BUSCA_LUCENE, e.getLocalizedMessage());
-      logger.error(e);
+    public Integer getLimite() {
+	return limite;
     }
-  }
 
-  public void setTermos(List<FrequenciaDoTermo> termList) {
-    this.termos = termList;
-  }
-
-  public List<FrequenciaDoTermo> getTermos() {
-    return termos;
-  }
-
-  public Integer getTotalAcordaosIndexados() {
-    try {
-      return new UtilBusca().getTotalDocumentosIndexados();
-    } catch (IOException e) {
-      errorMsg("erro", e);
-      return 0;
+    public Collection<String> getCamposSelecionados() {
+	try {
+	    metaDados = FachadaBuscador.getInstancia().buscarMetaData(fonte);
+	    return metaDados.getColunas();
+	} catch (Exception e) {
+	    // Fonte de dados eh um diretorio
+	}
+	Collection<String> listaCamposArquivo = new ArrayList<String>();
+	listaCamposArquivo.add("Texto");
+	return listaCamposArquivo;
     }
-  }
 
-  public Integer getTotalTermosIndexados() {
-    try {
-      return new UtilBusca("").getTotalDocumentosIndexados();
-    } catch (IOException e) {
-      errorMsg("erro", e);
-      return 0;
+    public void carregarDados() {
+	fonte = FachadaBuscador.getInstancia().buscarFontePeloId(
+		getIdFonteDados());
+	UtilFrequenciaDosTermos util = new UtilFrequenciaDosTermos(
+		fonte.getDiretorioIndice());
+	try {
+	    List<FrequenciaDoTermo> termList = util.getFrequencia(getLimite(),
+		    getCamposSelecionados());
+	    setTermos(termList);
+	} catch (Exception e) {
+	    errorMsg(e);
+	    logger.error(e);
+	}
     }
-  }
 
-  public void setFonte(FonteDados fonte) {
-    this.fonte = fonte;
-  }
+    public void setTermos(List<FrequenciaDoTermo> termList) {
+	this.termos = termList;
+    }
 
-  public FonteDados getFonte() {
-    return fonte;
-  }
+    public List<FrequenciaDoTermo> getTermos() {
+	return termos;
+    }
 
-  public void setMetaDados(VOMetaDados metaDados) {
-    this.metaDados = metaDados;
-  }
+    public Integer getTotalAcordaosIndexados() {
+	try {
+	    return new UtilBusca().getTotalDocumentosIndexados();
+	} catch (IOException e) {
+	    errorMsg(e);
+	    return 0;
+	}
+    }
 
-  public VOMetaDados getMetaDados() {
-    return metaDados;
-  }
+    public Integer getTotalTermosIndexados() {
+	try {
+	    return new UtilBusca("").getTotalDocumentosIndexados();
+	} catch (IOException e) {
+	    errorMsg(e);
+	    return 0;
+	}
+    }
 
-  public void setIdFonteDados(Integer idFonteDados) {
-    this.idFonteDados = idFonteDados;
-  }
+    public void setFonte(FonteDados fonte) {
+	this.fonte = fonte;
+    }
 
-  public Integer getIdFonteDados() {
-    return idFonteDados;
-  }
+    public FonteDados getFonte() {
+	return fonte;
+    }
+
+    public void setMetaDados(VOMetaDados metaDados) {
+	this.metaDados = metaDados;
+    }
+
+    public VOMetaDados getMetaDados() {
+	return metaDados;
+    }
+
+    public void setIdFonteDados(Integer idFonteDados) {
+	this.idFonteDados = idFonteDados;
+    }
+
+    public Integer getIdFonteDados() {
+	return idFonteDados;
+    }
 }
