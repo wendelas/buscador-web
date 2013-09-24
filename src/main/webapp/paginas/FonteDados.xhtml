@@ -31,14 +31,16 @@
 				<p:panelGrid columns="2">
 
 					<p:outputLabel value="Nome: *" />
-					<p:inputText value="#{fonteDadosBean.fonteDados.nome}" style="width:200px;"/>
+					<p:inputText value="#{fonteDadosBean.fonteDados.nome}"
+						style="width:200px;" />
 					<!--<h:graphicImage id="ajuda_nome" url="imagens/question.png"
 					style="border:none;" />
 				 <p:tooltip value="#{fonteDadosBean.mensagemNomeFonte}"
 					for="ajuda_nome" /> -->
 
 					<p:outputLabel value="Separador:" />
-					<p:inputText value="#{fonteDadosBean.separador}" style="width:20px;"/>
+					<p:inputText value="#{fonteDadosBean.separador}"
+						style="width:20px;" />
 
 					<p:outputLabel value="Adicionar anexo:" />
 					<p:fileUpload value="#{fonteDadosBean.arquivo}" mode="simple" />
@@ -69,11 +71,11 @@
 				</p:panelGrid>
 
 				<f:facet name="footer">
-					<p:commandButton value="Visualizar" />
+					<p:commandButton value="Visualizar" icon="ui-icon-search" />
 					<p:commandButton value="Salvar" ajax="false"
-						actionListener="#{fonteDadosBean.salvar}" />
+						actionListener="#{fonteDadosBean.salvar}" icon="ui-icon-disk" />
 					<p:commandButton value="Voltar" type="submit" action="Utilitario"
-						ajax="false" />
+						ajax="false" icon="ui-icon ui-icon-arrowreturnthick-1-w" />
 				</f:facet>
 			</p:panel>
 

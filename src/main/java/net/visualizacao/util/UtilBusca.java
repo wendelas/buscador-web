@@ -2,8 +2,8 @@ package net.visualizacao.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.Collection;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -14,6 +14,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
@@ -27,7 +28,6 @@ import org.apache.lucene.util.Version;
 public class UtilBusca {
     private static Logger logger = Logger.getLogger(UtilBusca.class);
     private FSDirectory diretorio;
-    private static Set<String> campos;
     private IndexSearcher buscador;
     private IndexReader reader;
     private long duracaoBusca;
@@ -81,10 +81,10 @@ public class UtilBusca {
 	for (String campo : campos) {
 	    arrCampos[i++] = campo;
 	}
-	return busca(arrCampos, argumentoDePesquisa);
+	return buscar(arrCampos, argumentoDePesquisa);
     }
 
-    public TopDocs busca(String[] campos, String argumentoDePesquisa)
+    public TopDocs buscar(String[] campos, String argumentoDePesquisa)
 	    throws ParseException, IOException {
 	//
 	long time = System.currentTimeMillis();
@@ -97,7 +97,7 @@ public class UtilBusca {
 	    analisador = new MultiFieldQueryParser(Version.LUCENE_44, campos,
 		    new StandardAnalyzer(Version.LUCENE_44));
 	}
-	// analisador.setDefaultOperator(Operator.AND);
+	analisador.setDefaultOperator(Operator.AND);
 	Query consulta = analisador.parse(argumentoDePesquisa);
 	TopDocs hits = getBuscador()
 		.search(consulta, quantidadeLimiteRegistros);
@@ -189,13 +189,17 @@ public class UtilBusca {
     }
 
     public TopDocs buscar(String consulta) throws ParseException {
-	Query query = new QueryParser(Version.LUCENE_44, "",
-		new StandardAnalyzer(Version.LUCENE_44))
-		.parse("TextoCompleto:(" + consulta + ")");
-	return busca(query);
+	consulta = Normalizer.normalize(consulta, Normalizer.Form.NFD)
+		.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+	StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	QueryParser queryParser = new QueryParser(Version.LUCENE_44, "",
+		analyzer);
+	queryParser.setDefaultOperator(Operator.AND);
+	Query query = queryParser.parse("TextoCompleto:(" + consulta + ")");
+	return buscar(query);
     }
 
-    public TopDocs busca(Query query) {
+    public TopDocs buscar(Query query) {
 	TopDocs hits;
 	try {
 	    long time = System.currentTimeMillis();

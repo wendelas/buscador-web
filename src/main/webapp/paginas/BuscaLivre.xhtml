@@ -16,16 +16,18 @@
 		<h:form>
 			<p:messages id="messages" />
 			<p:panel header="Busca Livre"
-				style="margin-left: 4%; margin-right: 4%;">
+				style="margin-left: 20%; margin-right: 20%;">
 				<p:panel>
-					<p:outputLabel value="Argumento:" />
-					<p:inputText value="#{buscaLivreBean.consulta}" size="100"
-						label="Consulta">
-						<f:validateLength minimum="1" />
-					</p:inputText>
+					<div align="center">
+						<p:inputText value="#{buscaLivreBean.consulta}" size="60"
+							label="Consulta">
+							<f:validateLength minimum="1" />
+						</p:inputText>
 
-					<p:commandButton value="Consultar" update="tblItens,messages"
-						ajax="false" actionListener="#{buscaLivreBean.consultar}" />
+						<p:commandButton value="Consultar" update="tblItens,messages"
+							ajax="false" actionListener="#{buscaLivreBean.consultar}"
+							icon="ui-icon-search" />
+					</div>
 				</p:panel>
 
 				<p:spacer height="6px" />
