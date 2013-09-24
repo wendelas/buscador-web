@@ -9,15 +9,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import net.indexador.entidades.AnexoFonteDados;
 import net.indexador.negocio.GenericXMLParser;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -152,7 +157,6 @@ public class Indexador {
 			.add(new Field(coluna, valor, StringField.TYPE_STORED));
 	    }
 	    writer.addDocument(documento);
-	    writer.commit();
 	    return true;
 	} catch (Exception e) {
 	    throw new ExcecaoIndexador(e);
@@ -181,7 +185,7 @@ public class Indexador {
 	    documento.add(new Field("TextoCompleto", textoExtraido,
 		    tipoAnalisado));
 	    writer.addDocument(documento);
-	    writer.commit();
+	    quantidadeArquivosIndexados++;
 	    return true;
 	} catch (Exception e) {
 	    logger.error(e);
@@ -203,6 +207,7 @@ public class Indexador {
 	while ((linha = bufferedReader.readLine()) != null) {
 	    System.out.println(StringUtils.limpacaracter(linha));
 	}
+	bufferedReader.close();
     }
 
     public int getQuantidadeArquivosIndexados() {
@@ -232,6 +237,32 @@ public class Indexador {
 	    indexarArquivoBinario(anexo);
 	} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".csv")) {
 	    indexarCSV(anexo);
+	} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".zip")) {
+	    try {
+		byte[] buffer = new byte[1024];
+		ZipInputStream zip = new ZipInputStream(
+			new ByteArrayInputStream(anexo.getAnexo()),
+			Charset.forName("ISO-8859-1"));
+		ZipEntry entry = zip.getNextEntry();
+		while (entry != null) {
+		    int len;
+		    ByteArrayOutputStream saida = new ByteArrayOutputStream();
+		    while ((len = zip.read(buffer)) > 0) {
+			saida.write(buffer, 0, len);
+		    }
+		    AnexoFonteDados subAnexo = new AnexoFonteDados();
+		    subAnexo.setDataEnvio(new Timestamp((System
+			    .currentTimeMillis())));
+		    subAnexo.setNomeArquivo(entry.getName());
+		    subAnexo.setTamanho(entry.getSize());
+		    subAnexo.setAnexo(saida.toByteArray());
+		    saida.close();
+		    indexaAnexo(subAnexo);
+		    entry = zip.getNextEntry();
+		}
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
 	}
     }
 
@@ -248,14 +279,22 @@ public class Indexador {
 	    while (line != null) {
 		if (linha == 1) {
 		    linha++;
-		    metadados = line.split(anexo.getSeparador());
+		    if (anexo.getSeparador().length() > 0) {
+			metadados = line.split(anexo.getSeparador());
+		    } else {
+			metadados = new String[] { line };
+		    }
 		} else {
 		    Document doc = new Document();
 		    try {
-			String[] dados = line.split(anexo.getSeparador());
-			for (int i = 0; i < metadados.length; i++) {
-			    doc.add(new Field(metadados[i], dados[i],
-				    tipoAnalisado));
+			if (anexo.getSeparador().length() > 0) {
+			    String[] dados = line.split(anexo.getSeparador());
+			    for (int i = 0; i < metadados.length; i++) {
+				doc.add(new Field(metadados[i], dados[i],
+					tipoAnalisado));
+			    }
+			} else {
+			    doc.add(new Field(metadados[0], line, tipoAnalisado));
 			}
 		    } catch (Exception e) {
 			logger.error("Erro na linha " + quantidadeLinhas);
@@ -263,7 +302,7 @@ public class Indexador {
 		    writer.addDocument(doc);
 		}
 		quantidadeLinhas++;
-		if (quantidadeLinhas % 1000 == 0) {
+		if (quantidadeLinhas % 100000 == 0) {
 		    logger.info("Quantidade de linhas processadas: "
 			    + quantidadeLinhas);
 		}
@@ -305,7 +344,6 @@ public class Indexador {
 	    documento.add(new Field("TextoCompleto", textoExtraido,
 		    tipoAnalisado));
 	    writer.addDocument(documento);
-	    writer.commit();
 	    quantidadeArquivosIndexados++;
 	} catch (Exception e) {
 	    logger.error(e);
