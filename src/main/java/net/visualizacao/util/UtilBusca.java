@@ -6,8 +6,11 @@ import java.text.Normalizer;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -22,6 +25,12 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.Scorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
@@ -33,13 +42,13 @@ public class UtilBusca {
     private long duracaoBusca;
     private Integer quantidadeLimiteRegistros = 5000;
     private String diretorioIndice;
+    private Query query;
 
     public Integer getTotalDocumentosIndexados() {
 	try {
 	    diretorio = FSDirectory.open(new File(diretorioIndice));
 	    reopen();
 	    int total = reader.numDocs();
-	    fecha();
 	    return total;
 	} catch (IOException e) {
 	    logger.error(e);
@@ -48,9 +57,11 @@ public class UtilBusca {
     }
 
     public void reopen() throws IOException {
-	diretorio = FSDirectory.open(new File(diretorioIndice));
-	reader = DirectoryReader.open(diretorio);
-	buscador = new IndexSearcher(reader);
+	if (reader == null) {
+	    diretorio = FSDirectory.open(new File(diretorioIndice));
+	    reader = DirectoryReader.open(diretorio);
+	    buscador = new IndexSearcher(reader);
+	}
     }
 
     public UtilBusca() throws IOException {
@@ -102,18 +113,19 @@ public class UtilBusca {
 	TopDocs hits = getBuscador()
 		.search(consulta, quantidadeLimiteRegistros);
 	duracaoBusca = System.currentTimeMillis() - time;
-	fecha();
 	return hits;
     }
 
     public void fecha() {
 	try {
 	    diretorio.close();
+	    diretorio = null;
 	} catch (Exception e) {
 	    logger.error(e);
 	}
 	try {
 	    reader.close();
+	    reader = null;
 	} catch (IOException e) {
 	    logger.error(e);
 	}
@@ -136,9 +148,26 @@ public class UtilBusca {
     }
 
     public Document doc(int docID) throws IOException {
+	reopen();
+	Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
+	Scorer scorer = new QueryScorer(getQuery());
+	Highlighter hl = new Highlighter(formatter, scorer);
 	Document doc = getBuscador().doc(docID);
-	fecha();
+	String texto = doc.get("TextoCompleto");
+	TokenStream token = TokenSources.getTokenStream(doc, "TextoCompleto",
+		new StandardAnalyzer(Version.LUCENE_44));
+	try {
+	    String fragmentos = hl.getBestFragment(new StandardAnalyzer(
+		    Version.LUCENE_44), "TextoCompleto", texto);
+	    doc.add(new StringField("TextoCompleto.hl", fragmentos, Store.NO));
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
 	return doc;
+    }
+
+    public Query getQuery() {
+	return query;
     }
 
     // public float getIdf(String termo, String campo) throws IOException {
@@ -195,11 +224,11 @@ public class UtilBusca {
 	QueryParser queryParser = new QueryParser(Version.LUCENE_44, "",
 		analyzer);
 	queryParser.setDefaultOperator(Operator.AND);
-	Query query = queryParser.parse("TextoCompleto:(" + consulta + ")");
-	return buscar(query);
+	query = queryParser.parse("TextoCompleto:(" + consulta + ")");
+	return buscar();
     }
 
-    public TopDocs buscar(Query query) {
+    public TopDocs buscar() {
 	TopDocs hits;
 	try {
 	    long time = System.currentTimeMillis();
@@ -208,7 +237,6 @@ public class UtilBusca {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	} finally {
-	    fecha();
 	}
 	return hits;
     }

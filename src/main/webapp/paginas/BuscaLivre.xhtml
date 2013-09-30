@@ -67,7 +67,7 @@
 				<p:panel rendered="#{not empty buscaLivreBean.itens}">
 					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
 						var="item" rows="20">
-						<p:column>
+						<p:column rendered="false">
 							<f:facet name="header">
 								<p:outputLabel value="View" />
 							</f:facet>

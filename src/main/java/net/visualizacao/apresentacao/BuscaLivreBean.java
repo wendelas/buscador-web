@@ -38,6 +38,14 @@ public class BuscaLivreBean extends BaseBean {
     private int idFonteDados;
     private FonteDados fonte;
     private Document documento;
+    private UtilBusca buscador;
+
+    public UtilBusca getBuscador() throws IOException {
+	if (buscador == null) {
+	    buscador = new UtilBusca(getFonte().getDiretorioIndice());
+	}
+	return buscador;
+    }
 
     public void setConsulta(String consulta) {
 	this.consulta = consulta;
@@ -82,24 +90,17 @@ public class BuscaLivreBean extends BaseBean {
     }
 
     public void consultar() {
-	UtilBusca buscador = null;
 	try {
 	    fonte = FachadaBuscador.getInstancia().buscarFontePeloId(
 		    getIdFonteDados());
-	    buscador = new UtilBusca(fonte.getDiretorioIndice());
-	    buscador.addCampoOrdenacao();
-	    TopDocs hits = buscador.buscar(getConsulta());
+	    TopDocs hits = getBuscador().buscar(getConsulta());
 	    setItens(hits.scoreDocs);
-	    duracaoBusca = buscador.getDuracaoBusca();
+	    duracaoBusca = getBuscador().getDuracaoBusca();
 	} catch (NoSuchDirectoryException e) {
 	    errorMsg("Essa fonte de dados ainda não foi indexada. Faça a indexação no menu de Utilitário.");
 	} catch (Exception e) {
 	    errorMsg(e);
 	} finally {
-	    try {
-		buscador.fecha();
-	    } catch (Exception e) {
-	    }
 	}
     }
 
@@ -111,14 +112,9 @@ public class BuscaLivreBean extends BaseBean {
 	return itens;
     }
 
-    public Document doc(ScoreDoc doc) {
-	return doc(doc.doc);
-    }
-
     public Document doc(int doc) {
 	try {
-	    UtilBusca buscador = new UtilBusca(getFonte().getDiretorioIndice());
-	    return buscador.doc(doc);
+	    return getBuscador().doc(doc);
 	} catch (IOException e) {
 	    logger.error(e);
 	}
@@ -144,12 +140,12 @@ public class BuscaLivreBean extends BaseBean {
     public String mostraDados(ScoreDoc doc) {
 	StringBuilder saida = new StringBuilder();
 	try {
-	    Document documento = doc(doc);
+	    Document documento = doc(doc.doc);
 	    // Arquivo no disco
 	    if (fonte.getMetadados() == null
 		    || fonte.getMetadados().size() == 0) {
-		//String resultado = "[" + documento.get("Caminho") + "]" + "<br/>";
-		String resultado = limitaTamanho(documento.get("TextoCompleto"));
+		String resultado = "[" + documento.get("ID") + "] - ";
+		resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
 		return resultado;
 	    }
 	    // Registro do banco
@@ -170,8 +166,11 @@ public class BuscaLivreBean extends BaseBean {
     }
 
     private String limitaTamanho(String conteudo) {
-	if (conteudo != null && conteudo.length() > QUANTIDADE_CARACTERES_VISUALIZACAO) {
-	    conteudo = conteudo.substring(0, QUANTIDADE_CARACTERES_VISUALIZACAO) + " (...)";
+	if (conteudo != null
+		&& conteudo.length() > QUANTIDADE_CARACTERES_VISUALIZACAO) {
+	    conteudo = conteudo
+		    .substring(0, QUANTIDADE_CARACTERES_VISUALIZACAO)
+		    + " (...)";
 	}
 	return conteudo;
     }
