@@ -30,6 +30,7 @@ import org.apache.lucene.store.NoSuchDirectoryException;
 @ManagedBean
 @RequestScoped
 public class BuscaLivreBean extends BaseBean {
+    private static final int QUANTIDADE_CARACTERES_VISUALIZACAO = 200;
     private static final long serialVersionUID = -7508553590263034662L;
     private String consulta;
     private long duracaoBusca;
@@ -95,7 +96,10 @@ public class BuscaLivreBean extends BaseBean {
 	} catch (Exception e) {
 	    errorMsg(e);
 	} finally {
-	    buscador.fecha();
+	    try {
+		buscador.fecha();
+	    } catch (Exception e) {
+	    }
 	}
     }
 
@@ -144,9 +148,8 @@ public class BuscaLivreBean extends BaseBean {
 	    // Arquivo no disco
 	    if (fonte.getMetadados() == null
 		    || fonte.getMetadados().size() == 0) {
-		String resultado = "[" + documento.get("Caminho") + "]"
-			+ "<br/>";
-		resultado += limitaTamanho(documento.get("TextoCompleto"));
+		//String resultado = "[" + documento.get("Caminho") + "]" + "<br/>";
+		String resultado = limitaTamanho(documento.get("TextoCompleto"));
 		return resultado;
 	    }
 	    // Registro do banco
@@ -167,8 +170,8 @@ public class BuscaLivreBean extends BaseBean {
     }
 
     private String limitaTamanho(String conteudo) {
-	if (conteudo != null && conteudo.length() > 50) {
-	    conteudo = conteudo.substring(0, 50) + " (...)";
+	if (conteudo != null && conteudo.length() > QUANTIDADE_CARACTERES_VISUALIZACAO) {
+	    conteudo = conteudo.substring(0, QUANTIDADE_CARACTERES_VISUALIZACAO) + " (...)";
 	}
 	return conteudo;
     }
