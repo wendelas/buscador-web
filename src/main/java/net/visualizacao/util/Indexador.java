@@ -299,6 +299,7 @@ public class Indexador {
 		    } catch (Exception e) {
 			logger.error("Erro na linha " + quantidadeLinhas);
 		    }
+		    doc.add(new Field("TextoCompleto", line, tipoAnalisado));
 		    writer.addDocument(doc);
 		}
 		quantidadeLinhas++;

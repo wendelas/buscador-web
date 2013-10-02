@@ -144,7 +144,8 @@ public class BuscaLivreBean extends BaseBean {
 	    // Arquivo no disco
 	    if (fonte.getMetadados() == null
 		    || fonte.getMetadados().size() == 0) {
-		String resultado = "[" + documento.get("ID") + "] - ";
+		String id = documento.get("ID");
+		String resultado = id == null ? "" : "[" + id + "] - ";
 		resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
 		return resultado;
 	    }
