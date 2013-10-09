@@ -3,18 +3,14 @@ package net.visualizacao.util;
 import java.io.File;
 import java.io.IOException;
 import java.text.Normalizer;
-import java.util.Collection;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
@@ -23,6 +19,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Formatter;
@@ -30,7 +27,6 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
@@ -41,79 +37,42 @@ public class UtilBusca {
     private IndexReader reader;
     private long duracaoBusca;
     private Integer quantidadeLimiteRegistros = 5000;
-    private String diretorioIndice;
     private Query query;
+    private SearcherManager sm;
+    private String diretorioIndice;
 
-    public Integer getTotalDocumentosIndexados() {
+    public void reopen() {
 	try {
-	    diretorio = FSDirectory.open(new File(diretorioIndice));
-	    reopen();
-	    int total = reader.numDocs();
-	    return total;
+	    if (sm == null) {
+		diretorio = FSDirectory.open(new File(diretorioIndice));
+		sm = new SearcherManager(diretorio, null);
+	    }
+	    buscador = sm.acquire();
 	} catch (IOException e) {
-	    logger.error(e);
-	    return 0;
+	    throw new RuntimeException(e);
 	}
     }
 
-    public void reopen() throws IOException {
-	if (reader == null) {
-	    diretorio = FSDirectory.open(new File(diretorioIndice));
-	    reader = DirectoryReader.open(diretorio);
-	    buscador = new IndexSearcher(reader);
-	}
-    }
-
-    public UtilBusca() throws IOException {
-	diretorio = FSDirectory.open(new File(diretorioIndice));
-	reopen();
-    }
-
-    public UtilBusca(String diretorioIndice) throws IOException {
+    public UtilBusca(String diretorioIndice) {
 	this.diretorioIndice = diretorioIndice;
-	reopen();
     }
 
-    public UtilBusca(Integer quantidadeLimiteRegistros) throws IOException {
-	this();
-	this.quantidadeLimiteRegistros = quantidadeLimiteRegistros;
-    }
-
-    public UtilBusca(Integer quantidadeLimiteDeAcordaos, String diretorioIndice)
-	    throws IOException {
-	this(diretorioIndice);
-	this.quantidadeLimiteRegistros = quantidadeLimiteDeAcordaos;
-    }
-
-    public TopDocs busca(Collection<String> campos, String argumentoDePesquisa)
-	    throws ParseException, IOException {
-	String[] arrCampos = new String[campos.size()];
-	int i = 0;
-	for (String campo : campos) {
-	    arrCampos[i++] = campo;
+    public void release() {
+	try {
+	    sm.release(buscador);
+	    buscador = null;
+	    //
+	} catch (IOException e) {
+	    e.printStackTrace();
 	}
-	return buscar(arrCampos, argumentoDePesquisa);
-    }
-
-    public TopDocs buscar(String[] campos, String argumentoDePesquisa)
-	    throws ParseException, IOException {
 	//
-	long time = System.currentTimeMillis();
-	argumentoDePesquisa = StringUtils.limpacaracter(argumentoDePesquisa);
-	QueryParser analisador = null;
-	if (campos.length == 1) {
-	    analisador = new QueryParser(Version.LUCENE_44, campos[0],
-		    new StandardAnalyzer(Version.LUCENE_44));
-	} else {
-	    analisador = new MultiFieldQueryParser(Version.LUCENE_44, campos,
-		    new StandardAnalyzer(Version.LUCENE_44));
+	try {
+	    if (diretorio != null)
+		diretorio.close();
+	    diretorio = null;
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
-	analisador.setDefaultOperator(Operator.AND);
-	Query consulta = analisador.parse(argumentoDePesquisa);
-	TopDocs hits = getBuscador()
-		.search(consulta, quantidadeLimiteRegistros);
-	duracaoBusca = System.currentTimeMillis() - time;
-	return hits;
     }
 
     public void fecha() {
@@ -147,23 +106,24 @@ public class UtilBusca {
 	return buscador;
     }
 
-    public Document doc(int docID) throws IOException {
-	reopen();
-	Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
-	Scorer scorer = new QueryScorer(getQuery());
-	Highlighter hl = new Highlighter(formatter, scorer);
-	Document doc = getBuscador().doc(docID);
-	String texto = doc.get("TextoCompleto");
-	TokenStream token = TokenSources.getTokenStream(doc, "TextoCompleto",
-		new StandardAnalyzer(Version.LUCENE_44));
+    public Document doc(int docID) {
 	try {
+	    reopen();
+	    Formatter formatter = new SimpleHTMLFormatter("<strong>",
+		    "</strong>");
+	    Scorer scorer = new QueryScorer(getQuery());
+	    Highlighter hl = new Highlighter(formatter, scorer);
+	    Document doc = getBuscador().doc(docID);
+	    String texto = doc.get("TextoCompleto");
 	    String fragmentos = hl.getBestFragment(new StandardAnalyzer(
 		    Version.LUCENE_44), "TextoCompleto", texto);
 	    doc.add(new StringField("TextoCompleto.hl", fragmentos, Store.NO));
+	    return doc;
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    throw new RuntimeException(e);
+	} finally {
+	    release();
 	}
-	return doc;
     }
 
     public Query getQuery() {
@@ -229,6 +189,7 @@ public class UtilBusca {
     }
 
     public TopDocs buscar() {
+	reopen();
 	TopDocs hits;
 	try {
 	    long time = System.currentTimeMillis();
@@ -237,6 +198,7 @@ public class UtilBusca {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	} finally {
+	    release();
 	}
 	return hits;
     }

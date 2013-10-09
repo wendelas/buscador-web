@@ -45,7 +45,7 @@ public class Indexador {
     private static Logger logger = Logger.getLogger(Indexador.class);
     private IndexWriter writer;
     private String diretorioIndice;
-    private int quantidadeArquivosIndexados = 0;
+    private int quantidadeItensIndexados = 0;
     private FieldType tipoAnalisado = new FieldType();
     private FieldType tipoNaoAnalisado = new FieldType();
 
@@ -60,6 +60,7 @@ public class Indexador {
 	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
 		analyzer);
+	config.setUseCompoundFile(false);
 	config.setOpenMode(OpenMode.CREATE_OR_APPEND);
 	writer = new IndexWriter(d, config);
 	//
@@ -106,7 +107,7 @@ public class Indexador {
 		    InputStream in = new FileInputStream(arquivo);
 		    textoExtraido = getTika().parseToString(in);
 		    if (indexaArquivo(arquivo, textoExtraido)) {
-			quantidadeArquivosIndexados++;
+			quantidadeItensIndexados++;
 		    }
 		} else {
 		    indexaArquivosDoDiretorio(arquivo);
@@ -185,7 +186,7 @@ public class Indexador {
 	    documento.add(new Field("TextoCompleto", textoExtraido,
 		    tipoAnalisado));
 	    writer.addDocument(documento);
-	    quantidadeArquivosIndexados++;
+	    quantidadeItensIndexados++;
 	    return true;
 	} catch (Exception e) {
 	    logger.error(e);
@@ -211,7 +212,7 @@ public class Indexador {
     }
 
     public int getQuantidadeArquivosIndexados() {
-	return quantidadeArquivosIndexados;
+	return quantidadeItensIndexados;
     }
 
     public Tika getTika() {
@@ -269,7 +270,6 @@ public class Indexador {
     private void indexarCSV(AnexoFonteDados anexo) {
 	InputStream is = null;
 	BufferedReader br = null;
-	int quantidadeLinhas = 0;
 	try {
 	    is = new ByteArrayInputStream(anexo.getAnexo());
 	    br = new BufferedReader(new AutoDetectReader(is));
@@ -297,15 +297,15 @@ public class Indexador {
 			    doc.add(new Field(metadados[0], line, tipoAnalisado));
 			}
 		    } catch (Exception e) {
-			logger.error("Erro na linha " + quantidadeLinhas);
+			logger.error("Erro na linha " + quantidadeItensIndexados);
 		    }
 		    doc.add(new Field("TextoCompleto", line, tipoAnalisado));
 		    writer.addDocument(doc);
 		}
-		quantidadeLinhas++;
-		if (quantidadeLinhas % 100000 == 0) {
+		quantidadeItensIndexados++;
+		if (quantidadeItensIndexados % 100000 == 0) {
 		    logger.info("Quantidade de linhas processadas: "
-			    + quantidadeLinhas);
+			    + quantidadeItensIndexados);
 		}
 		line = br.readLine();
 	    }
@@ -345,7 +345,7 @@ public class Indexador {
 	    documento.add(new Field("TextoCompleto", textoExtraido,
 		    tipoAnalisado));
 	    writer.addDocument(documento);
-	    quantidadeArquivosIndexados++;
+	    quantidadeItensIndexados++;
 	} catch (Exception e) {
 	    logger.error(e);
 	}

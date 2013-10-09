@@ -16,3 +16,9 @@ Proximos passos:
 
 
 -> Atualizar para JSF 2.0 com RichFaces 4.
+
+-> lsof -p 11424 | grep indices | wc -l
+
+-> jmap -heap proc_id
+-> jmap -histo:live proc_id | more
+-> jstat -gcutil -h5 lvmid 2s => verificar lvmid com o comando 'jps' 
