@@ -19,10 +19,12 @@
 				style="margin-left: 20%; margin-right: 20%;">
 				<p:panel>
 					<div align="center">
-						<p:inputText value="#{buscaLivreBean.consulta}" size="60"
+						<p:inputText value="#{buscaLivreBean.consulta}" size="60" id="txtConsulta"
 							label="Consulta">
 							<f:validateLength minimum="1" />
 						</p:inputText>
+						
+						<p:watermark for="txtConsulta" value="Consulte uma palavra-chave" />
 
 						<p:commandButton value="Consultar" update="tblItens,messages"
 							ajax="false" actionListener="#{buscaLivreBean.consultar}"
@@ -80,8 +82,7 @@
 							<f:facet name="header">
 								<p:outputLabel value="Conteúdo" />
 							</f:facet>
-							<p:outputLabel escape="false"
-								style="white-space: normal"
+							<p:outputLabel escape="false" style="white-space: normal"
 								value="#{buscaLivreBean.mostraDados(item)}" />
 						</p:column>
 
