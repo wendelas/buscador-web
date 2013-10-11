@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="comum/template.xhtml">
+
+	<ui:define name="body">
+		<h:form enctype="multipart/form-data">
+			<p:messages id="messages" showDetail="true" autoUpdate="true" />
+
+			<p:panel header="Informações"
+				style="margin-left: 24%; margin-right: 24%;">
+				<p:outputLabel value="#{fonteDadosBean.mensagemFonteDados}"
+					escape="false" />
+			</p:panel>
+
+			<p:spacer height="3px" />
+
+			<p:panel header="Fonte de Dados"
+				style="margin-left: 24%; margin-right: 24%;">
+
+				<h:inputHidden value="#{fonteDadosBean.fonteDados.id}" />
+
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Nome: *" />
+					<p:inputText value="#{fonteDadosBean.fonteDados.nome}"
+						style="width:200px;" />
+					<!--<h:graphicImage id="ajuda_nome" url="imagens/question.png"
+					style="border:none;" />
+				 <p:tooltip value="#{fonteDadosBean.mensagemNomeFonte}"
+					for="ajuda_nome" /> -->
+
+					<p:outputLabel value="Separador:" />
+					<p:inputText value="#{fonteDadosBean.separador}"
+						style="width:20px;" />
+
+					<p:outputLabel value="Adicionar anexo:" />
+					<p:fileUpload value="#{fonteDadosBean.arquivo}" mode="simple" />
+
+				</p:panelGrid>
+
+				<p:spacer height="6px" />
+
+				<p:panelGrid columns="1">
+					<f:facet name="header">Anexos</f:facet>
+					<p:outputLabel value="Nenhum anexo cadastrado"
+						rendered="#{empty fonteDadosBean.anexos}" />
+					<p:dataTable var="anexo" value="#{fonteDadosBean.anexos}"
+						rendered="#{not empty fonteDadosBean.anexos}">
+						<p:column headerText="Nome">
+							<h:outputText value="#{anexo.nomeArquivo}" />
+						</p:column>
+						<p:column headerText="Tamanho (MB)">
+							<h:outputText value="#{anexo.tamanho / 1024 / 1024}">
+								<f:convertNumber type="number" groupingUsed="true"
+									minFractionDigits="3" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Envio">
+							<h:outputText value="#{anexo.dataEnvio}" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+
+				<f:facet name="footer">
+					<p:commandButton value="Visualizar" icon="ui-icon-search" />
+					<p:commandButton value="Salvar" ajax="false"
+						actionListener="#{fonteDadosBean.salvar}" icon="ui-icon-disk" />
+					<p:commandButton value="Voltar" type="submit" action="Utilitario"
+						ajax="false" icon="ui-icon ui-icon-arrowreturnthick-1-w" />
+				</f:facet>
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core" template="comum/template.xhtml">
+
+	<title>Busca Livre</title>
+
+	<ui:define name="body">
+
+		<h:form>
+			<p:messages id="messages" />
+			<p:panel header="Busca Livre"
+				style="margin-left: 20%; margin-right: 20%;">
+				<p:panel>
+					<div align="center">
+						<p:inputText value="#{buscaLivreBean.consulta}" size="60"
+							label="Consulta">
+							<f:validateLength minimum="1" />
+						</p:inputText>
+
+						<p:commandButton value="Consultar" update="tblItens,messages"
+							ajax="false" actionListener="#{buscaLivreBean.consultar}"
+							icon="ui-icon-search" />
+					</div>
+				</p:panel>
+
+				<p:spacer height="6px" />
+
+				<p:panel>
+					<p:outputLabel value="Índice:" />
+					<p:selectOneMenu label="Índice"
+						value="#{buscaLivreBean.idFonteDados}">
+						<c:forEach items="#{fonteDadosBean.fontes}" var="fonte">
+							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+						</c:forEach>
+					</p:selectOneMenu>
+
+				</p:panel>
+				<p:spacer height="6px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
+
+				<p:panel
+					rendered="#{empty buscaLivreBean.itens and not empty buscaLivreBean.consulta}">
+					<p:outputLabel
+						value="Nenhum documento encontrado para o argumento pesquisado" />
+				</p:panel>
+
+				<p:spacer height="6px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
+
+				<p:panel rendered="#{not empty buscaLivreBean.itens}">
+					<p:outputLabel
+						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
+					<p:outputLabel
+						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}." />
+				</p:panel>
+
+				<p:spacer height="6px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
+
+				<p:panel rendered="#{not empty buscaLivreBean.itens}">
+					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
+						var="item" rows="20">
+						<p:column rendered="false">
+							<f:facet name="header">
+								<p:outputLabel value="View" />
+							</f:facet>
+							<p:commandLink action="#{buscaLivreBean.visualizarDetalhe}">
+								<f:param value="#{item}" name="scoreDoc" />
+								<p:graphicImage value="imagens/view.png" />
+							</p:commandLink>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<p:outputLabel value="Conteúdo" />
+							</f:facet>
+							<p:outputLabel escape="false"
+								style="white-space: normal"
+								value="#{buscaLivreBean.mostraDados(item)}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panel>
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

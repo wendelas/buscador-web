@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich" template="comum/template.xhtml">
+
+	<ui:define name="body">
+		<rich:panel header="Consulta termos mais frequentes"
+			style="margin-left: 30%; margin-right: 30%;">
+
+			<rich:panel>
+				<h:panelGrid columns="4" styleClass="fullWidthClass"
+					columnClasses="fullWidthClass, alignRightClass, alignRightClass, alignRightClass">
+					<h:outputText value="Quantidade mínima de ocorrências: " />
+					<h:inputText value="#{frequenciaDosTermosBean.limite}" size="6" />
+					<h:commandButton value="Consultar" type="submit"
+						action="#{frequenciaDosTermosBean.carregarDados}"
+						onclick="Richfaces.showModalPanel('painelAguarde');"
+						oncomplete="Richfaces.hideModalPanel('painelAguarde');"
+						reRender="termos" />
+					<h:graphicImage id="ajuda_nome" url="imagens/question.png"
+						style="border:none;" />
+					<rich:toolTip
+						value="Serão mostrados apenas os termos com a quantidade mínima de ocorrências. "
+						for="ajuda_nome" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="4" styleClass="fullWidthClass">
+					<h:outputText value="Índice:" />
+					<h:selectOneMenu layout="lineDirection" label="Índice"
+						value="#{frequenciaDosTermosBean.idFonteDados}">
+						<c:forEach items="#{utilitarioBean.fontes}" var="fonte">
+							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+						</c:forEach>
+					</h:selectOneMenu>
+				</h:panelGrid>
+
+			</rich:panel>
+
+			<rich:spacer height="10"
+				rendered="#{not empty frequenciaDosTermosBean.termos}" />
+			<rich:separator height="2" lineType="dotted"
+				rendered="#{not empty frequenciaDosTermosBean.termos}" />
+			<rich:spacer height="10"
+				rendered="#{not empty frequenciaDosTermosBean.termos}" />
+
+			<h:panelGrid columns="1" styleClass="fullWidthClass">
+				<rich:dataTable value="#{frequenciaDosTermosBean.termos}" rows="15"
+					rendered="#{not empty frequenciaDosTermosBean.termos}" var="termo">
+					<rich:column sortBy="#{termo.termo}">
+						<f:facet name="header">
+							<h:outputText styleClass="headerText" value="Termo" />
+						</f:facet>
+						<h:outputText value="#{termo.termo}" />
+					</rich:column>
+					<rich:column sortBy="#{termo.frequencia}">
+						<f:facet name="header">
+							<h:outputText value="Frequência" />
+						</f:facet>
+						<h:outputText value="#{termo.frequencia}" />
+					</rich:column>
+					<f:facet name="footer">
+						<rich:datascroller />
+					</f:facet>
+				</rich:dataTable>
+			</h:panelGrid>
+
+			<rich:panel rendered="false">
+				<h:outputText styleClass="headerText"
+					rendered="#{empty frequenciaDosTermosBean.termos}"
+					value="Não foi encontrado nenhum registro para a quantidade informada. Tente diminuir a quantidade mínima de ocorrências." />
+			</rich:panel>
+
+		</rich:panel>
+	</ui:define>
+</ui:composition>

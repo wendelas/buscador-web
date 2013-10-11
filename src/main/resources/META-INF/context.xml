@@ -1,0 +1,7 @@
+<Context path="/testapp" reloadable="true" docBase="work/Catalina/localhost">
+
+	<Resource name="jdbc/search-web" auth="Container" type="javax.sql.DataSource"
+		driverClassName="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:~/indices/db/db_indexador;shutdown=true"
+		username="sa" password="" maxActive="20" maxIdle="10" maxWait="-1" />
+
+</Context>  

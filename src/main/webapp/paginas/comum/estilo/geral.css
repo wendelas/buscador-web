@@ -1,0 +1,19 @@
+.ui-widget,.ui-widget .ui-widget .ui-panel-title {
+    font-size: 90% !important;
+}
+
+label,input,button {
+	margin: 6px;
+}
+
+.ui-selectonemenu {
+    bottom: -5px !important;
+}
+
+**.ui-layout-north {
+    z-index: 20 !important;
+    overflow: visible !important;
+}
+.ui-layout-north .ui-layout-unit-content {
+    overflow: visible !important;
+}**
