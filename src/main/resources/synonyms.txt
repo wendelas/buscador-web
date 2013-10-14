@@ -1,0 +1,17 @@
+concorrencia,licitação,pregão,tomada,convite
+aposentadoria,aposentado,pensão,pensionista
+contrata,contratação
+adia,prorroga
+inspeção,fiscalização
+edição,publicação
+estudos,analises
+auditoria,auditagem,checagem
+administra,administração,administrar,administrado,administrador,administrativo
+hospital,clinica
+dispensa,isenção
+denuncia,queixa
+falha,erro,irregularidades
+urbano,urbanisadora
+francisco,chico,chicão
+financeiro,pecuniário
+teste,experiência

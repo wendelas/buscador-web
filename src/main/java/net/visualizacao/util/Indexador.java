@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
@@ -23,7 +24,9 @@ import java.util.zip.ZipInputStream;
 import net.indexador.entidades.AnexoFonteDados;
 import net.indexador.negocio.GenericXMLParser;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.fontbox.util.ResourceLoader;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -62,16 +65,41 @@ public class Indexador {
 	File file = new File(System.getProperty("user.home")
 		+ "/dados/indices/" + diretorioIndice);
 	File dicionariosDir = new File(this.diretorioDicionarios);
-	//TODO:copiar arquivos para dicionários
+
+	if (!dicionariosDir.exists())
+	{
+		dicionariosDir.mkdir();
+	}
+	
+	File stopWordsFile = new File(this.diretorioDicionarios+"/stopwords.txt");
+	File dictionariesFile = new File(this.diretorioDicionarios+"/dictionaries.txt");
+	if (!stopWordsFile.exists())
+	{
+		URL url = getClass().getClassLoader().getResource("stopwords.txt");
+		try {
+			File f = new File(url.toURI());
+			FileUtils.copyFileToDirectory(f, dicionariosDir);
+		} catch (URISyntaxException e) {
+			logger.error("Erro ao copiar dicionário de stopwords");
+		}
+	}
+	if (!dictionariesFile.exists())
+	{
+		URL url = getClass().getClassLoader().getResource("synonyms.txt");
+		try {
+			File f = new File(url.toURI());
+			FileUtils.copyFileToDirectory(f, dicionariosDir);
+		} catch (URISyntaxException e) {
+			logger.error("Erro ao copiar dicionário de sinônimos");
+		}
+	}
 	
 	Directory d = NIOFSDirectory.open(file);
 	logger.info("Diretorio do indice: " + file.getAbsolutePath());
 	//Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
     HashMap<String, String> args = new HashMap<String, String>();
     args.put("stopWords", "stopwords.txt");
-    //args.put("dictionaries", "synonyms.txt");
     args.put("baseDirectory", diretorioDicionarios);
-    //args.put("language",language);
     args.put("luceneMatchVersion",Version.LUCENE_44.toString());
 
     Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
