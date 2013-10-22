@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
@@ -46,8 +46,21 @@ public class UtilBusca {
     private Integer quantidadeLimiteRegistros = 5000;
     private String diretorioIndice;
     private String diretorioDicionarios;
-    private HashMap<String,String> args;
+    private HashMap<String, String> args;
     private Query query;
+    private Analyzer analyzer;
+
+    public Analyzer getAnalyzer() {
+	if (analyzer == null) {
+	    args = new HashMap<String, String>();
+	    args.put("stopWords", "stopwords.txt");
+	    args.put("dictionaries", "synonyms.txt");
+	    args.put("baseDirectory", diretorioDicionarios);
+	    args.put("luceneMatchVersion", Version.LUCENE_44.toString());
+	    analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	}
+	return analyzer;
+    }
 
     public Integer getTotalDocumentosIndexados() {
 	try {
@@ -72,22 +85,12 @@ public class UtilBusca {
     public UtilBusca() throws IOException {
 	diretorio = FSDirectory.open(new File(diretorioIndice));
 	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
-	this.args = new HashMap<String, String>();
-	args.put("stopWords", "stopwords.txt");
-    args.put("dictionaries", "synonyms.txt");
-    args.put("baseDirectory", diretorioDicionarios);
-    args.put("luceneMatchVersion",Version.LUCENE_44.toString());
 	reopen();
     }
 
     public UtilBusca(String diretorioIndice) throws IOException {
 	this.diretorioIndice = diretorioIndice;
 	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
-	this.args = new HashMap<String, String>();
-	args.put("stopWords", "stopwords.txt");
-    args.put("dictionaries", "synonyms.txt");
-    args.put("baseDirectory", diretorioDicionarios);
-    args.put("luceneMatchVersion",Version.LUCENE_44.toString());
 	reopen();
     }
 
@@ -120,12 +123,10 @@ public class UtilBusca {
 	QueryParser analisador = null;
 	if (campos.length == 1) {
 	    analisador = new QueryParser(Version.LUCENE_44, campos[0],
-		    //new StandardAnalyzer(Version.LUCENE_44));
-    		new TimbreAnalyzer(Version.LUCENE_44, args));
+		    getAnalyzer());
 	} else {
 	    analisador = new MultiFieldQueryParser(Version.LUCENE_44, campos,
-		    //new StandardAnalyzer(Version.LUCENE_44));
-    		new TimbreAnalyzer(Version.LUCENE_44, args));
+		    getAnalyzer());
 	}
 	analisador.setDefaultOperator(Operator.AND);
 	Query consulta = analisador.parse(argumentoDePesquisa);
@@ -162,7 +163,7 @@ public class UtilBusca {
 	}
     }
 
-    public  IndexSearcher getBuscador() throws IOException {
+    public IndexSearcher getBuscador() throws IOException {
 	return buscador;
     }
 
@@ -174,14 +175,14 @@ public class UtilBusca {
 	Document doc = getBuscador().doc(docID);
 	String texto = doc.get("TextoCompleto");
 	TokenStream token = TokenSources.getTokenStream(doc, "TextoCompleto",
-		//new StandardAnalyzer(Version.LUCENE_44));
-			new TimbreAnalyzer(Version.LUCENE_44, args));
+		getAnalyzer());
 	try {
-	    //String fragmentos = hl.getBestFragment(new StandardAnalyzer(
-		    //Version.LUCENE_44), "TextoCompleto", texto);
-	    //doc.add(new StringField("TextoCompleto.hl", fragmentos, Store.NO));
-	    String fragmentos = hl.getBestFragment(new TimbreAnalyzer(
-	    Version.LUCENE_44, args), "TextoCompleto", texto);
+	    // String fragmentos = hl.getBestFragment(new StandardAnalyzer(
+	    // Version.LUCENE_44), "TextoCompleto", texto);
+	    // doc.add(new StringField("TextoCompleto.hl", fragmentos,
+	    // Store.NO));
+	    String fragmentos = hl.getBestFragment(getAnalyzer(),
+		    "TextoCompleto", texto);
 	    doc.add(new StringField("TextoCompleto.hl", fragmentos, Store.NO));
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -243,10 +244,8 @@ public class UtilBusca {
     public TopDocs buscar(String consulta) throws ParseException {
 	consulta = Normalizer.normalize(consulta, Normalizer.Form.NFD)
 		.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-	//StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-	TimbreAnalyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 	QueryParser queryParser = new QueryParser(Version.LUCENE_44, "",
-		analyzer);
+		getAnalyzer());
 	queryParser.setDefaultOperator(Operator.AND);
 	query = queryParser.parse("TextoCompleto:(" + consulta + ")");
 	return buscar();

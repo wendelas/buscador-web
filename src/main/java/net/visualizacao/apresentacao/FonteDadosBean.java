@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -27,7 +27,7 @@ import org.primefaces.model.UploadedFile;
  * 
  */
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class FonteDadosBean extends BaseBean {
     private static Logger logger = Logger.getLogger(FonteDadosBean.class);
     private static final long serialVersionUID = -7768860623840391492L;
@@ -40,6 +40,7 @@ public class FonteDadosBean extends BaseBean {
     private Collection<AnexoFonteDados> anexos;
     private int idFonteDados;
     private String separador;
+    private String dicionario;
 
     public String indexar() {
 	try {
@@ -120,6 +121,9 @@ public class FonteDadosBean extends BaseBean {
 
     public void salvar() {
 	try {
+	    if (getDicionario() != null) {
+		getFonteDados().setDicionario(dicionario.getBytes());
+	    }
 	    FachadaBuscador.getInstancia().persistir(getFonteDados());
 	    if (getArquivo() != null) {
 		salvarAnexo();
@@ -301,5 +305,23 @@ public class FonteDadosBean extends BaseBean {
 
     public String getSeparador() {
 	return separador;
+    }
+
+    public void setDicionario(String dicionario) {
+	this.dicionario = dicionario;
+    }
+
+    public void carregarDicionario() {
+	fonteDados = FachadaBuscador.getInstancia().buscarFontePeloId(
+		getIdFonteDados());
+	if (getFonteDados().getDicionario() != null) {
+	    setDicionario(new String(getFonteDados().getDicionario()));
+	} else {
+	    setDicionario("");
+	}
+    }
+
+    public String getDicionario() {
+	return dicionario;
     }
 }

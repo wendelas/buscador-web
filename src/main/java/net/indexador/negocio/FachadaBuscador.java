@@ -1,6 +1,5 @@
 package net.indexador.negocio;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -91,7 +89,12 @@ public class FachadaBuscador {
 	int qtdeItensIndexados = 0;
 	try {
 	    long inicio = System.currentTimeMillis();
-
+	    try {
+		indexador.excluirIndice();
+	    } catch (Exception e) {
+		//Indice ainda nao existe
+	    }
+	    logger.info("Indice excluido");
 	    Collection<AnexoFonteDados> anexos = buscarAnexos(idFonteDados);
 	    if (anexos != null) {
 		indexador = new Indexador(fonteDados.getNome());
@@ -191,7 +194,6 @@ public class FachadaBuscador {
     private void indexarAnexo(AnexoFonteDados anexo) {
 	getIndexador().indexaAnexo(anexo);
     }
-
 
     private void removeMetadados(FonteDados fonteDados) {
 	EntityManager em = JPAUtil.getInstance().getEntityManager();

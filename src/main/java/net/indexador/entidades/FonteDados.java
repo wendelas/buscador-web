@@ -17,6 +17,7 @@ public class FonteDados {
     private String nomeDriver;
     private List<MetaDado> metadados;
     private List<AnexoFonteDados> anexos;
+    private byte[] dicionario;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -114,6 +115,15 @@ public class FonteDados {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "fonteDados", cascade = CascadeType.ALL)
     public List<AnexoFonteDados> getAnexos() {
 	return anexos;
+    }
+
+    @Lob
+    public void setDicionario(byte[] dicionario) {
+	this.dicionario = dicionario;
+    }
+
+    public byte[] getDicionario() {
+	return dicionario;
     }
 
 }
