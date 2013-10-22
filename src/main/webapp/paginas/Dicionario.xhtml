@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="comum/template.xhtml">
+	<ui:define name="body">
+		<h:form>
+			<p:messages id="messages" />
+
+			<p:panel style="margin-left: 24%; margin-right: 24%;">
+				<f:facet name="header">Dicionário</f:facet>
+
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Fontes de dados:" />
+
+					<p:outputLabel value="Nenhuma fonte cadastrada"
+						rendered="#{empty fonteDadosBean.fontes}" />
+
+					<p:selectOneMenu style="width:155px;" label="Fontes"
+						value="#{fonteDadosBean.idFonteDados}">
+						<f:selectItem itemValue="" itemLabel="" />
+						<c:forEach items="#{fonteDadosBean.fontes}" var="fonte">
+							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
+						</c:forEach>
+						<p:ajax listener="#{fonteDadosBean.carregarDicionario}" event="change" update="txtDicionario" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="Dicionário" />
+					<p:inputTextarea value="#{fonteDadosBean.dicionario}"
+						cols="70" rows="30" id="txtDicionario" />
+
+				</p:panelGrid>
+
+				<f:facet name="footer">
+					<p:commandButton action="#{fonteDadosBean.salvar()}" ajax="false"
+						value="Salvar" icon="ui-icon-pencil">
+						<f:setPropertyActionListener
+							target="#{fonteDadosBean.fonteDados.id}"
+							value="#{fonteDadosBean.idFonteDados}" />
+					</p:commandButton>
+
+				</f:facet>
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+</html>

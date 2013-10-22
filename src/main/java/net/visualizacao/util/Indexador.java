@@ -61,56 +61,55 @@ public class Indexador {
     public Indexador(String diretorioIndice) throws IOException {
 	this.diretorioIndice = diretorioIndice;
 	this.diretorioDicionarios = System.getProperty("user.home")
-	+ "/dados/indices/" + diretorioIndice +"/dicionarios";
+		+ "/dados/indices/" + diretorioIndice + "/dicionarios";
 	File file = new File(System.getProperty("user.home")
 		+ "/dados/indices/" + diretorioIndice);
 	File dicionariosDir = new File(this.diretorioDicionarios);
 
-	if (!dicionariosDir.exists())
-	{
-		dicionariosDir.mkdir();
+	if (!dicionariosDir.exists()) {
+	    dicionariosDir.mkdir();
 	}
-	
-	File stopWordsFile = new File(this.diretorioDicionarios+"/stopwords.txt");
-	File dictionariesFile = new File(this.diretorioDicionarios+"/dictionaries.txt");
-	if (!stopWordsFile.exists())
-	{
-		URL url = getClass().getClassLoader().getResource("stopwords.txt");
-		try {
-			File f = new File(url.toURI());
-			FileUtils.copyFileToDirectory(f, dicionariosDir);
-		} catch (URISyntaxException e) {
-			logger.error("Erro ao copiar dicionário de stopwords");
-		}
+
+	File stopWordsFile = new File(this.diretorioDicionarios
+		+ "/stopwords.txt");
+	File dictionariesFile = new File(this.diretorioDicionarios
+		+ "/dictionaries.txt");
+	if (!stopWordsFile.exists()) {
+	    URL url = getClass().getClassLoader().getResource("stopwords.txt");
+	    try {
+		File f = new File(url.toURI());
+		FileUtils.copyFileToDirectory(f, dicionariosDir);
+	    } catch (URISyntaxException e) {
+		logger.error("Erro ao copiar dicionário de stopwords");
+	    }
 	}
-	if (!dictionariesFile.exists())
-	{
-		URL url = getClass().getClassLoader().getResource("synonyms.txt");
-		try {
-			File f = new File(url.toURI());
-			FileUtils.copyFileToDirectory(f, dicionariosDir);
-		} catch (URISyntaxException e) {
-			logger.error("Erro ao copiar dicionário de sinônimos");
-		}
+	if (!dictionariesFile.exists()) {
+	    URL url = getClass().getClassLoader().getResource("synonyms.txt");
+	    try {
+		File f = new File(url.toURI());
+		FileUtils.copyFileToDirectory(f, dicionariosDir);
+	    } catch (URISyntaxException e) {
+		logger.error("Erro ao copiar dicionário de sinônimos");
+	    }
 	}
-	
+
 	Directory d = NIOFSDirectory.open(file);
 	logger.info("Diretorio do indice: " + file.getAbsolutePath());
-	//Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-    HashMap<String, String> args = new HashMap<String, String>();
-    args.put("stopWords", "stopwords.txt");
-    args.put("baseDirectory", diretorioDicionarios);
-    args.put("luceneMatchVersion",Version.LUCENE_44.toString());
+	// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	HashMap<String, String> args = new HashMap<String, String>();
+	args.put("stopWords", "stopwords.txt");
+	args.put("baseDirectory", diretorioDicionarios);
+	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 
-    Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
 		analyzer);
 	config.setOpenMode(OpenMode.CREATE_OR_APPEND);
 	writer = new IndexWriter(d, config);
 	//
 	//
-	//TODO: TipoNaoAnalisado não deve ser indexado
-	//tipoNaoAnalisado.setIndexed(true);
+	// TODO: TipoNaoAnalisado não deve ser indexado
+	// tipoNaoAnalisado.setIndexed(true);
 	tipoNaoAnalisado.setIndexed(false);
 	tipoNaoAnalisado.setStored(true);
 	tipoAnalisado.setIndexed(true);
@@ -121,7 +120,7 @@ public class Indexador {
 
     }
 
-    //TODO:Remover esse método stopwords
+    // TODO:Remover esse método stopwords
     private Set<String> getStopWords() {
 	try {
 	    URL resource = getClass().getClassLoader().getResource(
