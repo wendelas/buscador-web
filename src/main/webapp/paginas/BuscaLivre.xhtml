@@ -19,11 +19,11 @@
 				style="margin-left: 20%; margin-right: 20%;">
 				<p:panel>
 					<div align="center">
-						<p:inputText value="#{buscaLivreBean.consulta}" size="60" id="txtConsulta"
-							label="Consulta">
+						<p:inputText value="#{buscaLivreBean.consulta}" size="60"
+							id="txtConsulta" label="Consulta">
 							<f:validateLength minimum="1" />
 						</p:inputText>
-						
+
 						<p:watermark for="txtConsulta" value="Consulte uma palavra-chave" />
 
 						<p:commandButton value="Consultar" update="tblItens,messages"
@@ -68,7 +68,8 @@
 
 				<p:panel rendered="#{not empty buscaLivreBean.itens}">
 					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
-						var="item" rows="20">
+						paginator="true" paginatorPosition="bottom" var="item" rows="20"
+						paginatorAlwaysVisible="false">
 						<p:column rendered="false">
 							<f:facet name="header">
 								<p:outputLabel value="View" />

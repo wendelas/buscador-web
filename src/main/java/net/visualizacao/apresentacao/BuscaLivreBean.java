@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpServletResponse;
 
 import net.indexador.entidades.FonteDados;

@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
@@ -31,7 +30,6 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
@@ -48,7 +46,7 @@ public class UtilBusca {
     private String diretorioDicionarios;
     private HashMap<String, String> args;
     private Query query;
-    private Analyzer analyzer;
+    private static Analyzer analyzer;
 
     public Analyzer getAnalyzer() {
 	if (analyzer == null) {
@@ -174,9 +172,9 @@ public class UtilBusca {
 	Highlighter hl = new Highlighter(formatter, scorer);
 	Document doc = getBuscador().doc(docID);
 	String texto = doc.get("TextoCompleto");
-	TokenStream token = TokenSources.getTokenStream(doc, "TextoCompleto",
-		getAnalyzer());
 	try {
+	    // TokenStream token = TokenSources.getTokenStream(doc,
+	    // "TextoCompleto", getAnalyzer());
 	    // String fragmentos = hl.getBestFragment(new StandardAnalyzer(
 	    // Version.LUCENE_44), "TextoCompleto", texto);
 	    // doc.add(new StringField("TextoCompleto.hl", fragmentos,
@@ -185,7 +183,7 @@ public class UtilBusca {
 		    "TextoCompleto", texto);
 	    doc.add(new StringField("TextoCompleto.hl", fragmentos, Store.NO));
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    logger.error(e);
 	}
 	return doc;
     }
