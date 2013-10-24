@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,7 +28,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.NoSuchDirectoryException;
 
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class BuscaLivreBean extends BaseBean {
     private static final int QUANTIDADE_CARACTERES_VISUALIZACAO = 200;
     private static final long serialVersionUID = -7508553590263034662L;
