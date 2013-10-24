@@ -49,14 +49,14 @@ public class UtilBusca {
     private static Analyzer analyzer;
 
     public Analyzer getAnalyzer() {
-	if (analyzer == null) {
-	    args = new HashMap<String, String>();
-	    args.put("stopWords", "stopwords.txt");
-	    args.put("dictionaries", "synonyms.txt");
-	    args.put("baseDirectory", diretorioDicionarios);
-	    args.put("luceneMatchVersion", Version.LUCENE_44.toString());
-	    analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
-	}
+	// if (analyzer == null) {
+	args = new HashMap<String, String>();
+	args.put("stopWords", "stopwords.txt");
+	args.put("dictionaries", "synonyms.txt");
+	args.put("baseDirectory", diretorioDicionarios);
+	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
+	analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	// }
 	return analyzer;
     }
 
