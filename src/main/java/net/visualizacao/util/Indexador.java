@@ -26,7 +26,6 @@ import net.indexador.negocio.GenericXMLParser;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fontbox.util.ResourceLoader;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -44,8 +43,6 @@ import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.tika.Tika;
 import org.apache.tika.detect.AutoDetectReader;
-
-import br.com.timbre.TimbreAnalyzer;
 
 public class Indexador {
     private static Logger logger = Logger.getLogger(Indexador.class);
@@ -101,7 +98,7 @@ public class Indexador {
 	args.put("baseDirectory", diretorioDicionarios);
 	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 
-	Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
 		analyzer);
 	config.setOpenMode(OpenMode.CREATE_OR_APPEND);

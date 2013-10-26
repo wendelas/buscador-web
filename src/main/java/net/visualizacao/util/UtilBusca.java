@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
@@ -33,8 +34,6 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-import br.com.timbre.TimbreAnalyzer;
-
 public class UtilBusca {
     private static Logger logger = Logger.getLogger(UtilBusca.class);
     private FSDirectory diretorio;
@@ -55,7 +54,7 @@ public class UtilBusca {
 	args.put("dictionaries", "synonyms.txt");
 	args.put("baseDirectory", diretorioDicionarios);
 	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
-	analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	analyzer = new StandardAnalyzer(Version.LUCENE_44);
 	// }
 	return analyzer;
     }
