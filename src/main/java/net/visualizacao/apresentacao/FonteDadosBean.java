@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -27,7 +27,7 @@ import org.primefaces.model.UploadedFile;
  * 
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class FonteDadosBean extends BaseBean {
     private static Logger logger = Logger.getLogger(FonteDadosBean.class);
     private static final long serialVersionUID = -7768860623840391492L;
@@ -73,6 +73,7 @@ public class FonteDadosBean extends BaseBean {
     @PostConstruct
     public void inicializa() {
 	carregarFontes();
+	fonteDados = new FonteDados();
     }
 
     private void carregarFontes() {
@@ -98,9 +99,6 @@ public class FonteDadosBean extends BaseBean {
     }
 
     public FonteDados getFonteDados() {
-	if (fonteDados == null) {
-	    fonteDados = new FonteDados();
-	}
 	return fonteDados;
     }
 
@@ -204,10 +202,14 @@ public class FonteDadosBean extends BaseBean {
     }
 
     public String editar() {
-	metaDados = new VOMetaDados();
-	fonteDados = FachadaBuscador.getInstancia().buscarFontePeloId(
-		getFonteDados().getId());
-	carregarAnexos();
+	try {
+	    metaDados = new VOMetaDados();
+	    fonteDados = FachadaBuscador.getInstancia().buscarFontePeloId(
+		    getFonteDados().getId());
+	    carregarAnexos();
+	} catch (Exception e) {
+	    logger.error(e);
+	}
 	return "FonteDados.jsf";
     }
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -15,7 +15,7 @@
 		<h:form enctype="multipart/form-data">
 			<p:messages id="messages" showDetail="true" autoUpdate="true" />
 
-			<p:panel header="Informações"
+			<p:panel header="InformaÃ§Ãµes"
 				style="margin-left: 24%; margin-right: 24%;">
 				<p:outputLabel value="#{fonteDadosBean.mensagemFonteDados}"
 					escape="false" />
@@ -30,15 +30,14 @@
 
 				<p:panelGrid columns="2">
 
+					<p:outputLabel value="ID" />
+					<p:outputLabel value="#{fonteDadosBean.fonteDados.id}" />
+
 					<p:outputLabel value="Nome: *" />
 					<p:inputText value="#{fonteDadosBean.fonteDados.nome}"
 						style="width:200px;" />
-					<!--<h:graphicImage id="ajuda_nome" url="imagens/question.png"
-					style="border:none;" />
-				 <p:tooltip value="#{fonteDadosBean.mensagemNomeFonte}"
-					for="ajuda_nome" /> -->
 
-					<p:outputLabel value="Separador:" />
+					<p:outputLabel value="Separador (para arquivos CSV):" />
 					<p:inputText value="#{fonteDadosBean.separador}"
 						style="width:20px;" />
 
@@ -71,7 +70,6 @@
 				</p:panelGrid>
 
 				<f:facet name="footer">
-					<p:commandButton value="Visualizar" icon="ui-icon-search" />
 					<p:commandButton value="Salvar" ajax="false"
 						actionListener="#{fonteDadosBean.salvar}" icon="ui-icon-disk" />
 					<p:commandButton value="Voltar" type="submit" action="Utilitario"

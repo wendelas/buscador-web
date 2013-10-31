@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -35,8 +35,8 @@
 				<p:spacer height="6px" />
 
 				<p:panel>
-					<p:outputLabel value="Índice:" />
-					<p:selectOneMenu label="Índice"
+					<p:outputLabel value="Ãndice:" />
+					<p:selectOneMenu label="Ãndice"
 						value="#{buscaLivreBean.idFonteDados}">
 						<c:forEach items="#{fonteDadosBean.fontes}" var="fonte">
 							<f:selectItem itemValue="#{fonte.id}" itemLabel="#{fonte.nome}" />
@@ -58,7 +58,7 @@
 
 				<p:panel rendered="#{not empty buscaLivreBean.itens}">
 					<p:outputLabel
-						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
+						value="DuraÃ§Ã£o da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
 					<p:outputLabel
 						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}." />
 				</p:panel>
@@ -81,7 +81,7 @@
 						</p:column>
 						<p:column>
 							<f:facet name="header">
-								<p:outputLabel value="Conteúdo" />
+								<p:outputLabel value="ConteÃºdo" />
 							</f:facet>
 							<p:outputLabel escape="false" style="white-space: normal"
 								value="#{buscaLivreBean.mostraDados(item)}" />
