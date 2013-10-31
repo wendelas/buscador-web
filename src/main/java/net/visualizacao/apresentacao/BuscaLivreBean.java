@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import net.indexador.entidades.FonteDados;
@@ -121,20 +122,13 @@ public class BuscaLivreBean extends BaseBean {
 	return null;
     }
 
-    public String visualizarDetalhe() {
+    public String visualizarDetalhe(ScoreDoc scoreDoc) {
 	try {
-	    // solucao tosca para recuperar o id do documento
-	    String scoreDoc = null;// JSFUtils.getParametro("scoreDoc");
-	    Pattern p = Pattern.compile("doc.(\\d+).*");
-	    Matcher matcher = p.matcher(scoreDoc);
-	    if (matcher.find()) {
-		String id = matcher.group(1);
-		documento = doc(new Integer(id));
-	    }
+	    documento = doc(scoreDoc.doc);
 	} catch (Exception e) {
 	    logger.error(e);
 	}
-	return "detalhar";
+	return "DetalheDocumento";
     }
 
     public String mostraDados(ScoreDoc doc) {

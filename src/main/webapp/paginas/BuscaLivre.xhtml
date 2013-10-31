@@ -32,7 +32,47 @@
 					</div>
 				</p:panel>
 
-				<p:spacer height="6px" />
+				<p:spacer height="3px" />
+
+				<p:panel rendered="#{not empty buscaLivreBean.itens}">
+					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
+						paginator="true" paginatorPosition="bottom" var="item" rows="20"
+						paginatorAlwaysVisible="false">
+						<p:column>
+							<f:facet name="header">
+								<p:outputLabel value="View" />
+							</f:facet>
+							<p:commandLink oncomplete="dlgDetalheDocumento.show();"
+								actionListener="#{buscaLivreBean.visualizarDetalhe(item)}"
+								update="detalheDocumento">
+								<p:graphicImage value="imagens/view.png" />
+							</p:commandLink>
+
+							<p:dialog id="detalheDocumento" widgetVar="dlgDetalheDocumento"
+								closeOnEscape="true" dynamic="true" header="Detalhes"
+								width="1000" height="500">
+								<p:outputLabel
+									value="#{buscaLivreBean.documento.get('TextoCompleto')}"
+									style="white-space: normal" />
+							</p:dialog>
+
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<p:outputLabel value="Conteúdo" />
+							</f:facet>
+							<p:outputLabel escape="false" style="white-space: normal"
+								value="#{buscaLivreBean.mostraDados(item)}" />
+						</p:column>
+					</p:dataTable>
+
+
+				</p:panel>
+
+
+
+				<p:spacer height="3px"
+					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
 				<p:panel>
 					<p:outputLabel value="Índice:" />
@@ -44,7 +84,8 @@
 					</p:selectOneMenu>
 
 				</p:panel>
-				<p:spacer height="6px"
+
+				<p:spacer height="3px"
 					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
 				<p:panel
@@ -53,7 +94,7 @@
 						value="Nenhum documento encontrado para o argumento pesquisado" />
 				</p:panel>
 
-				<p:spacer height="6px"
+				<p:spacer height="3px"
 					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
 				<p:panel rendered="#{not empty buscaLivreBean.itens}">
@@ -61,34 +102,6 @@
 						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
 					<p:outputLabel
 						value="Quantidade de itens encontrados: #{buscaLivreBean.quantidadeDeItens}." />
-				</p:panel>
-
-				<p:spacer height="6px"
-					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
-
-				<p:panel rendered="#{not empty buscaLivreBean.itens}">
-					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
-						paginator="true" paginatorPosition="bottom" var="item" rows="20"
-						paginatorAlwaysVisible="false">
-						<p:column rendered="false">
-							<f:facet name="header">
-								<p:outputLabel value="View" />
-							</f:facet>
-							<p:commandLink action="#{buscaLivreBean.visualizarDetalhe}">
-								<f:param value="#{item}" name="scoreDoc" />
-								<p:graphicImage value="imagens/view.png" />
-							</p:commandLink>
-						</p:column>
-						<p:column>
-							<f:facet name="header">
-								<p:outputLabel value="Conteúdo" />
-							</f:facet>
-							<p:outputLabel escape="false" style="white-space: normal"
-								value="#{buscaLivreBean.mostraDados(item)}" />
-						</p:column>
-
-					</p:dataTable>
-
 				</p:panel>
 
 			</p:panel>
