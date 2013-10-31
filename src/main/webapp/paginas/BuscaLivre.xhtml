@@ -27,8 +27,9 @@
 						<p:watermark for="txtConsulta" value="Consulte uma palavra-chave" />
 
 						<p:commandButton value="Consultar" update="tblItens,messages"
-							ajax="false" actionListener="#{buscaLivreBean.consultar}"
-							icon="ui-icon-search" />
+							ajax="true" actionListener="#{buscaLivreBean.consultar}"
+							icon="ui-icon-search"
+							onclick="tblItensWidget.getPaginator().setPage(0);" />
 					</div>
 				</p:panel>
 
@@ -36,7 +37,8 @@
 
 				<p:panel rendered="#{not empty buscaLivreBean.itens}">
 					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
-						paginator="true" paginatorPosition="bottom" var="item" rows="20"
+						widgetVar="tblItensWidget" paginator="true"
+						paginatorPosition="bottom" var="item" rows="20"
 						paginatorAlwaysVisible="false">
 						<p:column>
 							<f:facet name="header">
