@@ -64,7 +64,6 @@ public class FachadaBuscador {
 	em.close();
     }
 
-    @SuppressWarnings("unchecked")
     public Collection<FonteDados> buscarFontes() {
 	EntityManager em = JPAUtil.getInstance().getEntityManager();
 	List<FonteDados> lista = em.createQuery(

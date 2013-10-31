@@ -353,6 +353,7 @@ public class Indexador {
 		}
 		line = br.readLine();
 	    }
+	    logger.info("Adicionado: " + anexo.getNomeArquivo());
 	} catch (Exception e) {
 	    logger.info(e);
 	} finally {
@@ -390,6 +391,7 @@ public class Indexador {
 		    tipoAnalisado));
 	    writer.addDocument(documento);
 	    quantidadeArquivosIndexados++;
+	    logger.info("Adicionado: " + anexo.getNomeArquivo());
 	} catch (Exception e) {
 	    logger.error(e);
 	}
