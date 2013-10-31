@@ -1,6 +1,5 @@
 package net.visualizacao.apresentacao;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import net.indexador.entidades.FonteDados;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.FrequenciaDoTermo;
-import net.visualizacao.util.UtilBusca;
 
 import org.apache.log4j.Logger;
 
@@ -63,24 +61,6 @@ public class FrequenciaDosTermosBean extends BaseBean {
 
     public List<FrequenciaDoTermo> getTermos() {
 	return termos;
-    }
-
-    public Integer getTotalAcordaosIndexados() {
-	try {
-	    return new UtilBusca().getTotalDocumentosIndexados();
-	} catch (IOException e) {
-	    errorMsg(e);
-	    return 0;
-	}
-    }
-
-    public Integer getTotalTermosIndexados() {
-	try {
-	    return new UtilBusca("").getTotalDocumentosIndexados();
-	} catch (IOException e) {
-	    errorMsg(e);
-	    return 0;
-	}
     }
 
     public void setFonte(FonteDados fonte) {

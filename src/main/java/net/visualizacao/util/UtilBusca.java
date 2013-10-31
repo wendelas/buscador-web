@@ -3,7 +3,6 @@ package net.visualizacao.util;
 import java.io.File;
 import java.io.IOException;
 import java.text.Normalizer;
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -12,10 +11,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
@@ -24,7 +20,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -38,134 +34,76 @@ public class UtilBusca {
     private static Logger logger = Logger.getLogger(UtilBusca.class);
     private FSDirectory diretorio;
     private IndexSearcher buscador;
-    private IndexReader reader;
+    // private IndexReader reader;
     private long duracaoBusca;
     private Integer quantidadeLimiteRegistros = 5000;
-    private String diretorioIndice;
     private String diretorioDicionarios;
     private HashMap<String, String> args;
     private Query query;
     private static Analyzer analyzer;
+    private SearcherManager sm;
 
     public Analyzer getAnalyzer() {
-	// if (analyzer == null) {
-	args = new HashMap<String, String>();
-	args.put("stopWords", "stopwords.txt");
-	args.put("dictionaries", "synonyms.txt");
-	args.put("baseDirectory", diretorioDicionarios);
-	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
-	analyzer = new StandardAnalyzer(Version.LUCENE_44);
-	// }
+	if (analyzer == null) {
+	    logger.info("Novo analyzer");
+	    args = new HashMap<String, String>();
+	    args.put("stopWords", "stopwords.txt");
+	    args.put("dictionaries", "synonyms.txt");
+	    args.put("baseDirectory", diretorioDicionarios);
+	    args.put("luceneMatchVersion", Version.LUCENE_44.toString());
+	    analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	}
 	return analyzer;
     }
 
-    public Integer getTotalDocumentosIndexados() {
-	try {
-	    diretorio = FSDirectory.open(new File(diretorioIndice));
-	    reopen();
-	    int total = reader.numDocs();
-	    return total;
-	} catch (IOException e) {
-	    logger.error(e);
-	    return 0;
-	}
-    }
-
-    public void reopen() throws IOException {
-	if (reader == null) {
-	    diretorio = FSDirectory.open(new File(diretorioIndice));
-	    reader = DirectoryReader.open(diretorio);
-	    buscador = new IndexSearcher(reader);
-	}
-    }
-
-    public UtilBusca() throws IOException {
-	diretorio = FSDirectory.open(new File(diretorioIndice));
-	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
-	reopen();
-    }
+    // public void reopen() throws IOException {
+    // if (reader == null) {
+    // diretorio = FSDirectory.open(new File(diretorioIndice));
+    // reader = DirectoryReader.open(diretorio);
+    // buscador = new IndexSearcher(reader);
+    // }
+    // }
 
     public UtilBusca(String diretorioIndice) throws IOException {
-	this.diretorioIndice = diretorioIndice;
-	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
-	reopen();
+	diretorio = FSDirectory.open(new File(diretorioIndice));
+	sm = new SearcherManager(diretorio, null);
+	// this.diretorioDicionarios = diretorioIndice + "/dicionarios";
+	// reopen();
     }
 
-    public UtilBusca(Integer quantidadeLimiteRegistros) throws IOException {
-	this();
-	this.quantidadeLimiteRegistros = quantidadeLimiteRegistros;
-    }
+    // public UtilBusca(String diretorioIndice) throws IOException {
+    // this.diretorioIndice = diretorioIndice;
+    // this.diretorioDicionarios = diretorioIndice + "/dicionarios";
+    // reopen();
+    // }
 
-    public UtilBusca(Integer quantidadeLimiteDeAcordaos, String diretorioIndice)
-	    throws IOException {
-	this(diretorioIndice);
-	this.quantidadeLimiteRegistros = quantidadeLimiteDeAcordaos;
-    }
-
-    public TopDocs busca(Collection<String> campos, String argumentoDePesquisa)
-	    throws ParseException, IOException {
-	String[] arrCampos = new String[campos.size()];
-	int i = 0;
-	for (String campo : campos) {
-	    arrCampos[i++] = campo;
-	}
-	return buscar(arrCampos, argumentoDePesquisa);
-    }
-
-    public TopDocs buscar(String[] campos, String argumentoDePesquisa)
-	    throws ParseException, IOException {
-	//
-	long time = System.currentTimeMillis();
-	argumentoDePesquisa = StringUtils.limpacaracter(argumentoDePesquisa);
-	QueryParser analisador = null;
-	if (campos.length == 1) {
-	    analisador = new QueryParser(Version.LUCENE_44, campos[0],
-		    getAnalyzer());
-	} else {
-	    analisador = new MultiFieldQueryParser(Version.LUCENE_44, campos,
-		    getAnalyzer());
-	}
-	analisador.setDefaultOperator(Operator.AND);
-	Query consulta = analisador.parse(argumentoDePesquisa);
-	TopDocs hits = getBuscador()
-		.search(consulta, quantidadeLimiteRegistros);
-	duracaoBusca = System.currentTimeMillis() - time;
-	return hits;
-    }
-
-    public void fecha() {
+    public void fechar() {
 	try {
-	    diretorio.close();
+	    if (diretorio != null)
+		diretorio.close();
 	    diretorio = null;
 	} catch (Exception e) {
 	    logger.error(e);
 	}
 	try {
-	    reader.close();
-	    reader = null;
-	} catch (IOException e) {
+	    sm.release(buscador);
+	    buscador = null;
+	    logger.info("Fechar");
+	    // reader.close();
+	    // reader = null;
+	} catch (Exception e) {
 	    logger.error(e);
 	}
     }
 
-    public TopDocs buscaExata(String campo, String argumentoDePesquisa) {
-	try {
-	    Query query = new TermQuery(new Term(campo, argumentoDePesquisa));
-	    TopDocs hits = getBuscador().search(query, 100);
-	    return hits;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return null;
-	} finally {
-	}
-    }
-
     public IndexSearcher getBuscador() throws IOException {
+	buscador = sm.acquire();
+	logger.info("Abrir");
 	return buscador;
     }
 
     public Document doc(int docID) throws IOException {
-	reopen();
+	// reopen();
 	Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
 	Scorer scorer = new QueryScorer(getQuery());
 	Highlighter hl = new Highlighter(formatter, scorer);
@@ -184,6 +122,7 @@ public class UtilBusca {
 	} catch (Exception e) {
 	    logger.error(e);
 	}
+	fechar();
 	return doc;
     }
 
@@ -202,7 +141,7 @@ public class UtilBusca {
     // }
     public static void main(String[] args) {
 	try {
-	    UtilBusca buscador = new UtilBusca("");
+	    UtilBusca buscador = null;
 	    long time = System.currentTimeMillis();
 	    String query = "PERANTE AUTORIDADE POLICIAL";
 	    TopDocs resultado = null; // buscador.busca("*", query);
@@ -257,6 +196,7 @@ public class UtilBusca {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	} finally {
+	    fechar();
 	}
 	return hits;
     }
