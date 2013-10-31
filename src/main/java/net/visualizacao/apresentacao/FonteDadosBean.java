@@ -1,5 +1,7 @@
 package net.visualizacao.apresentacao;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -41,6 +43,7 @@ public class FonteDadosBean extends BaseBean {
     private int idFonteDados;
     private String separador;
     private String dicionario;
+    private String diretorio;
 
     public String indexar() {
 	try {
@@ -123,6 +126,9 @@ public class FonteDadosBean extends BaseBean {
 		getFonteDados().setDicionario(dicionario.getBytes());
 	    }
 	    FachadaBuscador.getInstancia().persistir(getFonteDados());
+	    if (getDiretorio() != null) {
+		salvarDiretorioComAnexos();
+	    }
 	    if (getArquivo() != null) {
 		salvarAnexo();
 	    }
@@ -130,6 +136,33 @@ public class FonteDadosBean extends BaseBean {
 	    carregarFontes();
 	} catch (Exception e) {
 	    errorMsg(e);
+	}
+    }
+
+    private void salvarDiretorioComAnexos() {
+	File diretorio = new File(getDiretorio());
+	if (diretorio.isDirectory()) {
+	    File[] arquivos = diretorio.listFiles();
+	    for (File arquivo : arquivos) {
+		try {
+		    if (!arquivo.isFile())
+			continue;
+		    AnexoFonteDados anexo = new AnexoFonteDados();
+		    byte[] bytes = IOUtils.toByteArray(new FileInputStream(
+			    arquivo));
+		    anexo.setNomeArquivo(arquivo.getName());
+		    anexo.setTamanho(arquivo.length());
+		    anexo.setAnexo(bytes);
+		    anexo.setFonteDados(getFonteDados());
+		    anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
+		    FachadaBuscador.getInstancia().persistir(anexo,
+			    getFonteDados().getId());
+		} catch (Exception e) {
+		    logger.error("Nao foi possivel salvar o arquivo "
+			    + arquivo.getAbsolutePath());
+		}
+
+	    }
 	}
     }
 
@@ -325,5 +358,13 @@ public class FonteDadosBean extends BaseBean {
 
     public String getDicionario() {
 	return dicionario;
+    }
+
+    public void setDiretorio(String diretorio) {
+	this.diretorio = diretorio;
+    }
+
+    public String getDiretorio() {
+	return diretorio;
     }
 }
