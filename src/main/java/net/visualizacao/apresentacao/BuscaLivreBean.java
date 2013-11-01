@@ -87,18 +87,14 @@ public class BuscaLivreBean extends BaseBean {
 
     public void consultar() {
 	try {
-	    // listaDocumentos = new ArrayList<Document>();
-	    // mapaItens = new HashMap<Integer, Document>();
 	    fonte = FachadaBuscador.getInstancia().buscarFontePeloId(
 		    getIdFonteDados());
 	    TopDocs hits = getBuscador().buscar(getConsulta());
 	    setItens(hits.scoreDocs);
 	    totalHits = hits.totalHits;
-	    // for (ScoreDoc sd : hits.scoreDocs) {
-	    // Document doc = doc(sd.doc);
-	    // mapaItens.put(sd.doc, doc);
-	    // listaDocumentos.add(doc(sd.doc));
-	    // }
+	    if (totalHits == 0) {
+		setItens(null);
+	    }
 	    duracaoBusca = getBuscador().getDuracaoBusca();
 	} catch (NoSuchDirectoryException e) {
 	    errorMsg("Essa fonte de dados ainda não foi indexada. Faça a indexação no menu de Utilitário.");
@@ -112,7 +108,7 @@ public class BuscaLivreBean extends BaseBean {
     public int getTotalHits() {
 	return totalHits;
     }
-    
+
     public void setItens(ScoreDoc[] itens) {
 	this.itens = itens;
     }
