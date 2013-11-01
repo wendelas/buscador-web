@@ -31,7 +31,7 @@ import org.apache.lucene.store.NoSuchDirectoryException;
 @ManagedBean
 @ViewScoped
 public class BuscaLivreBean extends BaseBean {
-    private static final int QUANTIDADE_CARACTERES_VISUALIZACAO = 200;
+    private static final int QUANTIDADE_CARACTERES_VISUALIZACAO = 400;
     private static final long serialVersionUID = -7508553590263034662L;
     private String consulta;
     private long duracaoBusca;

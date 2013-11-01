@@ -113,7 +113,7 @@ public class UtilBusca {
 	FieldQuery fq = fhl.getFieldQuery(getQuery());
 	Document doc = getBuscador().doc(docID);
 	String frag = fhl.getBestFragment(fq, getBuscador().getIndexReader(),
-		docID, "TextoCompleto", 100);
+		docID, "TextoCompleto", 400);
 	if (frag == null)
 	    frag = "";
 	// Highlighter hl = new Highlighter(formatter, scorer);
