@@ -224,6 +224,10 @@ public class BuscaLivreBean extends BaseBean {
     public Document getDocumento() {
 	return documento;
     }
+    
+    public String getDocumentoFormatado(){
+	return documento.get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
+    }
 
     public String abrirPaginaBusca() {
 	return "consultar";

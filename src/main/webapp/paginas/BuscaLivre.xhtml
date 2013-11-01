@@ -53,8 +53,8 @@
 							<p:dialog id="detalheDocumento" widgetVar="dlgDetalheDocumento"
 								closeOnEscape="true" dynamic="true" header="Detalhes"
 								width="1000" height="500">
-								<p:outputLabel
-									value="#{buscaLivreBean.documento.get('TextoCompleto')}"
+								<h:outputLabel escape="false"
+									value="#{buscaLivreBean.documentoFormatado}"
 									style="white-space: normal" />
 							</p:dialog>
 
