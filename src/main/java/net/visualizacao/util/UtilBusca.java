@@ -24,6 +24,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
 import org.apache.lucene.search.vectorhighlight.FieldQuery;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
 
 import br.com.timbre.TimbreAnalyzer;
@@ -63,7 +64,7 @@ public class UtilBusca {
     // }
 
     public UtilBusca(String diretorioIndice) throws IOException {
-	diretorio = FSDirectory.open(new File(diretorioIndice));
+	diretorio = new NIOFSDirectory(new File(diretorioIndice));
 	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
 	sm = new SearcherManager(diretorio, null);
 	buscador = sm.acquire();
@@ -96,8 +97,10 @@ public class UtilBusca {
     }
 
     public IndexSearcher getBuscador() throws IOException {
-	if (buscador == null)
+	if (buscador == null) {
+	    logger.info("Abrir");
 	    buscador = sm.acquire();
+	}
 	return buscador;
     }
 
@@ -208,6 +211,4 @@ public class UtilBusca {
 	return hits;
     }
 
-    public void addCampoOrdenacao() {
-    }
 }

@@ -42,6 +42,7 @@ public class BuscaLivreBean extends BaseBean {
     private UtilBusca buscador;
     private Map<Integer, Document> mapaItens;
     private Collection<Document> listaDocumentos;
+    private int totalHits;
 
     public UtilBusca getBuscador() throws IOException {
 	if (buscador == null) {
@@ -62,14 +63,6 @@ public class BuscaLivreBean extends BaseBean {
 	Double d = duracaoBusca / 1000d;
 	BigDecimal bd = new BigDecimal(d).setScale(4, BigDecimal.ROUND_CEILING);
 	return bd;
-    }
-
-    public int getQuantidadeDeItens() {
-	try {
-	    return getItens().length;
-	} catch (Exception e) {
-	    return 0;
-	}
     }
 
     public Collection<String> getCamposSelecionados() {
@@ -100,6 +93,7 @@ public class BuscaLivreBean extends BaseBean {
 		    getIdFonteDados());
 	    TopDocs hits = getBuscador().buscar(getConsulta());
 	    setItens(hits.scoreDocs);
+	    totalHits = hits.totalHits;
 	    // for (ScoreDoc sd : hits.scoreDocs) {
 	    // Document doc = doc(sd.doc);
 	    // mapaItens.put(sd.doc, doc);
@@ -115,6 +109,10 @@ public class BuscaLivreBean extends BaseBean {
 	}
     }
 
+    public int getTotalHits() {
+	return totalHits;
+    }
+    
     public void setItens(ScoreDoc[] itens) {
 	this.itens = itens;
     }
@@ -224,9 +222,10 @@ public class BuscaLivreBean extends BaseBean {
     public Document getDocumento() {
 	return documento;
     }
-    
-    public String getDocumentoFormatado(){
-	return documento.get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
+
+    public String getDocumentoFormatado() {
+	return documento.get("TextoCompleto").replaceAll("\n", "<br />")
+		.replaceAll("�", "");
     }
 
     public String abrirPaginaBusca() {
