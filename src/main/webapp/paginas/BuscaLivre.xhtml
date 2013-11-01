@@ -27,7 +27,7 @@
 						<p:watermark for="txtConsulta" value="Consulte uma palavra-chave" />
 
 						<p:commandButton value="Consultar"
-							update="messages,painelItens,painelStatus" ajax="false"
+							update="messages,painelItens,painelStatus" ajax="true"
 							actionListener="#{buscaLivreBean.consultar}"
 							icon="ui-icon-search"
 							onclick="tblItensWidget.getPaginator().setPage(0);" />
@@ -94,7 +94,7 @@
 				<p:spacer height="3px"
 					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}" />
 
-				<p:panel rendered="#{not empty buscaLivreBean.itens}"
+				<p:panel rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.consulta}"
 					id="painelStatus">
 					<p:outputLabel
 						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
