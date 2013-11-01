@@ -39,10 +39,12 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.tika.Tika;
 import org.apache.tika.detect.AutoDetectReader;
+
+import br.com.timbre.TimbreAnalyzer;
 
 public class Indexador {
     private static Logger logger = Logger.getLogger(Indexador.class);
@@ -90,7 +92,7 @@ public class Indexador {
 	    }
 	}
 
-	Directory d = NIOFSDirectory.open(file);
+	Directory d = FSDirectory.open(file);
 	logger.info("Diretorio do indice: " + file.getAbsolutePath());
 	// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 	HashMap<String, String> args = new HashMap<String, String>();
@@ -98,7 +100,8 @@ public class Indexador {
 	args.put("baseDirectory", diretorioDicionarios);
 	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 
-	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
 		analyzer);
 	config.setOpenMode(OpenMode.CREATE_OR_APPEND);
@@ -113,6 +116,9 @@ public class Indexador {
 	tipoAnalisado.setStored(true);
 	tipoAnalisado.setTokenized(true);
 	tipoAnalisado.setStoreTermVectors(true);
+	tipoAnalisado.setStoreTermVectorOffsets(true);
+	tipoAnalisado.setStoreTermVectorPayloads(true);
+	tipoAnalisado.setStoreTermVectorPositions(true);
 	//
 
     }

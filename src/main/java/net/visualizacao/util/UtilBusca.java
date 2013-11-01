@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
@@ -27,8 +26,12 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
+import org.apache.lucene.search.vectorhighlight.FieldQuery;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+
+import br.com.timbre.TimbreAnalyzer;
 
 public class UtilBusca {
     private static Logger logger = Logger.getLogger(UtilBusca.class);
@@ -36,11 +39,11 @@ public class UtilBusca {
     private IndexSearcher buscador;
     // private IndexReader reader;
     private long duracaoBusca;
-    private Integer quantidadeLimiteRegistros = 5000;
+    private Integer quantidadeLimiteRegistros = 1000;
     private String diretorioDicionarios;
     private HashMap<String, String> args;
     private Query query;
-    private static Analyzer analyzer;
+    private Analyzer analyzer;
     private SearcherManager sm;
 
     public Analyzer getAnalyzer() {
@@ -51,7 +54,7 @@ public class UtilBusca {
 	    args.put("dictionaries", "synonyms.txt");
 	    args.put("baseDirectory", diretorioDicionarios);
 	    args.put("luceneMatchVersion", Version.LUCENE_44.toString());
-	    analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	    analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 	}
 	return analyzer;
     }
@@ -66,9 +69,10 @@ public class UtilBusca {
 
     public UtilBusca(String diretorioIndice) throws IOException {
 	diretorio = FSDirectory.open(new File(diretorioIndice));
+	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
 	sm = new SearcherManager(diretorio, null);
-	// this.diretorioDicionarios = diretorioIndice + "/dicionarios";
-	// reopen();
+	buscador = sm.acquire();
+	logger.info("Abrir");
     }
 
     // public UtilBusca(String diretorioIndice) throws IOException {
@@ -97,18 +101,25 @@ public class UtilBusca {
     }
 
     public IndexSearcher getBuscador() throws IOException {
-	buscador = sm.acquire();
-	logger.info("Abrir");
+	if (buscador == null)
+	    buscador = sm.acquire();
 	return buscador;
     }
 
     public Document doc(int docID) throws IOException {
 	// reopen();
-	Formatter formatter = new SimpleHTMLFormatter("<strong>", "</strong>");
-	Scorer scorer = new QueryScorer(getQuery());
-	Highlighter hl = new Highlighter(formatter, scorer);
+	// Formatter formatter = new SimpleHTMLFormatter("<strong>",
+	// "</strong>");
+	// Scorer scorer = new QueryScorer(getQuery());
+	FastVectorHighlighter fhl = new FastVectorHighlighter();
+	FieldQuery fq = fhl.getFieldQuery(getQuery());
 	Document doc = getBuscador().doc(docID);
-	String texto = doc.get("TextoCompleto");
+	String frag = fhl.getBestFragment(fq, getBuscador().getIndexReader(),
+		docID, "TextoCompleto", 100);
+	if (frag == null)
+	    frag = "";
+	// Highlighter hl = new Highlighter(formatter, scorer);
+	// String texto = doc.get("TextoCompleto");
 	try {
 	    // TokenStream token = TokenSources.getTokenStream(doc,
 	    // "TextoCompleto", getAnalyzer());
@@ -116,13 +127,14 @@ public class UtilBusca {
 	    // Version.LUCENE_44), "TextoCompleto", texto);
 	    // doc.add(new StringField("TextoCompleto.hl", fragmentos,
 	    // Store.NO));
-	    String fragmentos = hl.getBestFragment(getAnalyzer(),
-		    "TextoCompleto", texto);
-	    doc.add(new StringField("TextoCompleto.hl", fragmentos, Store.NO));
+	    // String fragmentos = hl.getBestFragment(getAnalyzer(),
+	    // "TextoCompleto", texto);
+	    doc.add(new StringField("TextoCompleto.hl", frag, Store.NO));
 	} catch (Exception e) {
 	    logger.error(e);
+	} finally {
+	    fechar();
 	}
-	fechar();
 	return doc;
     }
 
@@ -196,7 +208,7 @@ public class UtilBusca {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	} finally {
-	    fechar();
+	    // fechar();
 	}
 	return hits;
     }

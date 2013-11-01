@@ -8,12 +8,12 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import net.indexador.entidades.FonteDados;
@@ -40,6 +40,8 @@ public class BuscaLivreBean extends BaseBean {
     private FonteDados fonte;
     private Document documento;
     private UtilBusca buscador;
+    private Map<Integer, Document> mapaItens;
+    private Collection<Document> listaDocumentos;
 
     public UtilBusca getBuscador() throws IOException {
 	if (buscador == null) {
@@ -92,16 +94,24 @@ public class BuscaLivreBean extends BaseBean {
 
     public void consultar() {
 	try {
+	    // listaDocumentos = new ArrayList<Document>();
+	    // mapaItens = new HashMap<Integer, Document>();
 	    fonte = FachadaBuscador.getInstancia().buscarFontePeloId(
 		    getIdFonteDados());
 	    TopDocs hits = getBuscador().buscar(getConsulta());
 	    setItens(hits.scoreDocs);
+	    // for (ScoreDoc sd : hits.scoreDocs) {
+	    // Document doc = doc(sd.doc);
+	    // mapaItens.put(sd.doc, doc);
+	    // listaDocumentos.add(doc(sd.doc));
+	    // }
 	    duracaoBusca = getBuscador().getDuracaoBusca();
 	} catch (NoSuchDirectoryException e) {
 	    errorMsg("Essa fonte de dados ainda não foi indexada. Faça a indexação no menu de Utilitário.");
 	} catch (Exception e) {
 	    errorMsg(e);
 	} finally {
+	    fecharIndice();
 	}
     }
 
@@ -135,6 +145,35 @@ public class BuscaLivreBean extends BaseBean {
 	StringBuilder saida = new StringBuilder();
 	try {
 	    Document documento = doc(doc.doc);
+	    // Arquivo no disco
+	    if (fonte.getMetadados() == null
+		    || fonte.getMetadados().size() == 0) {
+		String id = documento.get("ID");
+		String resultado = id == null ? "" : "[" + id + "] - ";
+		resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
+		return resultado;
+	    }
+	    // Registro do banco
+	    for (MetaDado metadado : fonte.getMetadados()) {
+		String campo = metadado.getCampo().toUpperCase();
+		String conteudo = documento.get(campo);
+		conteudo = limitaTamanho(conteudo);
+		saida.append("[");
+		saida.append(campo);
+		saida.append(": ");
+		saida.append(conteudo);
+		saida.append("] ");
+	    }
+	} catch (Exception e) {
+	    saida.append("Erro: " + e);
+	}
+	return saida.toString();
+    }
+
+    public String mostraDadosPorID(int doc) {
+	StringBuilder saida = new StringBuilder();
+	Document documento = mapaItens.get(doc);
+	try {
 	    // Arquivo no disco
 	    if (fonte.getMetadados() == null
 		    || fonte.getMetadados().size() == 0) {
@@ -222,5 +261,17 @@ public class BuscaLivreBean extends BaseBean {
 
     public String formataTexto(String texto) {
 	return texto.replaceAll("\n", "<br />");
+    }
+
+    public void fecharIndice() {
+	try {
+	    getBuscador().fechar();
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	}
+    }
+
+    public Collection<Document> getListaDocumentos() {
+	return listaDocumentos;
     }
 }
