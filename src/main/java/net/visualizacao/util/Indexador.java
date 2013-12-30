@@ -44,8 +44,6 @@ import org.apache.lucene.util.Version;
 import org.apache.tika.Tika;
 import org.apache.tika.detect.AutoDetectReader;
 
-import br.com.timbre.TimbreAnalyzer;
-
 public class Indexador {
     private static Logger logger = Logger.getLogger(Indexador.class);
     private IndexWriter writer;
@@ -100,8 +98,8 @@ public class Indexador {
 	args.put("baseDirectory", diretorioDicionarios);
 	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 
-	// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-	Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	//Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
 		analyzer);
 	config.setOpenMode(OpenMode.CREATE_OR_APPEND);
