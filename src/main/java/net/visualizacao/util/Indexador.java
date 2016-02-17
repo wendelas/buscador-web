@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.util.Date;
@@ -20,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import net.indexador.entidades.AnexoFonteDados;
-import net.indexador.negocio.GenericXMLParser;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -40,9 +38,11 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 import org.apache.tika.Tika;
 import org.apache.tika.detect.AutoDetectReader;
+
+import net.indexador.entidades.AnexoFonteDados;
+import net.indexador.negocio.GenericXMLParser;
 
 public class Indexador {
     private static Logger logger = Logger.getLogger(Indexador.class);
@@ -57,20 +57,17 @@ public class Indexador {
 
     public Indexador(String diretorioIndice) throws IOException {
 	this.diretorioIndice = diretorioIndice;
-	this.diretorioDicionarios = System.getProperty("user.home")
-		+ "/dados/indices/" + diretorioIndice + "/dicionarios";
-	File file = new File(System.getProperty("user.home")
-		+ "/dados/indices/" + diretorioIndice);
+	this.diretorioDicionarios = System.getProperty("user.home") + "/dados/indices/" + diretorioIndice
+		+ "/dicionarios";
+	String file = System.getProperty("user.home") + "/dados/indices/" + diretorioIndice;
 	File dicionariosDir = new File(this.diretorioDicionarios);
 
 	if (!dicionariosDir.exists()) {
 	    dicionariosDir.mkdir();
 	}
 
-	File stopWordsFile = new File(this.diretorioDicionarios
-		+ "/stopwords.txt");
-	File dictionariesFile = new File(this.diretorioDicionarios
-		+ "/dictionaries.txt");
+	File stopWordsFile = new File(this.diretorioDicionarios + "/stopwords.txt");
+	File dictionariesFile = new File(this.diretorioDicionarios + "/dictionaries.txt");
 	if (!stopWordsFile.exists()) {
 	    URL url = getClass().getClassLoader().getResource("stopwords.txt");
 	    try {
@@ -90,27 +87,24 @@ public class Indexador {
 	    }
 	}
 
-	Directory d = FSDirectory.open(file);
-	logger.info("Diretorio do indice: " + file.getAbsolutePath());
+	Directory d = FSDirectory.open(Paths.get(file));
+	logger.info("Diretorio do indice: " + file);
 	// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 	HashMap<String, String> args = new HashMap<String, String>();
 	args.put("stopWords", "stopwords.txt");
 	args.put("baseDirectory", diretorioDicionarios);
-	args.put("luceneMatchVersion", Version.LUCENE_44.toString());
+	// args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 
-	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-	//Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
-	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_44,
-		analyzer);
+	Analyzer analyzer = new StandardAnalyzer();
+	// Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
+	IndexWriterConfig config = new IndexWriterConfig(analyzer);
 	config.setOpenMode(OpenMode.CREATE_OR_APPEND);
 	writer = new IndexWriter(d, config);
 	//
 	//
 	// TODO: TipoNaoAnalisado não deve ser indexado
 	// tipoNaoAnalisado.setIndexed(true);
-	tipoNaoAnalisado.setIndexed(false);
 	tipoNaoAnalisado.setStored(true);
-	tipoAnalisado.setIndexed(true);
 	tipoAnalisado.setStored(true);
 	tipoAnalisado.setTokenized(true);
 	tipoAnalisado.setStoreTermVectors(true);
@@ -124,10 +118,9 @@ public class Indexador {
     // TODO:Remover esse método stopwords
     private Set<String> getStopWords() {
 	try {
-	    URL resource = getClass().getClassLoader().getResource(
-		    "stopwords.txt");
-	    BufferedReader br = new BufferedReader(new InputStreamReader(
-		    new FileInputStream(new File(resource.toURI()))));
+	    URL resource = getClass().getClassLoader().getResource("stopwords.txt");
+	    BufferedReader br = new BufferedReader(
+		    new InputStreamReader(new FileInputStream(new File(resource.toURI()))));
 	    String linha;
 	    Set<String> stopWords = new HashSet<String>();
 	    while ((linha = br.readLine()) != null) {
@@ -146,8 +139,7 @@ public class Indexador {
 		nomeArquivo = arquivo.getAbsolutePath();
 		if (arquivo.isFile()) {
 		    if (jahIndexado(getNomeArquivoFormatado(arquivo))) {
-			logger.info("Jah indexado: "
-				+ arquivo.getAbsolutePath());
+			logger.info("Jah indexado: " + arquivo.getAbsolutePath());
 			continue;
 		    }
 		    String textoExtraido = "";
@@ -161,8 +153,8 @@ public class Indexador {
 		}
 	    }
 	} catch (Exception e) {
-	    logger.error("Nao foi possivel analisar o arquivo " + nomeArquivo
-		    + "[" + raiz.getAbsolutePath() + "]. Erro Java: " + e);
+	    logger.error("Nao foi possivel analisar o arquivo " + nomeArquivo + "[" + raiz.getAbsolutePath()
+		    + "]. Erro Java: " + e);
 	}
     }
 
@@ -201,8 +193,7 @@ public class Indexador {
 		valor = StringUtils.limpacaracter(valor);
 		// TODO Verificar esse tipo: StringField.TYPE_STORED
 		// Verificar em http://lucene.apache.org/core/4_0_0/MIGRATE.html
-		documento
-			.add(new Field(coluna, valor, StringField.TYPE_STORED));
+		documento.add(new Field(coluna, valor, StringField.TYPE_STORED));
 	    }
 	    writer.addDocument(documento);
 	    return true;
@@ -218,20 +209,15 @@ public class Indexador {
 		return false;
 	    }
 	    Document documento = new Document();
-	    documento.add(new Field("AnoUltimaModificacao", DateUtils
-		    .getYear(new Date(arquivo.lastModified())),
+	    documento.add(new Field("AnoUltimaModificacao", DateUtils.getYear(new Date(arquivo.lastModified())),
 		    tipoNaoAnalisado));
-	    documento.add(new Field("UltimaModificacao", DateUtils
-		    .getDateFormatoAmericano(new Date(arquivo.lastModified())),
-		    tipoNaoAnalisado));
-	    documento.add(new Field("DataIndexacaoLucene", DateUtils
-		    .getDateFormatoAmericano(new Date()), tipoNaoAnalisado));
-	    documento.add(new Field("ID", getNomeArquivoFormatado(arquivo),
-		    tipoAnalisado));
-	    documento.add(new Field("Caminho", arquivo.getAbsolutePath(),
-		    tipoAnalisado));
-	    documento.add(new Field("TextoCompleto", textoExtraido,
-		    tipoAnalisado));
+	    documento.add(new Field("UltimaModificacao",
+		    DateUtils.getDateFormatoAmericano(new Date(arquivo.lastModified())), tipoNaoAnalisado));
+	    documento.add(
+		    new Field("DataIndexacaoLucene", DateUtils.getDateFormatoAmericano(new Date()), tipoNaoAnalisado));
+	    documento.add(new Field("ID", getNomeArquivoFormatado(arquivo), tipoAnalisado));
+	    documento.add(new Field("Caminho", arquivo.getAbsolutePath(), tipoAnalisado));
+	    documento.add(new Field("TextoCompleto", textoExtraido, tipoAnalisado));
 	    writer.addDocument(documento);
 	    quantidadeArquivosIndexados++;
 	    return true;
@@ -242,9 +228,8 @@ public class Indexador {
     }
 
     private String getNomeArquivoFormatado(File arquivo) {
-	return StringUtils.limpacaracter(
-		arquivo.getAbsolutePath().replaceAll("[/ &()-]", "_")
-			.replaceAll("_+", "_")).toLowerCase();
+	return StringUtils.limpacaracter(arquivo.getAbsolutePath().replaceAll("[/ &()-]", "_").replaceAll("_+", "_"))
+		.toLowerCase();
     }
 
     public static void main(String[] args) throws IOException {
@@ -288,8 +273,7 @@ public class Indexador {
 	} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".zip")) {
 	    try {
 		byte[] buffer = new byte[1024];
-		ZipInputStream zip = new ZipInputStream(
-			new ByteArrayInputStream(anexo.getAnexo()),
+		ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(anexo.getAnexo()),
 			Charset.forName("ISO-8859-1"));
 		ZipEntry entry = zip.getNextEntry();
 		while (entry != null) {
@@ -299,8 +283,7 @@ public class Indexador {
 			saida.write(buffer, 0, len);
 		    }
 		    AnexoFonteDados subAnexo = new AnexoFonteDados();
-		    subAnexo.setDataEnvio(new Timestamp((System
-			    .currentTimeMillis())));
+		    subAnexo.setDataEnvio(new Timestamp((System.currentTimeMillis())));
 		    subAnexo.setNomeArquivo(entry.getName());
 		    subAnexo.setTamanho(entry.getSize());
 		    subAnexo.setAnexo(saida.toByteArray());
@@ -338,8 +321,7 @@ public class Indexador {
 			if (anexo.getSeparador().length() > 0) {
 			    String[] dados = line.split(anexo.getSeparador());
 			    for (int i = 0; i < metadados.length; i++) {
-				doc.add(new Field(metadados[i], dados[i],
-					tipoAnalisado));
+				doc.add(new Field(metadados[i], dados[i], tipoAnalisado));
 			    }
 			} else {
 			    doc.add(new Field(metadados[0], line, tipoAnalisado));
@@ -352,8 +334,7 @@ public class Indexador {
 		}
 		quantidadeLinhas++;
 		if (quantidadeLinhas % 100000 == 0) {
-		    logger.info("Quantidade de linhas processadas: "
-			    + quantidadeLinhas);
+		    logger.info("Quantidade de linhas processadas: " + quantidadeLinhas);
 		}
 		line = br.readLine();
 	    }
@@ -376,23 +357,18 @@ public class Indexador {
 
     private void indexarArquivoBinario(AnexoFonteDados anexo) {
 	try {
-	    String textoExtraido = getTika().parseToString(
-		    new ByteArrayInputStream(anexo.getAnexo()));
-	    textoExtraido = Normalizer.normalize(textoExtraido,
-		    Normalizer.Form.NFD).replaceAll(
-		    "\\p{InCombiningDiacriticalMarks}+", "");
+	    String textoExtraido = getTika().parseToString(new ByteArrayInputStream(anexo.getAnexo()));
+	    textoExtraido = Normalizer.normalize(textoExtraido, Normalizer.Form.NFD)
+		    .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 	    if (StringUtils.vazia(textoExtraido)) {
-		logger.warn("O arquivo [" + anexo.getNomeArquivo()
-			+ "] não tem texto");
+		logger.warn("O arquivo [" + anexo.getNomeArquivo() + "] não tem texto");
 		return;
 	    }
 	    Document documento = new Document();
-	    documento.add(new Field("DataIndexacaoLucene", DateUtils
-		    .getDateFormatoAmericano(new Date()), tipoNaoAnalisado));
-	    documento.add(new Field("ID", anexo.getNomeArquivo(),
-		    tipoNaoAnalisado));
-	    documento.add(new Field("TextoCompleto", textoExtraido,
-		    tipoAnalisado));
+	    documento.add(
+		    new Field("DataIndexacaoLucene", DateUtils.getDateFormatoAmericano(new Date()), tipoNaoAnalisado));
+	    documento.add(new Field("ID", anexo.getNomeArquivo(), tipoNaoAnalisado));
+	    documento.add(new Field("TextoCompleto", textoExtraido, tipoAnalisado));
 	    writer.addDocument(documento);
 	    quantidadeArquivosIndexados++;
 	    logger.info("Adicionado: " + anexo.getNomeArquivo());
@@ -407,8 +383,7 @@ public class Indexador {
 	} catch (Exception e) {
 	    logger.error(e);
 	}
-	File diretorio = new File(System.getProperty("user.home")
-		+ "/dados/indices/" + diretorioIndice);
+	File diretorio = new File(System.getProperty("user.home") + "/dados/indices/" + diretorioIndice);
 	for (File arquivo : diretorio.listFiles()) {
 	    arquivo.delete();
 	}

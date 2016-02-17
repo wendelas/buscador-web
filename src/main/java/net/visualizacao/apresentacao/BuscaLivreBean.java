@@ -16,17 +16,16 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+
 import net.indexador.entidades.FonteDados;
 import net.indexador.entidades.MetaDado;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.StringUtils;
 import net.visualizacao.util.UtilBusca;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.NoSuchDirectoryException;
 
 @ManagedBean
 @ViewScoped
@@ -87,8 +86,7 @@ public class BuscaLivreBean extends BaseBean {
 
     public void consultar() {
 	try {
-	    fonte = FachadaBuscador.getInstancia().buscarFontePeloId(
-		    getIdFonteDados());
+	    fonte = FachadaBuscador.getInstancia().buscarFontePeloId(getIdFonteDados());
 	    TopDocs hits = getBuscador().buscar(getConsulta());
 	    setItens(hits.scoreDocs);
 	    totalHits = hits.totalHits;
@@ -96,8 +94,9 @@ public class BuscaLivreBean extends BaseBean {
 		setItens(null);
 	    }
 	    duracaoBusca = getBuscador().getDuracaoBusca();
-	} catch (NoSuchDirectoryException e) {
-	    errorMsg("Essa fonte de dados ainda não foi indexada. Faça a indexação no menu de Utilitário.");
+	    // } catch (NoSuchDirectoryException e) {
+	    // errorMsg("Essa fonte de dados ainda não foi indexada. Faça a
+	    // indexação no menu de Utilitário.");
 	} catch (Exception e) {
 	    errorMsg(e);
 	} finally {
@@ -140,8 +139,7 @@ public class BuscaLivreBean extends BaseBean {
 	try {
 	    Document documento = doc(doc.doc);
 	    // Arquivo no disco
-	    if (fonte.getMetadados() == null
-		    || fonte.getMetadados().size() == 0) {
+	    if (fonte.getMetadados() == null || fonte.getMetadados().size() == 0) {
 		String id = documento.get("ID");
 		String resultado = id == null ? "" : "[" + id + "] - ";
 		resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
@@ -169,8 +167,7 @@ public class BuscaLivreBean extends BaseBean {
 	Document documento = mapaItens.get(doc);
 	try {
 	    // Arquivo no disco
-	    if (fonte.getMetadados() == null
-		    || fonte.getMetadados().size() == 0) {
+	    if (fonte.getMetadados() == null || fonte.getMetadados().size() == 0) {
 		String id = documento.get("ID");
 		String resultado = id == null ? "" : "[" + id + "] - ";
 		resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
@@ -194,11 +191,8 @@ public class BuscaLivreBean extends BaseBean {
     }
 
     private String limitaTamanho(String conteudo) {
-	if (conteudo != null
-		&& conteudo.length() > QUANTIDADE_CARACTERES_VISUALIZACAO) {
-	    conteudo = conteudo
-		    .substring(0, QUANTIDADE_CARACTERES_VISUALIZACAO)
-		    + " (...)";
+	if (conteudo != null && conteudo.length() > QUANTIDADE_CARACTERES_VISUALIZACAO) {
+	    conteudo = conteudo.substring(0, QUANTIDADE_CARACTERES_VISUALIZACAO) + " (...)";
 	}
 	return conteudo;
     }
@@ -220,8 +214,7 @@ public class BuscaLivreBean extends BaseBean {
     }
 
     public String getDocumentoFormatado() {
-	return documento.get("TextoCompleto").replaceAll("\n", "<br />")
-		.replaceAll("�", "");
+	return documento.get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
     }
 
     public String abrirPaginaBusca() {
@@ -243,8 +236,7 @@ public class BuscaLivreBean extends BaseBean {
 	try {
 	    HttpServletResponse response = null;// getResponse();
 	    File arquivo = new File(fileName);
-	    response.addHeader("Content-Disposition:", "attachment; filename="
-		    + arquivo.getName());
+	    response.addHeader("Content-Disposition:", "attachment; filename=" + arquivo.getName());
 	    OutputStream out = response.getOutputStream();
 	    InputStream input = new FileInputStream(fileName);
 	    IOUtils.copy(input, out);

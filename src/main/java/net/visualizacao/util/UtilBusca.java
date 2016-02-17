@@ -1,7 +1,7 @@
 package net.visualizacao.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.HashMap;
 
@@ -26,7 +26,6 @@ import org.apache.lucene.search.vectorhighlight.FastVectorHighlighter;
 import org.apache.lucene.search.vectorhighlight.FieldQuery;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
-import org.apache.lucene.util.Version;
 
 public class UtilBusca {
     private static Logger logger = Logger.getLogger(UtilBusca.class);
@@ -48,9 +47,9 @@ public class UtilBusca {
 	    args.put("stopWords", "stopwords.txt");
 	    args.put("dictionaries", "synonyms.txt");
 	    args.put("baseDirectory", diretorioDicionarios);
-	    args.put("luceneMatchVersion", Version.LUCENE_44.toString());
+	    // args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 	    // analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
-	    analyzer = new StandardAnalyzer(Version.LUCENE_44);
+	    analyzer = new StandardAnalyzer();
 	}
 	return analyzer;
     }
@@ -64,7 +63,7 @@ public class UtilBusca {
     // }
 
     public UtilBusca(String diretorioIndice) throws IOException {
-	diretorio = new NIOFSDirectory(new File(diretorioIndice));
+	diretorio = new NIOFSDirectory(Paths.get(diretorioIndice));
 	this.diretorioDicionarios = diretorioIndice + "/dicionarios";
 	sm = new SearcherManager(diretorio, null);
 	buscador = sm.acquire();
@@ -112,8 +111,7 @@ public class UtilBusca {
 	FastVectorHighlighter fhl = new FastVectorHighlighter();
 	FieldQuery fq = fhl.getFieldQuery(getQuery());
 	Document doc = getBuscador().doc(docID);
-	String frag = fhl.getBestFragment(fq, getBuscador().getIndexReader(),
-		docID, "TextoCompleto", 400);
+	String frag = fhl.getBestFragment(fq, getBuscador().getIndexReader(), docID, "TextoCompleto", 400);
 	if (frag == null)
 	    frag = "";
 	// Highlighter hl = new Highlighter(formatter, scorer);
@@ -164,8 +162,7 @@ public class UtilBusca {
     }
 
     // FIXME Desacoplar do Lucene (nao sei como).
-    public TopDocs processaSimilaridade(String campo, String[] termos)
-	    throws IOException {
+    public TopDocs processaSimilaridade(String campo, String[] termos) throws IOException {
 	// An easier way might be to submit doc A as a query
 	// (adding all words to the query as OR terms,
 	// boosting each by term frequency) and look
@@ -188,10 +185,9 @@ public class UtilBusca {
     }
 
     public TopDocs buscar(String consulta) throws ParseException {
-	consulta = Normalizer.normalize(consulta, Normalizer.Form.NFD)
-		.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-	QueryParser queryParser = new QueryParser(Version.LUCENE_44, "",
-		getAnalyzer());
+	consulta = Normalizer.normalize(consulta, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+",
+		"");
+	QueryParser queryParser = new QueryParser("", getAnalyzer());
 	queryParser.setDefaultOperator(Operator.AND);
 	query = queryParser.parse("TextoCompleto:(" + consulta + ")");
 	return buscar();
