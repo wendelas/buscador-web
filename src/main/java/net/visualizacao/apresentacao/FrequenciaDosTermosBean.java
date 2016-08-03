@@ -7,83 +7,80 @@ import java.util.List;
 import net.indexador.entidades.FonteDados;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.FrequenciaDoTermo;
+import net.visualizacao.util.UtilFrequenciaDosTermos;
 
 import org.apache.log4j.Logger;
 
 public class FrequenciaDosTermosBean extends BaseBean {
-    private static final long serialVersionUID = 6837431655685273498L;
-    protected static final Logger logger = Logger
-	    .getLogger(FrequenciaDosTermosBean.class);
-    private Integer limite = 1;
-    private Integer idFonteDados;
-    private FonteDados fonte;
-    private VOMetaDados metaDados;
-    private List<FrequenciaDoTermo> termos;
+	private static final long serialVersionUID = 6837431655685273498L;
+	protected static final Logger logger = Logger.getLogger(FrequenciaDosTermosBean.class);
+	private Integer limite = 1;
+	private Integer idFonteDados;
+	private FonteDados fonte;
+	private VOMetaDados metaDados;
+	private List<FrequenciaDoTermo> termos;
 
-    public void setLimite(Integer limite) {
-	this.limite = limite;
-    }
-
-    public Integer getLimite() {
-	return limite;
-    }
-
-    public Collection<String> getCamposSelecionados() {
-	try {
-	    metaDados = FachadaBuscador.getInstancia().buscarMetaData(fonte);
-	    return metaDados.getColunas();
-	} catch (Exception e) {
-	    // Fonte de dados eh um diretorio
+	public void setLimite(Integer limite) {
+		this.limite = limite;
 	}
-	Collection<String> listaCamposArquivo = new ArrayList<String>();
-	listaCamposArquivo.add("Texto");
-	return listaCamposArquivo;
-    }
 
-    public void carregarDados() {
-	fonte = FachadaBuscador.getInstancia().buscarFontePeloId(
-		getIdFonteDados());
-	UtilFrequenciaDosTermos util = new UtilFrequenciaDosTermos(
-		fonte.getDiretorioIndice());
-	try {
-	    List<FrequenciaDoTermo> termList = util.getFrequencia(getLimite(),
-		    getCamposSelecionados());
-	    setTermos(termList);
-	} catch (Exception e) {
-	    errorMsg(e);
-	    logger.error(e);
+	public Integer getLimite() {
+		return limite;
 	}
-    }
 
-    public void setTermos(List<FrequenciaDoTermo> termList) {
-	this.termos = termList;
-    }
+	public Collection<String> getCamposSelecionados() {
+		try {
+			metaDados = FachadaBuscador.getInstancia().buscarMetaData(fonte);
+			return metaDados.getColunas();
+		} catch (Exception e) {
+			// Fonte de dados eh um diretorio
+		}
+		Collection<String> listaCamposArquivo = new ArrayList<String>();
+		listaCamposArquivo.add("Texto");
+		return listaCamposArquivo;
+	}
 
-    public List<FrequenciaDoTermo> getTermos() {
-	return termos;
-    }
+	public void carregarDados() {
+		fonte = FachadaBuscador.getInstancia().buscarFontePeloId(getIdFonteDados());
+		UtilFrequenciaDosTermos util = new UtilFrequenciaDosTermos(fonte.getDiretorioIndice());
+		try {
+			List<FrequenciaDoTermo> termList = util.getFrequencia(getLimite(), getCamposSelecionados());
+			setTermos(termList);
+		} catch (Exception e) {
+			errorMsg(e);
+			logger.error(e);
+		}
+	}
 
-    public void setFonte(FonteDados fonte) {
-	this.fonte = fonte;
-    }
+	public void setTermos(List<FrequenciaDoTermo> termList) {
+		this.termos = termList;
+	}
 
-    public FonteDados getFonte() {
-	return fonte;
-    }
+	public List<FrequenciaDoTermo> getTermos() {
+		return termos;
+	}
 
-    public void setMetaDados(VOMetaDados metaDados) {
-	this.metaDados = metaDados;
-    }
+	public void setFonte(FonteDados fonte) {
+		this.fonte = fonte;
+	}
 
-    public VOMetaDados getMetaDados() {
-	return metaDados;
-    }
+	public FonteDados getFonte() {
+		return fonte;
+	}
 
-    public void setIdFonteDados(Integer idFonteDados) {
-	this.idFonteDados = idFonteDados;
-    }
+	public void setMetaDados(VOMetaDados metaDados) {
+		this.metaDados = metaDados;
+	}
 
-    public Integer getIdFonteDados() {
-	return idFonteDados;
-    }
+	public VOMetaDados getMetaDados() {
+		return metaDados;
+	}
+
+	public void setIdFonteDados(Integer idFonteDados) {
+		this.idFonteDados = idFonteDados;
+	}
+
+	public Integer getIdFonteDados() {
+		return idFonteDados;
+	}
 }

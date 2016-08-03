@@ -6,8 +6,8 @@
 	<artifactId>search-web-beta</artifactId>
 	<version>0.1.beta</version>
 	<packaging>war</packaging>
-	<name>Search Web - Beta</name>
-	<description>Aplicação para testar as funcionalidades do Lucene</description>
+	<name>Buscador Web</name>
+	<description>Aplicação para testar as funcionalidades do Lucene na Web</description>
 
 	<url>http://github.com/masreis</url>
 	<licenses>

@@ -174,7 +174,7 @@ public class UtilBusca {
 			// tQuery.setBoost(getIdf(termo));
 			// FuzzyQuery fQuery = new FuzzyQuery(term, 0.8f);
 			FuzzyQuery fQuery = new FuzzyQuery(term);
-//			query.add(fQuery, Occur.SHOULD);
+			// query.add(fQuery, Occur.SHOULD);
 		}
 		TopDocs hits = getBuscador().search(query, quantidadeLimiteRegistros);
 		return hits;
