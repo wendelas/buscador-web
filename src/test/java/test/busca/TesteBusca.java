@@ -10,24 +10,21 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.junit.Test;
 
-
 public class TesteBusca {
 
 	@Test
-	   public void buscarNome()  {
+	public void buscarNome() {
 
 		try {
-			UtilBusca util = new UtilBusca(System.getProperty("user.home")
-					+ "/dados/indices/Nomes");
+			UtilBusca util = new UtilBusca(System.getProperty("user.home") + "/dados/indices/Nomes");
 			TopDocs docs = util.buscar("raphael");
 			ScoreDoc[] scoreDocs = docs.scoreDocs;
 			System.out.println("Foram encontrados " + docs.totalHits + " ocorrências");
-	         for (int i = 0; i < scoreDocs.length; i++)
-	         {
-	            Document hitDoc = util.getBuscador().doc(scoreDocs[i].doc);
-	            System.out.println("Conteúdo: " + hitDoc.get("TextoCompleto"));	            
-	         }
-			
+			for (int i = 0; i < scoreDocs.length; i++) {
+				Document hitDoc = util.doc(scoreDocs[i].doc);
+				System.out.println("Conteúdo: " + hitDoc.get("TextoCompleto"));
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,22 +33,20 @@ public class TesteBusca {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
-	   public void buscarParecer()  {
+	public void buscarParecer() {
 
 		try {
-			UtilBusca util = new UtilBusca(System.getProperty("user.home")
-					+ "/dados/indices/Pareceres");
+			UtilBusca util = new UtilBusca(System.getProperty("user.home") + "/dados/indices/Pareceres");
 			TopDocs docs = util.buscar("paresser");
 			ScoreDoc[] scoreDocs = docs.scoreDocs;
 			System.out.println("Foram encontrados " + docs.totalHits + " ocorrências");
-	         for (int i = 0; i < scoreDocs.length; i++)
-	         {
-	            Document hitDoc = util.getBuscador().doc(scoreDocs[i].doc);
-	            System.out.println("Conteúdo: " + hitDoc.get("TextoCompleto"));	            
-	         }
-			
+			for (int i = 0; i < scoreDocs.length; i++) {
+				Document hitDoc = util.doc(scoreDocs[i].doc);
+				System.out.println("Conteúdo: " + hitDoc.get("TextoCompleto"));
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

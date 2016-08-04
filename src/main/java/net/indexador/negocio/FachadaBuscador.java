@@ -16,6 +16,11 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.log4j.Logger;
+import org.apache.tika.Tika;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import net.indexador.entidades.AnexoFonteDados;
 import net.indexador.entidades.FonteDados;
 import net.indexador.entidades.Indice;
@@ -25,11 +30,6 @@ import net.visualizacao.util.ExcecaoIndexador;
 import net.visualizacao.util.Indexador;
 import net.visualizacao.util.JPAUtil;
 import net.visualizacao.util.StringUtils;
-
-import org.apache.log4j.Logger;
-import org.apache.tika.Tika;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 /**
  * 
@@ -98,7 +98,7 @@ public class FachadaBuscador {
 			if (anexos != null) {
 				indexador = new Indexador(fonteDados.getNome());
 				indexarAnexos(anexos);
-				return getIndexador().getQuantidadeArquivosIndexados();
+				return getIndexador().getQuantidadeDocumentosIndexados();
 			}
 			//
 			new File(fonteDados.getDiretorioIndice() + "/write.lock").delete();
@@ -106,7 +106,7 @@ public class FachadaBuscador {
 			// Indexa arquivos no disco
 			if (!StringUtils.vazia(fonteDados.getDiretorio())) {
 				indexador.indexaArquivosDoDiretorio(new File(fonteDados.getDiretorio()));
-				logger.info("Total de arquivos indexados: " + indexador.getQuantidadeArquivosIndexados());
+				logger.info("Total de documentos indexados: " + indexador.getQuantidadeDocumentosIndexados());
 			}
 			// Indexa banco de dados
 			Connection con = null;

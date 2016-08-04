@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.marcoreis</groupId>
-	<artifactId>search-web-beta</artifactId>
+	<artifactId>buscador-web</artifactId>
 	<version>0.1.beta</version>
 	<packaging>war</packaging>
 	<name>Buscador Web</name>
@@ -28,19 +28,19 @@
 		<versao.hibernate>5.1.0.Final</versao.hibernate>
 	</properties>
 
-	<!-- <repositories> -->
-	<!-- <repository> -->
-	<!-- <id>prime-repo</id> -->
-	<!-- <name>PrimeFaces Maven Repository</name> -->
-	<!-- <url>http://repository.primefaces.org</url> -->
-	<!-- <layout>default</layout> -->
-	<!-- </repository> -->
-	<!-- <repository> -->
-	<!-- <id>java.net.m2</id> -->
-	<!-- <name>java.net m2 repo</name> -->
-	<!-- <url>http://download.java.net/maven/2</url> -->
-	<!-- </repository> -->
-	<!-- </repositories> -->
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+		<!-- <repository> -->
+		<!-- <id>java.net.m2</id> -->
+		<!-- <name>java.net m2 repo</name> -->
+		<!-- <url>http://download.java.net/maven/2</url> -->
+		<!-- </repository> -->
+	</repositories>
 
 	<dependencies>
 
@@ -116,11 +116,12 @@
 		<!-- <version>2.4</version> -->
 		<!-- </dependency> -->
 
-		<!-- <dependency> -->
-		<!-- <groupId>commons-fileupload</groupId> -->
-		<!-- <artifactId>commons-fileupload</artifactId> -->
-		<!-- <version>1.3.1</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.apache.tika</groupId>
@@ -159,11 +160,11 @@
 			<version>5.3</version>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>org.primefaces.themes</groupId> -->
-		<!-- <artifactId>all-themes</artifactId> -->
-		<!-- <version>1.0.10</version> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.10</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>

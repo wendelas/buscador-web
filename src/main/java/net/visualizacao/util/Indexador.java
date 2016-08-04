@@ -32,6 +32,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -48,11 +49,12 @@ public class Indexador {
 	private IndexWriter writer;
 	private String diretorioIndice;
 	private String diretorioDicionarios;
-	private int quantidadeArquivosIndexados = 0;
+	private int quantidadeDocumentosIndexados = 0;
 	private FieldType tipoAnalisado = new FieldType();
 	private FieldType tipoNaoAnalisado = new FieldType();
 
 	private Tika tika;
+	private FSDirectory directory;
 
 	public Indexador(String diretorioIndice) throws IOException {
 		this.diretorioIndice = diretorioIndice;
@@ -86,7 +88,7 @@ public class Indexador {
 			}
 		}
 
-		Directory d = FSDirectory.open(Paths.get(file));
+		directory = FSDirectory.open(Paths.get(file));
 		logger.info("Diretorio do indice: " + file);
 		// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 		HashMap<String, String> args = new HashMap<String, String>();
@@ -98,18 +100,20 @@ public class Indexador {
 		// Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-		writer = new IndexWriter(d, config);
+		writer = new IndexWriter(directory, config);
 		//
 		//
 		// TODO: TipoNaoAnalisado não deve ser indexado
 		// tipoNaoAnalisado.setIndexed(true);
 		tipoNaoAnalisado.setStored(true);
+		IndexOptions opts = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		tipoAnalisado.setIndexOptions(opts);
 		tipoAnalisado.setStored(true);
 		tipoAnalisado.setTokenized(true);
-		tipoAnalisado.setStoreTermVectors(true);
-		tipoAnalisado.setStoreTermVectorOffsets(true);
-		tipoAnalisado.setStoreTermVectorPayloads(true);
-		tipoAnalisado.setStoreTermVectorPositions(true);
+		// tipoAnalisado.setStoreTermVectors(true);
+		// tipoAnalisado.setStoreTermVectorOffsets(true);
+		// tipoAnalisado.setStoreTermVectorPayloads(true);
+		// tipoAnalisado.setStoreTermVectorPositions(true);
 		//
 
 	}
@@ -145,7 +149,7 @@ public class Indexador {
 					InputStream in = new FileInputStream(arquivo);
 					textoExtraido = getTika().parseToString(in);
 					if (indexaArquivo(arquivo, textoExtraido)) {
-						quantidadeArquivosIndexados++;
+						quantidadeDocumentosIndexados++;
 					}
 				} else {
 					indexaArquivosDoDiretorio(arquivo);
@@ -170,6 +174,7 @@ public class Indexador {
 
 	public void fecha() throws CorruptIndexException, IOException {
 		writer.close();
+		directory.close();
 	}
 
 	/**
@@ -218,7 +223,7 @@ public class Indexador {
 			documento.add(new Field("Caminho", arquivo.getAbsolutePath(), tipoAnalisado));
 			documento.add(new Field("TextoCompleto", textoExtraido, tipoAnalisado));
 			writer.addDocument(documento);
-			quantidadeArquivosIndexados++;
+			quantidadeDocumentosIndexados++;
 			return true;
 		} catch (Exception e) {
 			logger.error(e);
@@ -242,8 +247,8 @@ public class Indexador {
 		bufferedReader.close();
 	}
 
-	public int getQuantidadeArquivosIndexados() {
-		return quantidadeArquivosIndexados;
+	public int getQuantidadeDocumentosIndexados() {
+		return quantidadeDocumentosIndexados;
 	}
 
 	public Tika getTika() {
@@ -300,6 +305,7 @@ public class Indexador {
 		InputStream is = null;
 		BufferedReader br = null;
 		int quantidadeLinhas = 0;
+		Document doc = new Document();
 		try {
 			is = new ByteArrayInputStream(anexo.getAnexo());
 			br = new BufferedReader(new AutoDetectReader(is));
@@ -307,39 +313,30 @@ public class Indexador {
 			int linha = 1;
 			String line = br.readLine();
 			while (line != null) {
+				// Linha com os metadados
 				if (linha == 1) {
 					linha++;
-					if (anexo.getSeparador().length() > 0) {
-						metadados = line.split(anexo.getSeparador());
-					} else {
-						metadados = new String[] { line };
-					}
+					metadados = carregarMetadados(anexo, line);
 				} else {
-					Document doc = new Document();
 					try {
-						if (anexo.getSeparador().length() > 0) {
-							String[] dados = line.split(anexo.getSeparador());
-							for (int i = 0; i < metadados.length; i++) {
-								doc.add(new Field(metadados[i], dados[i], tipoAnalisado));
-							}
-						} else {
-							doc.add(new Field(metadados[0], line, tipoAnalisado));
-						}
+						criarDocumento(anexo, metadados, line, doc);
+						writer.addDocument(doc);
+						quantidadeLinhas++;
 					} catch (Exception e) {
-						logger.error("Erro na linha " + quantidadeLinhas);
+						logger.error(e);
+						logger.error("Linha -> " + line);
 					}
-					doc.add(new Field("TextoCompleto", line, tipoAnalisado));
-					writer.addDocument(doc);
 				}
-				quantidadeLinhas++;
 				if (quantidadeLinhas % 100000 == 0) {
 					logger.info("Quantidade de linhas processadas: " + quantidadeLinhas);
 				}
 				line = br.readLine();
 			}
 			logger.info("Adicionado: " + anexo.getNomeArquivo());
+			quantidadeDocumentosIndexados = quantidadeLinhas;
 		} catch (Exception e) {
-			logger.info(e);
+			logger.error(e);
+			throw new RuntimeException(e);
 		} finally {
 			try {
 				is.close();
@@ -352,6 +349,29 @@ public class Indexador {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void criarDocumento(AnexoFonteDados anexo, String[] metadados, String line, Document doc) {
+		doc.clear();
+		if (anexo.getSeparador().length() > 0) {
+			String[] dados = line.split(anexo.getSeparador());
+			for (int i = 0; i < dados.length; i++) {
+				doc.add(new Field(metadados[i], dados[i], tipoAnalisado));
+			}
+		} else {
+			doc.add(new Field(metadados[0], line, tipoAnalisado));
+		}
+		doc.add(new Field("TextoCompleto", line, tipoAnalisado));
+	}
+
+	private String[] carregarMetadados(AnexoFonteDados anexo, String line) {
+		String[] metadados;
+		if (anexo.getSeparador().length() > 0) {
+			metadados = line.split(anexo.getSeparador());
+		} else {
+			metadados = new String[] { line };
+		}
+		return metadados;
 	}
 
 	private void indexarArquivoBinario(AnexoFonteDados anexo) {
@@ -369,7 +389,7 @@ public class Indexador {
 			documento.add(new Field("ID", anexo.getNomeArquivo(), tipoNaoAnalisado));
 			documento.add(new Field("TextoCompleto", textoExtraido, tipoAnalisado));
 			writer.addDocument(documento);
-			quantidadeArquivosIndexados++;
+			quantidadeDocumentosIndexados++;
 			logger.info("Adicionado: " + anexo.getNomeArquivo());
 		} catch (Exception e) {
 			logger.error(e);

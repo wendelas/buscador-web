@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,30 +33,31 @@ import net.visualizacao.util.UtilBusca;
 public class BuscaLivreBean extends BaseBean {
 	private static final int QUANTIDADE_CARACTERES_VISUALIZACAO = 400;
 	private static final long serialVersionUID = -7508553590263034662L;
-	private String consulta;
+	// @ManagedProperty(value = "#{param.q}")
+	private String q;
 	private long duracaoBusca;
 	private ScoreDoc[] itens;
 	private int idFonteDados;
 	private FonteDados fonte;
 	private Document documento;
-	private UtilBusca buscador;
 	private Map<Integer, Document> mapaItens;
 	private Collection<Document> listaDocumentos;
 	private int totalHits;
 
-	public UtilBusca getBuscador() throws IOException {
-		if (buscador == null) {
-			buscador = new UtilBusca(getFonte().getDiretorioIndice());
+	public UtilBusca criarBuscador() {
+		try {
+			return new UtilBusca(getFonte().getDiretorioIndice());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		return buscador;
 	}
 
-	public void setConsulta(String consulta) {
-		this.consulta = consulta;
+	public void setQ(String consulta) {
+		this.q = consulta;
 	}
 
-	public String getConsulta() {
-		return consulta;
+	public String getQ() {
+		return q;
 	}
 
 	public BigDecimal getDuracaoBusca() {
@@ -85,22 +87,23 @@ public class BuscaLivreBean extends BaseBean {
 	}
 
 	public void consultar() {
+		if (StringUtils.vazia(getQ()) || StringUtils.vazia(String.valueOf(getIdFonteDados()))) {
+			return;
+		}
+		fonte = FachadaBuscador.getInstancia().buscarFontePeloId(getIdFonteDados());
+		UtilBusca buscador = criarBuscador();
 		try {
-			fonte = FachadaBuscador.getInstancia().buscarFontePeloId(getIdFonteDados());
-			TopDocs hits = getBuscador().buscar(getConsulta());
+			TopDocs hits = buscador.buscar(getQ());
 			setItens(hits.scoreDocs);
 			totalHits = hits.totalHits;
-			if (totalHits == 0) {
-				setItens(null);
-			}
-			duracaoBusca = getBuscador().getDuracaoBusca();
-			// } catch (NoSuchDirectoryException e) {
-			// errorMsg("Essa fonte de dados ainda não foi indexada. Faça a
-			// indexação no menu de Utilitário.");
+			// if (totalHits == 0) {
+			// setItens(null);
+			// }
+			duracaoBusca = buscador.getDuracaoBusca();
 		} catch (Exception e) {
 			errorMsg(e);
 		} finally {
-			fecharIndice();
+			buscador.fechar();
 		}
 	}
 
@@ -116,11 +119,16 @@ public class BuscaLivreBean extends BaseBean {
 		return itens;
 	}
 
-	public Document doc(int doc) {
+	public Document doc(int idDoc) {
+		UtilBusca buscador = criarBuscador();
 		try {
-			return getBuscador().doc(doc);
+			Document doc = buscador.doc(idDoc);
+			buscador.fechar();
+			return doc;
 		} catch (IOException e) {
 			logger.error(e);
+		} finally {
+			buscador.fechar();
 		}
 		return null;
 	}
@@ -214,7 +222,7 @@ public class BuscaLivreBean extends BaseBean {
 	}
 
 	public String getDocumentoFormatado() {
-		return documento.get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
+		return getDocumento().get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
 	}
 
 	public String abrirPaginaBusca() {
@@ -252,14 +260,6 @@ public class BuscaLivreBean extends BaseBean {
 
 	public String formataTexto(String texto) {
 		return texto.replaceAll("\n", "<br />");
-	}
-
-	public void fecharIndice() {
-		try {
-			getBuscador().fechar();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public Collection<Document> getListaDocumentos() {
