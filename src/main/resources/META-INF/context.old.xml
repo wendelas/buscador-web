@@ -4,5 +4,6 @@
 		driverClassName="org.hsqldb.jdbcDriver"
 		url="jdbc:hsqldb:file:~/indices/db/db_indexador;shutdown=true"
 		username="sa" password="" maxActive="20" maxIdle="10" maxWait="-1" />
-	<Resources cachingAllowed="true" cacheMaxSize="500000" />
+	<Resource name="file" cachingAllowed="false"
+		className="org.apache.catalina.webresources.FileResourceSet" />
 </Context>  

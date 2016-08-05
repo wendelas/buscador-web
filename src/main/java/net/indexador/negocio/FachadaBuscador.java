@@ -86,6 +86,7 @@ public class FachadaBuscador {
 		FonteDados fonteDados = em.find(FonteDados.class, idFonteDados);
 		int qtdeItensIndexados = 0;
 		try {
+			indexador = new Indexador(fonteDados.getNome());
 			long inicio = System.currentTimeMillis();
 			try {
 				// TODO utilizar o commons
@@ -94,20 +95,23 @@ public class FachadaBuscador {
 				// Indice ainda nao existe
 			}
 			logger.info("Indice excluido");
+			//
+			indexador = new Indexador(fonteDados.getNome());
+			// Indexa arquivos no disco
+			if (!StringUtils.vazia(fonteDados.getDiretorio())) {
+				indexador.indexaArquivosDoDiretorio(new File(fonteDados.getDiretorio()), fonteDados.getSeparador());
+				logger.info("Total de documentos indexados: " + indexador.getQuantidadeDocumentosIndexados());
+			}
+			//
 			Collection<AnexoFonteDados> anexos = buscarAnexos(idFonteDados);
 			if (anexos != null) {
-				indexador = new Indexador(fonteDados.getNome());
+
 				indexarAnexos(anexos);
 				return getIndexador().getQuantidadeDocumentosIndexados();
 			}
 			//
 			new File(fonteDados.getDiretorioIndice() + "/write.lock").delete();
-			indexador = new Indexador(fonteDados.getNome());
-			// Indexa arquivos no disco
-			if (!StringUtils.vazia(fonteDados.getDiretorio())) {
-				indexador.indexaArquivosDoDiretorio(new File(fonteDados.getDiretorio()));
-				logger.info("Total de documentos indexados: " + indexador.getQuantidadeDocumentosIndexados());
-			}
+
 			// Indexa banco de dados
 			Connection con = null;
 			Statement stmt = null;

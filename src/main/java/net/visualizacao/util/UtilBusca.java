@@ -2,7 +2,6 @@ package net.visualizacao.util;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.text.Normalizer;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -26,8 +25,8 @@ public class UtilBusca {
 	private FSDirectory directory;
 	private IndexSearcher searcher;
 	// private IndexReader reader;
-	private long duracaoBusca;
-	private Integer quantidadeLimiteRegistros = 1000;
+	// private long duracaoBusca;
+	private Integer quantidadeLimiteRegistros = 100000;
 	private String diretorioDicionarios;
 	private HashMap<String, String> args;
 	private Query query;
@@ -46,8 +45,13 @@ public class UtilBusca {
 		return analyzer;
 	}
 
-	public UtilBusca(String diretorioIndice) throws IOException {
-		abrirIndice(diretorioIndice);
+	public UtilBusca(String diretorioIndice) {
+		try {
+			abrirIndice(diretorioIndice);
+		} catch (IOException e) {
+			logger.error(e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void abrirIndice(String diretorioIndice) throws IOException {
@@ -68,23 +72,24 @@ public class UtilBusca {
 		}
 	}
 
-	public Document doc(int docID) throws IOException {
+	public Document doHighlight(Document doc, int docID) throws IOException {
 		// Criar campo com highlight
 		FastVectorHighlighter fhl = new FastVectorHighlighter();
 		FieldQuery fq = fhl.getFieldQuery(getQuery());
-		acquire();
-		Document doc = searcher.doc(docID);
 		String fragHighlight = fhl.getBestFragment(fq, searcher.getIndexReader(), docID, "TextoCompleto",
 				doc.get("TextoCompleto").length());
 		if (fragHighlight == null)
 			fragHighlight = doc.get("TextoCompleto");
-		try {
-			doc.add(new StringField("TextoCompleto.hl", fragHighlight, Store.NO));
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			release();
-		}
+		doc.add(new StringField("TextoCompleto.hl", fragHighlight, Store.NO));
+		release();
+		return doc;
+
+	}
+
+	public Document doc(int docID) throws IOException {
+		acquire();
+		Document doc = searcher.doc(docID);
+		release();
 		return doc;
 	}
 
@@ -116,37 +121,32 @@ public class UtilBusca {
 		}
 	}
 
-	public long getDuracaoBusca() {
-		return duracaoBusca;
-	}
+	// public long getDuracaoBusca() {
+	// return duracaoBusca;
+	// }
 
 	public TopDocs buscar(String consulta) {
 		try {
-			consulta = Normalizer.normalize(consulta, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+",
-					"");
+			// consulta = Normalizer.normalize(consulta, Normalizer.Form.NFD)
+			// .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 			QueryParser queryParser = new QueryParser("", getAnalyzer());
 			queryParser.setDefaultOperator(Operator.AND);
 			query = queryParser.parse("TextoCompleto:(" + consulta + ")");
-			TopDocs hits = buscar();
+			TopDocs hits;
+			long time = System.currentTimeMillis();
+			acquire();
+			// Péssima ideia para índices muito grandes
+			// MatchAllDocsQuery m = new MatchAllDocsQuery();
+			// hits = searcher.search(m, 1);
+			// quantidadeLimiteRegistros = hits.totalHits;
+			//
+			hits = searcher.search(query, quantidadeLimiteRegistros);
+			// duracaoBusca = System.currentTimeMillis() - time;
 			release();
 			return hits;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public TopDocs buscar() {
-		TopDocs hits;
-		try {
-			long time = System.currentTimeMillis();
-			acquire();
-			hits = searcher.search(query, quantidadeLimiteRegistros);
-			duracaoBusca = System.currentTimeMillis() - time;
-			release();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return hits;
 	}
 
 	public void fechar() {

@@ -18,6 +18,7 @@ public class FonteDados {
 	private List<MetaDado> metadados;
 	private List<AnexoFonteDados> anexos;
 	private byte[] dicionario;
+	private String separador;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -126,4 +127,11 @@ public class FonteDados {
 		return dicionario;
 	}
 
+	public void setSeparador(String separador) {
+		this.separador = separador;
+	}
+
+	public String getSeparador() {
+		return separador;
+	}
 }

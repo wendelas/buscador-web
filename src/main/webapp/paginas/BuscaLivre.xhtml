@@ -14,11 +14,11 @@
 	<ui:define name="body">
 
 		<f:metadata>
-			<f:viewParam name="q" value="#{buscaLivreBean.q}" />
-			<f:viewParam name="idFonteDados" value="#{buscaLivreBean.idFonteDados}" />
+			<!-- 			<f:viewParam name="q" value="#{buscaLivreBean.q}" /> -->
+			<!-- 			<f:viewParam name="idFonteDados" value="#{buscaLivreBean.idFonteDados}" /> -->
 			<!-- 				</f:metadata> -->
 			<!-- 		<f:metadata> -->
-			<f:event type="preRenderView" listener="#{buscaLivreBean.consultar}" />
+			<!-- 			<f:event type="preRenderView" listener="#{buscaLivreBean.consultar}" /> -->
 		</f:metadata>
 
 		<h:form id="formPesquisa">
@@ -35,29 +35,30 @@
 						<p:watermark for="txtConsulta" value="Consulte uma palavra-chave" />
 
 						<p:commandButton value="Consultar"
-							update="messages,painelItens,painelStatus" ajax="true"
+							update="messages,painelDocs,painelStatus" ajax="true"
 							actionListener="#{buscaLivreBean.consultar()}"
 							icon="ui-icon-search"
-							onclick="tblItensWidget.getPaginator().setPage(0);" />
+							onclick="tblDocsWidget.getPaginator().setPage(0);" />
 					</div>
 				</p:panel>
 
 				<p:spacer height="3px" />
 
-				<p:panel id="painelItens"
-					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.q}">
-					<p:dataTable id="tblItens" value="#{buscaLivreBean.itens}"
-						rendered="#{not empty buscaLivreBean.itens}"
-						widgetVar="tblItensWidget" paginator="true"
-						paginatorPosition="bottom" var="item" rows="20"
-						paginatorAlwaysVisible="false">
+				<p:panel id="painelDocs" rendered="#{not empty buscaLivreBean.q}">
+					<p:dataTable id="tblDocs" value="#{buscaLivreBean.docs}"
+						rendered="#{not empty buscaLivreBean.docs}"
+						widgetVar="tblDocsWidget" paginator="true"
+						paginatorPosition="bottom" var="doc" rows="20"
+						paginatorAlwaysVisible="false" lazy="true">
+						<p:ajax event="page" update="formPesquisa:painelStatus" />
+
 						<p:column style="width: 45px; ">
 							<f:facet name="header">
 								<p:outputLabel value="Ver" />
 							</f:facet>
 							<p:commandLink oncomplete="PF('dlgDetalheDocumento').show();"
-								actionListener="#{buscaLivreBean.visualizarDetalhe(item)}"
-								update="detalheDocumento">
+								update="detalheDocumento"
+								style="margin-left: auto;margin-right: auto;">
 								<p:graphicImage value="imagens/view.png" />
 							</p:commandLink>
 
@@ -75,18 +76,18 @@
 								<p:outputLabel value="Conteúdo" />
 							</f:facet>
 							<p:outputLabel escape="false" style="white-space: normal"
-								value="#{buscaLivreBean.mostraDados(item)}" />
+								value="#{buscaLivreBean.mostrarDados(doc)}" />
 						</p:column>
 					</p:dataTable>
 
 					<p:outputLabel
-						rendered="#{empty buscaLivreBean.itens and not empty buscaLivreBean.q}"
+						rendered="#{empty buscaLivreBean.docs and not empty buscaLivreBean.q}"
 						value="Nenhum documento encontrado para o argumento pesquisado" />
 
 				</p:panel>
 
 				<p:spacer height="3px"
-					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.q}" />
+					rendered="#{not empty buscaLivreBean.docs or not empty buscaLivreBean.q}" />
 
 				<p:panel>
 					<p:outputLabel value="Índice:" />
@@ -101,15 +102,15 @@
 				</p:panel>
 
 				<p:spacer height="3px"
-					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.q}" />
+					rendered="#{not empty buscaLivreBean.docs or not empty buscaLivreBean.q}" />
 
 				<p:panel
-					rendered="#{not empty buscaLivreBean.itens or not empty buscaLivreBean.q}"
+					rendered="#{not empty buscaLivreBean.docs or not empty buscaLivreBean.q}"
 					id="painelStatus">
 					<p:outputLabel
 						value="Duração da consulta: #{buscaLivreBean.duracaoBusca} segundos. " />
 					<p:outputLabel
-						value="Quantidade de itens encontrados: #{buscaLivreBean.totalHits}." />
+						value="Quantidade de itens encontrados: #{buscaLivreBean.docs.rowCount}." />
 				</p:panel>
 
 			</p:panel>

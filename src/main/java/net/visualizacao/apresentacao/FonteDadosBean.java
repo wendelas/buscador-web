@@ -1,7 +1,5 @@
 package net.visualizacao.apresentacao;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -12,16 +10,16 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
+
 import net.indexador.entidades.AnexoFonteDados;
 import net.indexador.entidades.FonteDados;
 import net.indexador.negocio.ExcecaoImportador;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.StringUtils;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
 
 /**
  * 
@@ -108,6 +106,8 @@ public class FonteDadosBean extends BaseBean {
 			AnexoFonteDados anexo = new AnexoFonteDados();
 			byte[] bytes = IOUtils.toByteArray(getArquivo().getInputstream());
 			anexo.setAnexo(bytes);
+			getFonteDados().setSeparador(getSeparador());
+			getFonteDados().setDiretorio(getDiretorio());
 			FachadaBuscador.getInstancia().persistir(getFonteDados());
 			FachadaBuscador.getInstancia().persistir(anexo, getFonteDados().getId());
 			infoMsg("Arquivo gravado com sucesso");
@@ -122,9 +122,11 @@ public class FonteDadosBean extends BaseBean {
 			if (getDicionario() != null) {
 				getFonteDados().setDicionario(dicionario.getBytes());
 			}
+			getFonteDados().setSeparador(getSeparador());
+			getFonteDados().setDiretorio(getDiretorio());
 			FachadaBuscador.getInstancia().persistir(getFonteDados());
 			if (getDiretorio() != null) {
-				salvarDiretorioComAnexos();
+//				salvarDiretorioComAnexos();
 			}
 			if (getArquivo() != null) {
 				salvarAnexo();
@@ -136,29 +138,29 @@ public class FonteDadosBean extends BaseBean {
 		}
 	}
 
-	private void salvarDiretorioComAnexos() {
-		File diretorio = new File(getDiretorio());
-		if (diretorio.isDirectory()) {
-			File[] arquivos = diretorio.listFiles();
-			for (File arquivo : arquivos) {
-				try {
-					if (!arquivo.isFile())
-						continue;
-					AnexoFonteDados anexo = new AnexoFonteDados();
-					byte[] bytes = IOUtils.toByteArray(new FileInputStream(arquivo));
-					anexo.setNomeArquivo(arquivo.getName());
-					anexo.setTamanho(arquivo.length());
-					anexo.setAnexo(bytes);
-					anexo.setFonteDados(getFonteDados());
-					anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
-					FachadaBuscador.getInstancia().persistir(anexo, getFonteDados().getId());
-				} catch (Exception e) {
-					logger.error("Nao foi possivel salvar o arquivo " + arquivo.getAbsolutePath());
-				}
-
-			}
-		}
-	}
+//	private void salvarDiretorioComAnexos() {
+//		File diretorio = new File(getDiretorio());
+//		if (diretorio.isDirectory()) {
+//			File[] arquivos = diretorio.listFiles();
+//			for (File arquivo : arquivos) {
+//				try {
+//					if (!arquivo.isFile())
+//						continue;
+//					AnexoFonteDados anexo = new AnexoFonteDados();
+//					byte[] bytes = IOUtils.toByteArray(new FileInputStream(arquivo), 8192);
+//					anexo.setNomeArquivo(arquivo.getName());
+//					anexo.setTamanho(arquivo.length());
+//					anexo.setAnexo(bytes);
+//					anexo.setFonteDados(getFonteDados());
+//					anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
+//					FachadaBuscador.getInstancia().persistir(anexo, getFonteDados().getId());
+//				} catch (Exception e) {
+//					logger.error("Nao foi possivel salvar o arquivo " + arquivo.getAbsolutePath());
+//				}
+//
+//			}
+//		}
+//	}
 
 	private boolean validar() {
 		// somente diretorio de arquivos
@@ -230,6 +232,8 @@ public class FonteDadosBean extends BaseBean {
 		try {
 			metaDados = new VOMetaDados();
 			fonteDados = FachadaBuscador.getInstancia().buscarFontePeloId(getFonteDados().getId());
+			setDiretorio(fonteDados.getDiretorio());
+			setSeparador(fonteDados.getSeparador());
 			carregarAnexos();
 		} catch (Exception e) {
 			logger.error(e);

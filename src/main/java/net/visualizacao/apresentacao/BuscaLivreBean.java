@@ -2,31 +2,28 @@ package net.visualizacao.apresentacao;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.primefaces.component.datatable.DataTable;
 
 import net.indexador.entidades.FonteDados;
 import net.indexador.entidades.MetaDado;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.StringUtils;
-import net.visualizacao.util.UtilBusca;
 
 @ManagedBean
 @ViewScoped
@@ -35,21 +32,34 @@ public class BuscaLivreBean extends BaseBean {
 	private static final long serialVersionUID = -7508553590263034662L;
 	// @ManagedProperty(value = "#{param.q}")
 	private String q;
-	private long duracaoBusca;
-	private ScoreDoc[] itens;
+	private LuceneLazyDataModel docs;
+	// private ScoreDoc[] itens;
 	private int idFonteDados;
 	private FonteDados fonte;
-	private Document documento;
-	private Map<Integer, Document> mapaItens;
-	private Collection<Document> listaDocumentos;
-	private int totalHits;
+	// private Document documento;
+	// private Map<Integer, Document> mapaItens;
+	// private Collection<Document> listaDocumentos;
+	// private int totalHits;
 
-	public UtilBusca criarBuscador() {
-		try {
-			return new UtilBusca(getFonte().getDiretorioIndice());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+	@PostConstruct
+	public void init() {
+
+	}
+
+	public LuceneLazyDataModel getDocs() {
+		if (docs == null) {
+			docs = new LuceneLazyDataModel(getQ(), getIdFonteDados());
 		}
+		return docs;
+	}
+
+	public void setDocs(LuceneLazyDataModel docs) {
+		this.docs = docs;
+	}
+
+	public void consultar() {
+		fonte = FachadaBuscador.getInstancia().buscarFontePeloId(idFonteDados);
+		docs = new LuceneLazyDataModel(getQ(), getIdFonteDados());
 	}
 
 	public void setQ(String consulta) {
@@ -61,7 +71,7 @@ public class BuscaLivreBean extends BaseBean {
 	}
 
 	public BigDecimal getDuracaoBusca() {
-		Double d = duracaoBusca / 1000d;
+		Double d = getDocs().getDuracaoBusca() / 1000d;
 		BigDecimal bd = new BigDecimal(d).setScale(4, BigDecimal.ROUND_CEILING);
 		return bd;
 	}
@@ -86,71 +96,54 @@ public class BuscaLivreBean extends BaseBean {
 		return null;
 	}
 
-	public void consultar() {
-		if (StringUtils.vazia(getQ()) || StringUtils.vazia(String.valueOf(getIdFonteDados()))) {
-			return;
-		}
-		fonte = FachadaBuscador.getInstancia().buscarFontePeloId(getIdFonteDados());
-		UtilBusca buscador = criarBuscador();
-		try {
-			TopDocs hits = buscador.buscar(getQ());
-			setItens(hits.scoreDocs);
-			totalHits = hits.totalHits;
-			// if (totalHits == 0) {
-			// setItens(null);
-			// }
-			duracaoBusca = buscador.getDuracaoBusca();
-		} catch (Exception e) {
-			errorMsg(e);
-		} finally {
-			buscador.fechar();
-		}
-	}
+	// public int getTotalHits() {
+	// return totalHits;
+	// }
+	//
+	// public void setItens(ScoreDoc[] itens) {
+	// this.itens = itens;
+	// }
 
-	public int getTotalHits() {
-		return totalHits;
-	}
+	// public ScoreDoc[] getItens() {
+	// return itens;
+	// }
 
-	public void setItens(ScoreDoc[] itens) {
-		this.itens = itens;
-	}
+	// public Document doc(int idDoc) {
+	// UtilBusca buscador = criarBuscador();
+	// try {
+	// Document doc = buscador.doc(idDoc);
+	// buscador.fechar();
+	// return doc;
+	// } catch (IOException e) {
+	// logger.error(e);
+	// } finally {
+	// buscador.fechar();
+	// }
+	// return null;
+	// }
 
-	public ScoreDoc[] getItens() {
-		return itens;
-	}
+	// public String visualizarDetalhe(ScoreDoc scoreDoc) {
+	// try {
+	// documento = doc(scoreDoc.doc);
+	// } catch (Exception e) {
+	// logger.error(e);
+	// }
+	// return "DetalheDocumento";
+	// }
 
-	public Document doc(int idDoc) {
-		UtilBusca buscador = criarBuscador();
-		try {
-			Document doc = buscador.doc(idDoc);
-			buscador.fechar();
-			return doc;
-		} catch (IOException e) {
-			logger.error(e);
-		} finally {
-			buscador.fechar();
-		}
-		return null;
-	}
-
-	public String visualizarDetalhe(ScoreDoc scoreDoc) {
-		try {
-			documento = doc(scoreDoc.doc);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		return "DetalheDocumento";
-	}
-
-	public String mostraDados(ScoreDoc doc) {
+	public String mostrarDados(Document documento) {
 		StringBuilder saida = new StringBuilder();
 		try {
-			Document documento = doc(doc.doc);
 			// Arquivo no disco
 			if (fonte.getMetadados() == null || fonte.getMetadados().size() == 0) {
 				String id = documento.get("ID");
 				String resultado = id == null ? "" : "[" + id + "] - ";
-				resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
+				String conteudo = documento.get("TextoCompleto.hl");
+				// Quando o highlight não funciona...
+				if (conteudo == null) {
+					conteudo = documento.get("TextoCompleto");
+				}
+				resultado += limitaTamanho(conteudo);
 				return resultado;
 			}
 			// Registro do banco
@@ -170,33 +163,33 @@ public class BuscaLivreBean extends BaseBean {
 		return saida.toString();
 	}
 
-	public String mostraDadosPorID(int doc) {
-		StringBuilder saida = new StringBuilder();
-		Document documento = mapaItens.get(doc);
-		try {
-			// Arquivo no disco
-			if (fonte.getMetadados() == null || fonte.getMetadados().size() == 0) {
-				String id = documento.get("ID");
-				String resultado = id == null ? "" : "[" + id + "] - ";
-				resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
-				return resultado;
-			}
-			// Registro do banco
-			for (MetaDado metadado : fonte.getMetadados()) {
-				String campo = metadado.getCampo().toUpperCase();
-				String conteudo = documento.get(campo);
-				conteudo = limitaTamanho(conteudo);
-				saida.append("[");
-				saida.append(campo);
-				saida.append(": ");
-				saida.append(conteudo);
-				saida.append("] ");
-			}
-		} catch (Exception e) {
-			saida.append("Erro: " + e);
-		}
-		return saida.toString();
-	}
+	// public String mostrarDadosPorID(int doc) {
+	// StringBuilder saida = new StringBuilder();
+	// Document documento = mapaItens.get(doc);
+	// try {
+	// // Arquivo no disco
+	// if (fonte.getMetadados() == null || fonte.getMetadados().size() == 0) {
+	// String id = documento.get("ID");
+	// String resultado = id == null ? "" : "[" + id + "] - ";
+	// resultado += limitaTamanho(documento.get("TextoCompleto.hl"));
+	// return resultado;
+	// }
+	// // Registro do banco
+	// for (MetaDado metadado : fonte.getMetadados()) {
+	// String campo = metadado.getCampo().toUpperCase();
+	// String conteudo = documento.get(campo);
+	// conteudo = limitaTamanho(conteudo);
+	// saida.append("[");
+	// saida.append(campo);
+	// saida.append(": ");
+	// saida.append(conteudo);
+	// saida.append("] ");
+	// }
+	// } catch (Exception e) {
+	// saida.append("Erro: " + e);
+	// }
+	// return saida.toString();
+	// }
 
 	private String limitaTamanho(String conteudo) {
 		if (conteudo != null && conteudo.length() > QUANTIDADE_CARACTERES_VISUALIZACAO) {
@@ -213,16 +206,16 @@ public class BuscaLivreBean extends BaseBean {
 		return idFonteDados;
 	}
 
-	public FonteDados getFonte() {
-		return fonte;
-	}
-
-	public Document getDocumento() {
-		return documento;
-	}
+	// public FonteDados getFonte() {
+	// return fonte;
+	// }
+	//
+	// public Document getDocumento() {
+	// return documento;
+	// }
 
 	public String getDocumentoFormatado() {
-		return getDocumento().get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
+		return getDocs().getRowData().get("TextoCompleto").replaceAll("\n", "<br />").replaceAll("�", "");
 	}
 
 	public String abrirPaginaBusca() {
@@ -253,7 +246,6 @@ public class BuscaLivreBean extends BaseBean {
 			// getFacesContext().responseComplete();
 		} catch (Exception e) {
 			// errorMsg("erro.generico",
-			// "Nï¿½o foi possï¿½vel baixar o arquivo. Erro Java: " + e);
 			logger.error(e);
 		}
 	}
@@ -262,7 +254,7 @@ public class BuscaLivreBean extends BaseBean {
 		return texto.replaceAll("\n", "<br />");
 	}
 
-	public Collection<Document> getListaDocumentos() {
-		return listaDocumentos;
-	}
+	// public Collection<Document> getListaDocumentos() {
+	// return listaDocumentos;
+	// }
 }

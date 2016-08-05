@@ -24,11 +24,7 @@ public class TesteBusca {
 				Document hitDoc = util.doc(scoreDocs[i].doc);
 				System.out.println("Conteúdo: " + hitDoc.get("TextoCompleto"));
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -46,11 +42,7 @@ public class TesteBusca {
 				Document hitDoc = util.doc(scoreDocs[i].doc);
 				System.out.println("Conteúdo: " + hitDoc.get("TextoCompleto"));
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

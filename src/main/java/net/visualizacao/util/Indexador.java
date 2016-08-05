@@ -37,7 +37,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.tika.Tika;
 import org.apache.tika.detect.AutoDetectReader;
@@ -47,7 +46,6 @@ import net.indexador.entidades.AnexoFonteDados;
 public class Indexador {
 	private static Logger logger = Logger.getLogger(Indexador.class);
 	private IndexWriter writer;
-	private String diretorioIndice;
 	private String diretorioDicionarios;
 	private int quantidadeDocumentosIndexados = 0;
 	private FieldType tipoAnalisado = new FieldType();
@@ -55,12 +53,12 @@ public class Indexador {
 
 	private Tika tika;
 	private FSDirectory directory;
+	private String diretorioIndice;
 
-	public Indexador(String diretorioIndice) throws IOException {
-		this.diretorioIndice = diretorioIndice;
-		this.diretorioDicionarios = System.getProperty("user.home") + "/dados/indices/" + diretorioIndice
-				+ "/dicionarios";
-		String file = System.getProperty("user.home") + "/dados/indices/" + diretorioIndice;
+	public Indexador(String nomeIndice) throws IOException {
+		this.diretorioDicionarios = System.getProperty("user.home") + "/dados/indices/" + nomeIndice + "/dicionarios";
+		this.diretorioIndice = System.getProperty("user.home") + "/dados/indices/" + nomeIndice;
+		String file = System.getProperty("user.home") + "/dados/indices/" + nomeIndice;
 		File dicionariosDir = new File(this.diretorioDicionarios);
 
 		if (!dicionariosDir.exists()) {
@@ -90,27 +88,24 @@ public class Indexador {
 
 		directory = FSDirectory.open(Paths.get(file));
 		logger.info("Diretorio do indice: " + file);
-		// Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
 		HashMap<String, String> args = new HashMap<String, String>();
 		args.put("stopWords", "stopwords.txt");
 		args.put("baseDirectory", diretorioDicionarios);
-		// args.put("luceneMatchVersion", Version.LUCENE_44.toString());
 
 		Analyzer analyzer = new StandardAnalyzer();
-		// Analyzer analyzer = new TimbreAnalyzer(Version.LUCENE_44, args);
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		// config.setRAMBufferSizeMB(1024);
 		writer = new IndexWriter(directory, config);
 		//
 		//
 		// TODO: TipoNaoAnalisado não deve ser indexado
 		// tipoNaoAnalisado.setIndexed(true);
 		tipoNaoAnalisado.setStored(true);
-		IndexOptions opts = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		IndexOptions opts = IndexOptions.DOCS_AND_FREQS;
 		tipoAnalisado.setIndexOptions(opts);
 		tipoAnalisado.setStored(true);
 		tipoAnalisado.setTokenized(true);
-		// tipoAnalisado.setStoreTermVectors(true);
 		// tipoAnalisado.setStoreTermVectorOffsets(true);
 		// tipoAnalisado.setStoreTermVectorPayloads(true);
 		// tipoAnalisado.setStoreTermVectorPositions(true);
@@ -135,24 +130,28 @@ public class Indexador {
 		return null;
 	}
 
-	public void indexaArquivosDoDiretorio(File raiz) {
+	public void indexaArquivosDoDiretorio(File raiz, String separador) {
 		String nomeArquivo = "";
 		try {
-			for (File arquivo : raiz.listFiles(new FiltroArquivoSuportado())) {
+			for (File arquivo : raiz.listFiles()) {
 				nomeArquivo = arquivo.getAbsolutePath();
 				if (arquivo.isFile()) {
 					if (jahIndexado(getNomeArquivoFormatado(arquivo))) {
 						logger.info("Jah indexado: " + arquivo.getAbsolutePath());
 						continue;
 					}
-					String textoExtraido = "";
 					InputStream in = new FileInputStream(arquivo);
-					textoExtraido = getTika().parseToString(in);
-					if (indexaArquivo(arquivo, textoExtraido)) {
-						quantidadeDocumentosIndexados++;
+					if (arquivo.getName().endsWith(".csv")) {
+						indexarCSV(in, separador);
+					} else {
+						String textoExtraido = "";
+						textoExtraido = getTika().parseToString(in);
+						if (indexaArquivo(arquivo, textoExtraido)) {
+							quantidadeDocumentosIndexados++;
+						}
 					}
 				} else {
-					indexaArquivosDoDiretorio(arquivo);
+					indexaArquivosDoDiretorio(arquivo, separador);
 				}
 			}
 		} catch (Exception e) {
@@ -273,7 +272,8 @@ public class Indexador {
 				|| anexo.getNomeArquivo().toLowerCase().endsWith(".rtf")) {
 			indexarArquivoBinario(anexo);
 		} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".csv")) {
-			indexarCSV(anexo);
+			InputStream bytes = new ByteArrayInputStream(anexo.getAnexo());
+			indexarCSV(bytes, anexo.getSeparador());
 		} else if (anexo.getNomeArquivo().toLowerCase().endsWith(".zip")) {
 			try {
 				byte[] buffer = new byte[1024];
@@ -301,13 +301,11 @@ public class Indexador {
 		}
 	}
 
-	private void indexarCSV(AnexoFonteDados anexo) {
-		InputStream is = null;
+	private void indexarCSV(InputStream is, String separador) {
 		BufferedReader br = null;
 		int quantidadeLinhas = 0;
 		Document doc = new Document();
 		try {
-			is = new ByteArrayInputStream(anexo.getAnexo());
 			br = new BufferedReader(new AutoDetectReader(is));
 			String[] metadados = null;
 			int linha = 1;
@@ -316,10 +314,10 @@ public class Indexador {
 				// Linha com os metadados
 				if (linha == 1) {
 					linha++;
-					metadados = carregarMetadados(anexo, line);
+					metadados = carregarMetadados(separador, line);
 				} else {
 					try {
-						criarDocumento(anexo, metadados, line, doc);
+						criarDocumento(separador, metadados, line, doc);
 						writer.addDocument(doc);
 						quantidadeLinhas++;
 					} catch (Exception e) {
@@ -332,8 +330,7 @@ public class Indexador {
 				}
 				line = br.readLine();
 			}
-			logger.info("Adicionado: " + anexo.getNomeArquivo());
-			quantidadeDocumentosIndexados = quantidadeLinhas;
+			quantidadeDocumentosIndexados += quantidadeLinhas;
 		} catch (Exception e) {
 			logger.error(e);
 			throw new RuntimeException(e);
@@ -351,10 +348,10 @@ public class Indexador {
 		}
 	}
 
-	private void criarDocumento(AnexoFonteDados anexo, String[] metadados, String line, Document doc) {
+	private void criarDocumento(String separador, String[] metadados, String line, Document doc) {
 		doc.clear();
-		if (anexo.getSeparador().length() > 0) {
-			String[] dados = line.split(anexo.getSeparador());
+		if (!StringUtils.vazia(separador)) {
+			String[] dados = line.split(separador);
 			for (int i = 0; i < dados.length; i++) {
 				doc.add(new Field(metadados[i], dados[i], tipoAnalisado));
 			}
@@ -364,10 +361,10 @@ public class Indexador {
 		doc.add(new Field("TextoCompleto", line, tipoAnalisado));
 	}
 
-	private String[] carregarMetadados(AnexoFonteDados anexo, String line) {
+	private String[] carregarMetadados(String separador, String line) {
 		String[] metadados;
-		if (anexo.getSeparador().length() > 0) {
-			metadados = line.split(anexo.getSeparador());
+		if (!StringUtils.vazia(separador)) {
+			metadados = line.split(separador);
 		} else {
 			metadados = new String[] { line };
 		}
@@ -402,7 +399,7 @@ public class Indexador {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		File diretorio = new File(System.getProperty("user.home") + "/dados/indices/" + diretorioIndice);
+		File diretorio = new File(diretorioIndice);
 		for (File arquivo : diretorio.listFiles()) {
 			arquivo.delete();
 		}
