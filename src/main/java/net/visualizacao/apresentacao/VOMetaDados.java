@@ -1,6 +1,8 @@
 package net.visualizacao.apresentacao;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author marcoreis

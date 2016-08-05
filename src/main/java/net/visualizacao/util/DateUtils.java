@@ -1,7 +1,7 @@
 package net.visualizacao.util;
 
-import java.text.*;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class DateUtils {
 	public static final String FORMATO_AMERICANO_COMPLETO = "yyyy-MM-dd HH:mm:ss";

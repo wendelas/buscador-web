@@ -1,11 +1,13 @@
 package net.indexador.negocio;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,15 +83,15 @@ public class FachadaBuscador {
 	 * @throws ExcecaoIndexador
 	 */
 	// FIXME melhorar esse codigo
-	public int indexar(int idFonteDados) throws ExcecaoIndexador {
+	public Map<String, Long> indexar(int idFonteDados) throws ExcecaoIndexador {
 		EntityManager em = JPAUtil.getInstance().getEntityManager();
 		FonteDados fonteDados = em.find(FonteDados.class, idFonteDados);
-		int qtdeItensIndexados = 0;
+
 		try {
 			indexador = new Indexador(fonteDados.getNome());
 			long inicio = System.currentTimeMillis();
 			try {
-				// TODO utilizar o commons
+				// TODO Remover esse método e usar apache o commons IO
 				indexador.excluirIndice();
 			} catch (Exception e) {
 				// Indice ainda nao existe
@@ -97,6 +99,7 @@ public class FachadaBuscador {
 			logger.info("Indice excluido");
 			//
 			indexador = new Indexador(fonteDados.getNome());
+
 			// Indexa arquivos no disco
 			if (!StringUtils.vazia(fonteDados.getDiretorio())) {
 				indexador.indexaArquivosDoDiretorio(new File(fonteDados.getDiretorio()), fonteDados.getSeparador());
@@ -105,73 +108,23 @@ public class FachadaBuscador {
 			//
 			Collection<AnexoFonteDados> anexos = buscarAnexos(idFonteDados);
 			if (anexos != null) {
-
 				indexarAnexos(anexos);
-				return getIndexador().getQuantidadeDocumentosIndexados();
 			}
-			//
-			new File(fonteDados.getDiretorioIndice() + "/write.lock").delete();
 
 			// Indexa banco de dados
-			Connection con = null;
-			Statement stmt = null;
-			ResultSet query = null;
-			Class.forName(fonteDados.getNomeDriver());
-			con = DriverManager.getConnection(fonteDados.getUrl(), fonteDados.getUsuario(), fonteDados.getPassword());
-			stmt = con.createStatement();
-			query = stmt.executeQuery(fonteDados.getQuery());
-			removeMetadados(fonteDados);
-			ResultSetMetaData rsMetaDados = query.getMetaData();
-			for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
-				String coluna = rsMetaDados.getColumnLabel(i).toUpperCase();
-				persistir(fonteDados, coluna);
-			}
-			while (query.next()) {
-				Map<String, String> mapa = new HashMap<String, String>();
-				for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
-					String coluna = "";
-					try {
-						coluna = rsMetaDados.getColumnLabel(i).toUpperCase();
-						Object valor = query.getObject(i);
-						String texto = "[ColunaVazia]";
-						//
-						if (valor instanceof InputStream) {
-							try {
-								texto = getTika().parseToString((InputStream) query.getObject(i));
-							} catch (Exception e) {
-								// Nao eh doc/xls/pdf/etc...
-							}
-						} else if (valor != null) {
-							texto = valor.toString();
-						}
-						//
-						try {
-							Document doc = Jsoup.parse(texto);
-							texto = doc.text();
-						} catch (Exception e1) {
-							// Nao eh arquivo html
-						}
-						//
-						if (!StringUtils.vazia(texto)) {
-							mapa.put(coluna, texto);
-						}
-					} catch (Exception e) {
-						logger.error(e);
-					}
-				}
-				if (indexador.indexar(mapa)) {
-					qtdeItensIndexados++;
-				}
-				if (qtdeItensIndexados > 0 && qtdeItensIndexados % 100 == 0) {
-					logger.info("Estatistica parcial: " + qtdeItensIndexados + " itens indexados.");
-				}
+			if (!StringUtils.vazia(fonteDados.getUrl())) {
+				indexarBaseDados(fonteDados);
 			}
 			long fim = System.currentTimeMillis();
-			String msg = "Tempo para indexar: " + ((fim - inicio) / 1000) + " segundos.";
+			long tempoMinutos = (fim - inicio) / (1000 * 60);
+			String msg = "Tempo para indexar: " + tempoMinutos + " minutos.";
 			logger.info(msg);
-			logger.info("Quantidade itens indexados: " + qtdeItensIndexados);
+			logger.info("Quantidade itens indexados: " + getIndexador().getQuantidadeDocumentosIndexados());
 			em.close();
-			return qtdeItensIndexados;
+			Map<String, Long> retorno = new HashMap<String, Long>();
+			retorno.put("TempoMinutos", tempoMinutos);
+			retorno.put("QuantidadeDocumentosIndexados", getIndexador().getQuantidadeDocumentosIndexados());
+			return retorno;
 		} catch (Exception e) {
 			throw new ExcecaoIndexador(e);
 		} finally {
@@ -179,6 +132,58 @@ public class FachadaBuscador {
 				indexador.fecha();
 			} catch (Exception e) {
 			}
+		}
+	}
+
+	private void indexarBaseDados(FonteDados fonteDados)
+			throws ClassNotFoundException, SQLException, ExcecaoIndexador, IOException {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet query = null;
+		Class.forName(fonteDados.getNomeDriver());
+		con = DriverManager.getConnection(fonteDados.getUrl(), fonteDados.getUsuario(), fonteDados.getPassword());
+		stmt = con.createStatement();
+		query = stmt.executeQuery(fonteDados.getQuery());
+		removeMetadados(fonteDados);
+		ResultSetMetaData rsMetaDados = query.getMetaData();
+		for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
+			String coluna = rsMetaDados.getColumnLabel(i).toUpperCase();
+			persistir(fonteDados, coluna);
+		}
+		while (query.next()) {
+			Map<String, String> mapa = new HashMap<String, String>();
+			for (int i = 1; i <= rsMetaDados.getColumnCount(); i++) {
+				String coluna = "";
+				try {
+					coluna = rsMetaDados.getColumnLabel(i).toUpperCase();
+					Object valor = query.getObject(i);
+					String texto = "[ColunaVazia]";
+					//
+					if (valor instanceof InputStream) {
+						try {
+							texto = getTika().parseToString((InputStream) query.getObject(i));
+						} catch (Exception e) {
+							// Nao eh doc/xls/pdf/etc...
+						}
+					} else if (valor != null) {
+						texto = valor.toString();
+					}
+					//
+					try {
+						Document doc = Jsoup.parse(texto);
+						texto = doc.text();
+					} catch (Exception e1) {
+						// Nao eh arquivo html
+					}
+					//
+					if (!StringUtils.vazia(texto)) {
+						mapa.put(coluna, texto);
+					}
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+			indexador.indexar(mapa);
 		}
 	}
 

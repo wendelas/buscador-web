@@ -1,8 +1,9 @@
 package net.visualizacao.util;
 
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 
 public class StringUtils {
 	protected static final Logger logger = Logger.getLogger(StringUtils.class);

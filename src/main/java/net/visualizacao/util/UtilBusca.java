@@ -48,9 +48,8 @@ public class UtilBusca {
 	public UtilBusca(String diretorioIndice) {
 		try {
 			abrirIndice(diretorioIndice);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e);
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -156,7 +155,6 @@ public class UtilBusca {
 			logger.info("Fechar SearchManager");
 		} catch (Exception e) {
 			logger.error(e);
-			throw new RuntimeException(e);
 		}
 	}
 

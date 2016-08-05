@@ -47,7 +47,7 @@ public class Indexador {
 	private static Logger logger = Logger.getLogger(Indexador.class);
 	private IndexWriter writer;
 	private String diretorioDicionarios;
-	private int quantidadeDocumentosIndexados = 0;
+	private long quantidadeDocumentosIndexados = 0;
 	private FieldType tipoAnalisado = new FieldType();
 	private FieldType tipoNaoAnalisado = new FieldType();
 
@@ -102,7 +102,7 @@ public class Indexador {
 		// TODO: TipoNaoAnalisado não deve ser indexado
 		// tipoNaoAnalisado.setIndexed(true);
 		tipoNaoAnalisado.setStored(true);
-		IndexOptions opts = IndexOptions.DOCS_AND_FREQS;
+		IndexOptions opts = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 		tipoAnalisado.setIndexOptions(opts);
 		tipoAnalisado.setStored(true);
 		tipoAnalisado.setTokenized(true);
@@ -146,9 +146,7 @@ public class Indexador {
 					} else {
 						String textoExtraido = "";
 						textoExtraido = getTika().parseToString(in);
-						if (indexaArquivo(arquivo, textoExtraido)) {
-							quantidadeDocumentosIndexados++;
-						}
+						indexaArquivo(arquivo, textoExtraido);
 					}
 				} else {
 					indexaArquivosDoDiretorio(arquivo, separador);
@@ -161,13 +159,20 @@ public class Indexador {
 	}
 
 	private boolean jahIndexado(String id) {
+		UtilBusca buscador = null;
 		try {
-			UtilBusca buscador = new UtilBusca(diretorioIndice);
+			buscador = new UtilBusca(diretorioIndice);
 			TopDocs hits = buscador.buscar("ID:" + id);
 			int qtd = hits.totalHits;
 			return qtd > 0;
 		} catch (Exception e) {
 			return false;
+		} finally {
+			try {
+				buscador.fechar();
+			} catch (Exception e) {
+				logger.error(e);
+			}
 		}
 	}
 
@@ -183,8 +188,9 @@ public class Indexador {
 	 *            coluna) de uma tupla no banco de dados
 	 * @return
 	 * @throws ExcecaoIndexador
+	 * @throws IOException
 	 */
-	public boolean indexar(Map<String, String> valores) throws ExcecaoIndexador {
+	public boolean indexar(Map<String, String> valores) throws ExcecaoIndexador, IOException {
 		Document documento = new Document();
 		if (jahIndexado(valores.get("ID")))
 			return false;
@@ -199,6 +205,7 @@ public class Indexador {
 				documento.add(new Field(coluna, valor, StringField.TYPE_STORED));
 			}
 			writer.addDocument(documento);
+			quantidadeDocumentosIndexados++;
 			return true;
 		} catch (Exception e) {
 			throw new ExcecaoIndexador(e);
@@ -246,7 +253,7 @@ public class Indexador {
 		bufferedReader.close();
 	}
 
-	public int getQuantidadeDocumentosIndexados() {
+	public long getQuantidadeDocumentosIndexados() {
 		return quantidadeDocumentosIndexados;
 	}
 
@@ -303,7 +310,6 @@ public class Indexador {
 
 	private void indexarCSV(InputStream is, String separador) {
 		BufferedReader br = null;
-		int quantidadeLinhas = 0;
 		Document doc = new Document();
 		try {
 			br = new BufferedReader(new AutoDetectReader(is));
@@ -319,18 +325,17 @@ public class Indexador {
 					try {
 						criarDocumento(separador, metadados, line, doc);
 						writer.addDocument(doc);
-						quantidadeLinhas++;
+						quantidadeDocumentosIndexados++;
 					} catch (Exception e) {
 						logger.error(e);
 						logger.error("Linha -> " + line);
 					}
 				}
-				if (quantidadeLinhas % 100000 == 0) {
-					logger.info("Quantidade de linhas processadas: " + quantidadeLinhas);
+				if (quantidadeDocumentosIndexados % 100000 == 0) {
+					logger.info("Quantidade de linhas processadas: " + quantidadeDocumentosIndexados);
 				}
 				line = br.readLine();
 			}
-			quantidadeDocumentosIndexados += quantidadeLinhas;
 		} catch (Exception e) {
 			logger.error(e);
 			throw new RuntimeException(e);
@@ -352,7 +357,13 @@ public class Indexador {
 		doc.clear();
 		if (!StringUtils.vazia(separador)) {
 			String[] dados = line.split(separador);
-			for (int i = 0; i < dados.length; i++) {
+			int limite = dados.length;
+			// Caso os dados tenham problemas com o separador
+			if (metadados.length < dados.length) {
+				logger.error("Problemas no separador da linha: " + line);
+				limite = metadados.length;
+			}
+			for (int i = 0; i < limite; i++) {
 				doc.add(new Field(metadados[i], dados[i], tipoAnalisado));
 			}
 		} else {

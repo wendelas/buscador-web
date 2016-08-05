@@ -6,7 +6,6 @@ import javax.persistence.Persistence;
 
 public class JPAUtil {
 	private EntityManagerFactory emf;
-	private EntityManager entityManager;
 	private static JPAUtil instance;
 
 	private JPAUtil() {

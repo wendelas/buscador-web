@@ -1,6 +1,6 @@
 package net.indexador.importacao;
 
-import java.sql.*;
+import java.sql.Connection;
 
 public class ImportadorJDBC {
 	private Connection conexao;

@@ -3,6 +3,7 @@ package net.visualizacao.apresentacao;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -45,8 +46,10 @@ public class FonteDadosBean extends BaseBean {
 
 	public String indexar() {
 		try {
-			int qtd = FachadaBuscador.getInstancia().indexar(getIdFonteDados());
-			String msg = "Indexação concluída com sucesso. Foram indexados " + qtd + " itens.";
+			Map<String, Long> retorno = FachadaBuscador.getInstancia().indexar(getIdFonteDados());
+			String msg = "Indexação concluída com sucesso. Foram indexados "
+					+ retorno.get("QuantidadeDocumentosIndexados") + " itens em " + retorno.get("TempoMinutos")
+					+ " minutos.";
 			infoMsg(msg);
 		} catch (Exception e) {
 			errorMsg(e);
@@ -126,7 +129,7 @@ public class FonteDadosBean extends BaseBean {
 			getFonteDados().setDiretorio(getDiretorio());
 			FachadaBuscador.getInstancia().persistir(getFonteDados());
 			if (getDiretorio() != null) {
-//				salvarDiretorioComAnexos();
+				// salvarDiretorioComAnexos();
 			}
 			if (getArquivo() != null) {
 				salvarAnexo();
@@ -138,29 +141,30 @@ public class FonteDadosBean extends BaseBean {
 		}
 	}
 
-//	private void salvarDiretorioComAnexos() {
-//		File diretorio = new File(getDiretorio());
-//		if (diretorio.isDirectory()) {
-//			File[] arquivos = diretorio.listFiles();
-//			for (File arquivo : arquivos) {
-//				try {
-//					if (!arquivo.isFile())
-//						continue;
-//					AnexoFonteDados anexo = new AnexoFonteDados();
-//					byte[] bytes = IOUtils.toByteArray(new FileInputStream(arquivo), 8192);
-//					anexo.setNomeArquivo(arquivo.getName());
-//					anexo.setTamanho(arquivo.length());
-//					anexo.setAnexo(bytes);
-//					anexo.setFonteDados(getFonteDados());
-//					anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
-//					FachadaBuscador.getInstancia().persistir(anexo, getFonteDados().getId());
-//				} catch (Exception e) {
-//					logger.error("Nao foi possivel salvar o arquivo " + arquivo.getAbsolutePath());
-//				}
-//
-//			}
-//		}
-//	}
+	// private void salvarDiretorioComAnexos() {
+	// File diretorio = new File(getDiretorio());
+	// if (diretorio.isDirectory()) {
+	// File[] arquivos = diretorio.listFiles();
+	// for (File arquivo : arquivos) {
+	// try {
+	// if (!arquivo.isFile())
+	// continue;
+	// AnexoFonteDados anexo = new AnexoFonteDados();
+	// byte[] bytes = IOUtils.toByteArray(new FileInputStream(arquivo), 8192);
+	// anexo.setNomeArquivo(arquivo.getName());
+	// anexo.setTamanho(arquivo.length());
+	// anexo.setAnexo(bytes);
+	// anexo.setFonteDados(getFonteDados());
+	// anexo.setDataEnvio(new Timestamp(System.currentTimeMillis()));
+	// FachadaBuscador.getInstancia().persistir(anexo, getFonteDados().getId());
+	// } catch (Exception e) {
+	// logger.error("Nao foi possivel salvar o arquivo " +
+	// arquivo.getAbsolutePath());
+	// }
+	//
+	// }
+	// }
+	// }
 
 	private boolean validar() {
 		// somente diretorio de arquivos

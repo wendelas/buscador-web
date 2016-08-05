@@ -13,12 +13,10 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.Document;
-import org.primefaces.component.datatable.DataTable;
 
 import net.indexador.entidades.FonteDados;
 import net.indexador.entidades.MetaDado;

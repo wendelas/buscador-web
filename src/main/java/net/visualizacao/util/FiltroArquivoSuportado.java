@@ -1,6 +1,7 @@
 package net.visualizacao.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
 
 public class FiltroArquivoSuportado implements FileFilter {
 	public boolean accept(File file) {

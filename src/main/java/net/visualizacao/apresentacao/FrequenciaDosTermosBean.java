@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import net.indexador.entidades.FonteDados;
 import net.indexador.negocio.FachadaBuscador;
 import net.visualizacao.util.FrequenciaDoTermo;
 import net.visualizacao.util.UtilFrequenciaDosTermos;
-
-import org.apache.log4j.Logger;
 
 public class FrequenciaDosTermosBean extends BaseBean {
 	private static final long serialVersionUID = 6837431655685273498L;

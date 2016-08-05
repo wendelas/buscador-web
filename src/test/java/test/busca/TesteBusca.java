@@ -1,14 +1,11 @@
 package test.busca;
 
-import java.io.IOException;
-
-import net.visualizacao.util.UtilBusca;
-
 import org.apache.lucene.document.Document;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.junit.Test;
+
+import net.visualizacao.util.UtilBusca;
 
 public class TesteBusca {
 

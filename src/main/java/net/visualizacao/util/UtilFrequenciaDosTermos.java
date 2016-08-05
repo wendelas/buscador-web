@@ -1,7 +1,6 @@
 package net.visualizacao.util;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,7 +9,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.store.FSDirectory;
 
 public class UtilFrequenciaDosTermos {
 	private String diretorioIndice;
